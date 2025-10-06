@@ -11,10 +11,10 @@
   --text-secondary: #e0e0e0;    /* Supporting text - light gray */
   --text-light: #b0b0b0;        /* Captions, metadata - medium gray */
   
-  /* Borders - Clean Separators */
-  --border-light: #e6f3ff;      /* Subtle blue-tinted separators */
-  --border-medium: #d0e7ff;     /* Standard borders */
-  --border-strong: #a8ccef;     /* Emphasized borders */
+  /* Borders - Dark Theme */
+  --border-light: #2a2a2a;      /* Subtle dark separators */
+  --border-medium: #3a3a3a;     /* Standard borders */
+  --border-strong: #4a4a4a;     /* Emphasized borders */
   
   /* Brand Colors - Simon Price PT Logo Colors */
   --brand-primary: #00BFFF;     /* Main cyan blue from logo */

@@ -27,7 +27,7 @@ const Header = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          boxShadow: '0 2px 8px rgba(0, 69, 52, 0.25)'
+          boxShadow: '0 2px 8px rgba(0, 191, 255, 0.25)'
         }}>
           {/* Logo */}
           <div className="flex items-center">

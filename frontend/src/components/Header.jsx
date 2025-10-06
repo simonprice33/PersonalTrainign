@@ -32,7 +32,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <img 
-              src="https://customer-assets.emergentagent.com/job_personal-trainer-24/artifacts/3u7xdkqr_87f3e4cd-295c-463d-ab0d-2f0bb37ee9c2.png" 
+              src="https://customer-assets.emergentagent.com/job_personal-trainer-24/artifacts/g2n7e7ey_Logo%20800x770.png" 
               alt="Simon Price Personal Training" 
               className="h-12 w-auto"
             />

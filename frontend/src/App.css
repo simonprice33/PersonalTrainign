@@ -184,7 +184,7 @@ body {
 
 .network-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 69, 52, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 191, 255, 0.25);
 }
 
 /* Container System */

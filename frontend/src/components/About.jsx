@@ -1,0 +1,166 @@
+import React from 'react';
+import { Award, Users, Target, Star, CheckCircle } from 'lucide-react';
+import { aboutStats } from '../mock/mockData';
+
+const About = () => {
+  return (
+    <section id="about" className="section-padding">
+      <div className="container">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          {/* Content */}
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h2 className="heading-1">Meet Simon Price</h2>
+              <h3 className="heading-3" style={{ color: 'var(--brand-primary)' }}>
+                Your Partner in Transformation
+              </h3>
+              <p className="body-large">
+                With over 5 years of experience helping people achieve their fitness goals, 
+                I believe that everyone deserves to feel confident, strong, and healthy in their own body.
+              </p>
+              <p className="body-medium">
+                My approach goes beyond just exercise and nutrition. I focus on building sustainable habits, 
+                providing unwavering support, and creating personalized strategies that fit your lifestyle. 
+                Your success is my mission, and I'm here to guide you every step of the way.
+              </p>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="text-center p-4">
+                <div className="text-3xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
+                  {aboutStats.clients}
+                </div>
+                <div className="text-sm" style={{ color: 'var(--text-light)' }}>
+                  Happy Clients
+                </div>
+              </div>
+              <div className="text-center p-4">
+                <div className="text-3xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
+                  {aboutStats.experience}
+                </div>
+                <div className="text-sm" style={{ color: 'var(--text-light)' }}>
+                  Experience
+                </div>
+              </div>
+              <div className="text-center p-4">
+                <div className="text-3xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
+                  {aboutStats.successRate}
+                </div>
+                <div className="text-sm" style={{ color: 'var(--text-light)' }}>
+                  Success Rate
+                </div>
+              </div>
+              <div className="text-center p-4">
+                <div className="text-3xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
+                  {aboutStats.rating}
+                </div>
+                <div className="text-sm" style={{ color: 'var(--text-light)' }}>
+                  Client Rating
+                </div>
+              </div>
+            </div>
+
+            {/* Certifications */}
+            <div className="space-y-4">
+              <h4 className="heading-3">Certifications & Expertise</h4>
+              <div className="space-y-3">
+                {aboutStats.certifications.map((cert, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <CheckCircle size={20} style={{ color: 'var(--brand-primary)' }} />
+                    <span className="body-medium">{cert}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Visual Element */}
+          <div className="flex justify-center">
+            <div className="relative">
+              {/* Main Card */}
+              <div 
+                className="network-card p-8 max-w-md"
+                style={{ background: 'var(--bg-card)' }}
+              >
+                <div className="text-center mb-6">
+                  <div 
+                    className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white"
+                    style={{ background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-hover))' }}
+                  >
+                    SP
+                  </div>
+                  <h3 className="heading-3 mb-2">Simon Price</h3>
+                  <p className="body-medium" style={{ color: 'var(--text-secondary)' }}>
+                    Certified Personal Trainer
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="body-medium">Client Success Rate</span>
+                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>95%</span>
+                  </div>
+                  <div 
+                    className="w-full h-2 rounded-full"
+                    style={{ background: 'var(--bg-subtle)' }}
+                  >
+                    <div 
+                      className="h-2 rounded-full"
+                      style={{ 
+                        background: 'var(--brand-primary)', 
+                        width: '95%' 
+                      }}
+                    ></div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="body-medium">Years Experience</span>
+                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>5+</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="body-medium">Happy Clients</span>
+                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>500+</span>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-6" style={{ borderTop: '1px solid var(--border-light)' }}>
+                  <div className="flex items-center justify-center gap-1 mb-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star 
+                        key={star} 
+                        size={16} 
+                        fill="var(--brand-primary)" 
+                        style={{ color: 'var(--brand-primary)' }}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-center text-sm" style={{ color: 'var(--text-light)' }}>
+                    "Simon's dedication to his clients is unmatched"
+                  </p>
+                </div>
+              </div>
+
+              {/* Floating Achievement Cards */}
+              <div 
+                className="absolute -top-4 -right-6 p-3 rounded-2xl shadow-lg"
+                style={{ background: 'white' }}
+              >
+                <Award size={24} style={{ color: 'var(--brand-primary)' }} />
+              </div>
+              <div 
+                className="absolute -bottom-4 -left-6 p-3 rounded-2xl shadow-lg"
+                style={{ background: 'white' }}
+              >
+                <Target size={24} style={{ color: 'var(--brand-primary)' }} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default About;

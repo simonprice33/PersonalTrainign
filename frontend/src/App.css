@@ -1,34 +1,254 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Simon Price Personal Training - Professional Color System */
+:root {
+  /* Backgrounds - Professional Network Colors */
+  --bg-page: #FAFFEE;           /* Main page background */
+  --bg-card: #FAFAFF;           /* Card backgrounds */ 
+  --bg-subtle: #EDEDFE;         /* Light section backgrounds */
+  --bg-section: #CACAFC;        /* Subtle purple sections */
+  
+  /* Text - Professional Colors */
+  --text-primary: #004534;      /* Main headings and content */
+  --text-secondary: #0C6951;    /* Supporting text */
+  --text-light: #807979;        /* Captions, metadata */
+  
+  /* Borders - Clean Separators */
+  --border-light: #CACAFC;      /* Subtle separators */
+  --border-medium: #DDDDDD;     /* Standard borders */
+  --border-strong: #B0B0B0;     /* Emphasized borders */
+  
+  /* Brand Colors - Simon Price PT */
+  --brand-primary: #D3FF62;     /* Main accent green */
+  --brand-dark: #004534;        
+  --brand-hover: #0C6951;      
+  --brand-cyan: #00BFFF;        /* Logo cyan accent */
+  
+  /* Spacing System */
+  --spacing-xs: 8px;
+  --spacing-small: 16px;
+  --spacing-medium: 24px;
+  --spacing-large: 32px;
+  --spacing-xl: 48px;
+  --spacing-giant: 64px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+/* Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  line-height: 1.5;
+  background: var(--bg-page);
+  color: var(--text-primary);
 }
 
-.App-link {
-    color: #61dafb;
+/* Typography Scale */
+.display-large { 
+  font-size: clamp(3rem, 6.5vw, 5rem); 
+  font-weight: 700; 
+  line-height: 0.95; 
+  color: var(--text-primary);
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.display-medium { 
+  font-size: clamp(2rem, 4vw, 3rem); 
+  font-weight: 600; 
+  line-height: 1.2; 
+  color: var(--text-primary);
+}
+
+.heading-1 { 
+  font-size: clamp(2rem, 4vw, 3rem); 
+  font-weight: 600; 
+  line-height: 1.2; 
+  color: var(--text-primary);
+}
+
+.heading-2 { 
+  font-size: clamp(1.5rem, 3vw, 2rem); 
+  font-weight: 600; 
+  line-height: 1.3; 
+  color: var(--text-primary);
+}
+
+.heading-3 { 
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem); 
+  font-weight: 600; 
+  line-height: 1.4; 
+  color: var(--text-primary);
+}
+
+.body-large { 
+  font-size: clamp(1.125rem, 2.5vw, 1.25rem); 
+  font-weight: 400; 
+  line-height: 1.6; 
+  color: var(--text-secondary);
+}
+
+.body-medium { 
+  font-size: clamp(1rem, 2vw, 1.125rem); 
+  font-weight: 400; 
+  line-height: 1.6; 
+  color: var(--text-secondary);
+}
+
+/* Button System - Pill Shape */
+.btn-primary {
+  background: var(--brand-dark);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 14px 32px;
+  font-size: clamp(1rem, 2vw, 1.125rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  background: var(--brand-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 69, 52, 0.25);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--brand-dark);
+  border: 2px solid var(--brand-dark);
+  border-radius: 25px;
+  padding: 12px 30px;
+  font-size: clamp(1rem, 2vw, 1.125rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  gap: 8px;
+}
+
+.btn-secondary:hover {
+  background: var(--brand-dark);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-cta {
+  background: var(--brand-primary);
+  color: var(--brand-dark);
+  border: none;
+  border-radius: 33px;
+  padding: 18px 36px;
+  font-size: clamp(1.125rem, 2.5vw, 1.25rem);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  gap: 8px;
+}
+
+.btn-cta:hover {
+  background: var(--brand-hover);
+  color: white;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(0, 69, 52, 0.25);
+}
+
+/* Card System */
+.network-card {
+  background: var(--bg-card);
+  border-radius: 32px;
+  padding: var(--spacing-large);
+  box-shadow: 0 2px 8px rgba(0, 69, 52, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.network-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 69, 52, 0.25);
+}
+
+/* Container System */
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-small);
+}
+
+.section-padding {
+  padding: var(--spacing-giant) 0;
+}
+
+/* Grid System */
+.network-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-large);
+  padding: var(--spacing-large) 0;
+}
+
+/* Animation System */
+.animated {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+.animated.fadeIn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hover-lift {
+  transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Responsive Design */
+@media (max-width: 781px) {
+  .container {
+    padding: 0 var(--spacing-small);
+  }
+  
+  .network-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-medium);
+  }
+  
+  .network-card {
+    border-radius: 24px;
+    padding: var(--spacing-medium);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 var(--spacing-medium);
+  }
+  
+  .network-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
 }

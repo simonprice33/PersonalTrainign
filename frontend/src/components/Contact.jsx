@@ -89,6 +89,7 @@ const Contact = () => {
                     style={{ 
                       border: '1px solid var(--border-medium)',
                       background: 'var(--bg-card)',
+                      color: 'var(--text-primary)',
                       focusRingColor: 'var(--brand-primary)'
                     }}
                     placeholder="Enter your full name"

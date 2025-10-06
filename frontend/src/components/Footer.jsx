@@ -44,7 +44,7 @@ const Footer = () => {
           <div className="lg:col-span-2 space-y-6">
             <div className="flex items-center gap-4">
               <img 
-                src="https://customer-assets.emergentagent.com/job_personal-trainer-24/artifacts/3u7xdkqr_87f3e4cd-295c-463d-ab0d-2f0bb37ee9c2.png" 
+                src="https://customer-assets.emergentagent.com/job_personal-trainer-24/artifacts/g2n7e7ey_Logo%20800x770.png" 
                 alt="Simon Price Personal Training" 
                 className="h-16 w-auto"
               />

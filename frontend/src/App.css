@@ -16,11 +16,11 @@
   --border-medium: #DDDDDD;     /* Standard borders */
   --border-strong: #B0B0B0;     /* Emphasized borders */
   
-  /* Brand Colors - Simon Price PT */
-  --brand-primary: #D3FF62;     /* Main accent green */
-  --brand-dark: #004534;        
-  --brand-hover: #0C6951;      
-  --brand-cyan: #00BFFF;        /* Logo cyan accent */
+  /* Brand Colors - Simon Price PT Logo Colors */
+  --brand-primary: #00BFFF;     /* Main cyan blue from logo */
+  --brand-dark: #1a1a2e;       /* Dark navy from logo background */
+  --brand-hover: #0099cc;      /* Darker cyan for hover states */
+  --brand-accent: #16213e;     /* Secondary dark blue */
   
   /* Spacing System */
   --spacing-xs: 8px;

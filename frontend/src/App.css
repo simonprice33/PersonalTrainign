@@ -6,10 +6,10 @@
   --bg-subtle: #111111;         /* Dark section backgrounds */
   --bg-section: #1f1f1f;        /* Subtle dark sections */
   
-  /* Text - Professional Colors */
-  --text-primary: #1a1a2e;      /* Main headings and content */
-  --text-secondary: #2c3e50;    /* Supporting text */
-  --text-light: #6c757d;        /* Captions, metadata */
+  /* Text - Dark Theme Colors */
+  --text-primary: #ffffff;      /* Main headings and content - white */
+  --text-secondary: #e0e0e0;    /* Supporting text - light gray */
+  --text-light: #b0b0b0;        /* Captions, metadata - medium gray */
   
   /* Borders - Clean Separators */
   --border-light: #e6f3ff;      /* Subtle blue-tinted separators */

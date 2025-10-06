@@ -7,9 +7,9 @@
   --bg-section: #CACAFC;        /* Subtle purple sections */
   
   /* Text - Professional Colors */
-  --text-primary: #004534;      /* Main headings and content */
-  --text-secondary: #0C6951;    /* Supporting text */
-  --text-light: #807979;        /* Captions, metadata */
+  --text-primary: #1a1a2e;      /* Main headings and content */
+  --text-secondary: #2c3e50;    /* Supporting text */
+  --text-light: #6c757d;        /* Captions, metadata */
   
   /* Borders - Clean Separators */
   --border-light: #CACAFC;      /* Subtle separators */

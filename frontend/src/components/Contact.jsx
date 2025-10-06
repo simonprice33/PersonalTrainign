@@ -108,7 +108,8 @@ const Contact = () => {
                     className="w-full px-4 py-3 rounded-2xl border transition-all duration-200 focus:outline-none focus:ring-2"
                     style={{ 
                       border: '1px solid var(--border-medium)',
-                      background: 'var(--bg-card)'
+                      background: 'var(--bg-card)',
+                      color: 'var(--text-primary)'
                     }}
                     placeholder="your.email@example.com"
                   />

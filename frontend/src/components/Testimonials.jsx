@@ -18,7 +18,7 @@ const Testimonials = () => {
   };
 
   return (
-    <section id="testimonials" className="section-padding" style={{ background: 'var(--bg-subtle)' }}>
+    <section id="testimonials" className="section-padding" style={{ background: 'var(--bg-section)' }}>
       <div className="container">
         <div className="text-center mb-16">
           <h2 className="heading-1 mb-6">Client Success Stories</h2>

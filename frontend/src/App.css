@@ -149,7 +149,7 @@ body {
 
 .btn-cta {
   background: var(--brand-primary);
-  color: var(--brand-dark);
+  color: #000000;
   border: none;
   border-radius: 33px;
   padding: 18px 36px;

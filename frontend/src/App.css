@@ -177,7 +177,7 @@ body {
   background: var(--bg-card);
   border-radius: 32px;
   padding: var(--spacing-large);
-  box-shadow: 0 2px 8px rgba(0, 69, 52, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 191, 255, 0.25);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }

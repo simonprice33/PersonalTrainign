@@ -94,7 +94,7 @@ const Hero = () => {
                 className="w-96 h-96 rounded-full flex items-center justify-center"
                 style={{ 
                   background: 'linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-hover) 100%)',
-                  boxShadow: '0 20px 40px rgba(0, 69, 52, 0.3)'
+                  boxShadow: '0 20px 40px rgba(0, 191, 255, 0.3)'
                 }}
               >
                 <div className="text-center text-white">

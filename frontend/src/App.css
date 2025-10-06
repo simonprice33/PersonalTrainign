@@ -1,10 +1,10 @@
 /* Simon Price Personal Training - Professional Color System */
 :root {
-  /* Backgrounds - Professional Network Colors */
-  --bg-page: #FAFFEE;           /* Main page background */
-  --bg-card: #FAFAFF;           /* Card backgrounds */ 
-  --bg-subtle: #EDEDFE;         /* Light section backgrounds */
-  --bg-section: #CACAFC;        /* Subtle purple sections */
+  /* Backgrounds - Dark Theme */
+  --bg-page: #0a0a0a;           /* Main page background - deep black */
+  --bg-card: #1a1a1a;           /* Card backgrounds - dark gray */ 
+  --bg-subtle: #111111;         /* Dark section backgrounds */
+  --bg-section: #1f1f1f;        /* Subtle dark sections */
   
   /* Text - Professional Colors */
   --text-primary: #1a1a2e;      /* Main headings and content */

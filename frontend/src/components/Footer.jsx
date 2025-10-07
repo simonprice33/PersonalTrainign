@@ -120,12 +120,7 @@ const Footer = () => {
               >
                 About Simon
               </button>
-              <button 
-                onClick={() => scrollToSection('testimonials')}
-                className="block text-gray-300 hover:text-white transition-colors duration-200"
-              >
-                Success Stories
-              </button>
+              {/* Success Stories removed - will be added when we have real client testimonials */}
               <button 
                 onClick={() => scrollToSection('contact')}
                 className="block text-gray-300 hover:text-white transition-colors duration-200"

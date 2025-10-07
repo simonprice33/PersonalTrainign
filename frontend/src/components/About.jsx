@@ -147,7 +147,7 @@ const About = () => {
                     ))}
                   </div>
                   <p className="text-center text-sm" style={{ color: 'var(--text-light)' }}>
-                    "Simon's dedication to his clients is unmatched"
+                    "Ready to help you achieve your fitness goals"
                   </p>
                 </div>
               </div>

@@ -21,8 +21,8 @@ const Hero = () => {
                 <span style={{ color: 'var(--brand-primary)' }}> Transform Your Life</span>
               </h1>
               <p className="body-large max-w-2xl">
-                Get personalized training, nutrition plans, and 24/7 support from an experienced personal trainer. 
-                Join hundreds of clients who've achieved their fitness goals with Simon Price Personal Training.
+                Get personalized training, nutrition plans, and dedicated support from a passionate, certified personal trainer. 
+                Start your fitness journey with someone committed to helping you achieve your goals.
               </p>
             </div>
 

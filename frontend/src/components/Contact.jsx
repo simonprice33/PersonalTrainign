@@ -29,11 +29,33 @@ const Contact = () => {
     setSubmitStatus(null);
 
     try {
-      const response = await submitContactForm(formData);
+      // EmailJS configuration - Replace with your actual values
+      const emailParams = {
+        to_email: 'simon.price.33@hotmail.com',
+        from_name: formData.name,
+        from_email: formData.email,
+        phone: formData.phone,
+        fitness_goals: formData.goals,
+        experience_level: formData.experience,
+        message: formData.message,
+        reply_to: formData.email
+      };
+
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        'YOUR_SERVICE_ID',    // Replace with your EmailJS service ID
+        'YOUR_TEMPLATE_ID',   // Replace with your EmailJS template ID
+        emailParams,
+        'YOUR_PUBLIC_KEY'     // Replace with your EmailJS public key
+      );
+
+      console.log('Email sent successfully:', result);
+      
       setSubmitStatus({
         type: 'success',
-        message: response.message
+        message: 'Thank you for your interest! Simon will get back to you within 24 hours.'
       });
+      
       setFormData({
         name: '',
         email: '',
@@ -42,10 +64,12 @@ const Contact = () => {
         experience: '',
         message: ''
       });
+      
     } catch (error) {
+      console.error('Email sending failed:', error);
       setSubmitStatus({
         type: 'error',
-        message: 'Something went wrong. Please try again.'
+        message: 'Something went wrong. Please try again or email directly at simon.price.33@hotmail.com'
       });
     } finally {
       setIsSubmitting(false);

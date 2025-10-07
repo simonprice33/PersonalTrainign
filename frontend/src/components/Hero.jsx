@@ -30,20 +30,20 @@ const Hero = () => {
             <div className="flex flex-wrap gap-8">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-full" style={{ background: 'var(--brand-primary)' }}>
-                  <Users size={20} style={{ color: 'var(--brand-dark)' }} />
+                  <Trophy size={20} style={{ color: 'var(--brand-dark)' }} />
                 </div>
                 <div>
-                  <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>500+</div>
-                  <div className="text-sm" style={{ color: 'var(--text-light)' }}>Happy Clients</div>
+                  <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>Certified</div>
+                  <div className="text-sm" style={{ color: 'var(--text-light)' }}>Personal Trainer</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-full" style={{ background: 'var(--brand-primary)' }}>
-                  <Trophy size={20} style={{ color: 'var(--brand-dark)' }} />
+                  <Users size={20} style={{ color: 'var(--brand-dark)' }} />
                 </div>
                 <div>
-                  <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>5 Years</div>
-                  <div className="text-sm" style={{ color: 'var(--text-light)' }}>Experience</div>
+                  <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>Passionate</div>
+                  <div className="text-sm" style={{ color: 'var(--text-light)' }}>About Fitness</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -51,8 +51,8 @@ const Hero = () => {
                   <Star size={20} style={{ color: 'var(--brand-dark)' }} />
                 </div>
                 <div>
-                  <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>4.9/5</div>
-                  <div className="text-sm" style={{ color: 'var(--text-light)' }}>Client Rating</div>
+                  <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>Dedicated</div>
+                  <div className="text-sm" style={{ color: 'var(--text-light)' }}>To Your Success</div>
                 </div>
               </div>
             </div>

@@ -108,8 +108,8 @@ const About = () => {
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="body-medium">Client Success Rate</span>
-                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>95%</span>
+                    <span className="body-medium">Commitment Level</span>
+                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>100%</span>
                   </div>
                   <div 
                     className="w-full h-2 rounded-full"
@@ -119,19 +119,19 @@ const About = () => {
                       className="h-2 rounded-full"
                       style={{ 
                         background: 'var(--brand-primary)', 
-                        width: '95%' 
+                        width: '100%' 
                       }}
                     ></div>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="body-medium">Years Experience</span>
-                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>5+</span>
+                    <span className="body-medium">Passion for Fitness</span>
+                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>MAX</span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="body-medium">Happy Clients</span>
-                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>500+</span>
+                    <span className="body-medium">Dedication to You</span>
+                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>Always</span>
                   </div>
                 </div>
 

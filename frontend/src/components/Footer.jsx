@@ -203,7 +203,7 @@ const Footer = () => {
               style={{ background: 'var(--brand-primary)' }}
             ></div>
             <span className="text-sm" style={{ color: 'var(--brand-primary)' }}>
-              Certified Personal Trainer • 500+ Success Stories • 24/7 Support
+              Certified Personal Trainer • Passionate About Fitness • Dedicated Support
             </span>
           </div>
         </div>

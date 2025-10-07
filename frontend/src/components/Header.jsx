@@ -58,12 +58,7 @@ const Header = () => {
             >
               About
             </button>
-            <button 
-              onClick={() => scrollToSection('testimonials')}
-              className="network-nav-link text-white hover:bg-white hover:bg-opacity-10 px-4 py-2 rounded-full transition-all duration-200"
-            >
-              Testimonials
-            </button>
+            {/* Testimonials removed - will be added when we have real client reviews */}
             <button 
               onClick={() => scrollToSection('contact')}
               className="btn-primary ml-4"

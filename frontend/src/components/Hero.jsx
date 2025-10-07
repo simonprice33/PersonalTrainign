@@ -82,7 +82,7 @@ const Hero = () => {
                 ))}
               </div>
               <div className="text-sm" style={{ color: 'var(--text-light)' }}>
-                Join 500+ satisfied clients who transformed their lives
+                Start your transformation journey with personalized support
               </div>
             </div>
           </div>

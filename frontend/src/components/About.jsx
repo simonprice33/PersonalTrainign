@@ -63,14 +63,24 @@ const About = () => {
 
             {/* Certifications */}
             <div className="space-y-4">
-              <h4 className="heading-3">Certifications & Expertise</h4>
+              <h4 className="heading-3">Qualifications & Commitment</h4>
               <div className="space-y-3">
-                {aboutStats.certifications.map((cert, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <CheckCircle size={20} style={{ color: 'var(--brand-primary)' }} />
-                    <span className="body-medium">{cert}</span>
-                  </div>
-                ))}
+                <div className="flex items-center gap-3">
+                  <CheckCircle size={20} style={{ color: 'var(--brand-primary)' }} />
+                  <span className="body-medium">Certified Personal Trainer</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle size={20} style={{ color: 'var(--brand-primary)' }} />
+                  <span className="body-medium">Nutrition Guidance Qualified</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle size={20} style={{ color: 'var(--brand-primary)' }} />
+                  <span className="body-medium">Committed to Continued Learning</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle size={20} style={{ color: 'var(--brand-primary)' }} />
+                  <span className="body-medium">Focused on Client Success</span>
+                </div>
               </div>
             </div>
           </div>

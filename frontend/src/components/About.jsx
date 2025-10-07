@@ -25,38 +25,38 @@ const About = () => {
               </p>
             </div>
 
-            {/* Stats Grid */}
+            {/* Values Grid */}
             <div className="grid grid-cols-2 gap-6">
               <div className="text-center p-4">
-                <div className="text-3xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
-                  {aboutStats.clients}
+                <div className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
+                  Fresh Start
                 </div>
                 <div className="text-sm" style={{ color: 'var(--text-light)' }}>
-                  Happy Clients
+                  New Perspective
                 </div>
               </div>
               <div className="text-center p-4">
-                <div className="text-3xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
-                  {aboutStats.experience}
+                <div className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
+                  Certified
                 </div>
                 <div className="text-sm" style={{ color: 'var(--text-light)' }}>
-                  Experience
+                  Professional Training
                 </div>
               </div>
               <div className="text-center p-4">
-                <div className="text-3xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
-                  {aboutStats.successRate}
+                <div className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
+                  Dedicated
                 </div>
                 <div className="text-sm" style={{ color: 'var(--text-light)' }}>
-                  Success Rate
+                  To Your Goals
                 </div>
               </div>
               <div className="text-center p-4">
-                <div className="text-3xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
-                  {aboutStats.rating}
+                <div className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
+                  Passionate
                 </div>
                 <div className="text-sm" style={{ color: 'var(--text-light)' }}>
-                  Client Rating
+                  About Fitness
                 </div>
               </div>
             </div>

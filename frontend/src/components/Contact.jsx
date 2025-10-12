@@ -246,14 +246,11 @@ const Contact = () => {
                 />
               </div>
 
-              {/* reCAPTCHA */}
-              <div className="flex justify-center">
-                <div 
-                  className="g-recaptcha" 
-                  data-sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-                  data-callback="onRecaptchaSuccess"
-                  data-theme="dark"
-                ></div>
+              {/* reCAPTCHA v3 - Invisible */}
+              <div className="text-center text-sm text-gray-500 mb-4">
+                This site is protected by reCAPTCHA and the Google{' '}
+                <a href="https://policies.google.com/privacy" className="underline">Privacy Policy</a>{' '}
+                and <a href="https://policies.google.com/terms" className="underline">Terms of Service</a> apply.
               </div>
 
               <button

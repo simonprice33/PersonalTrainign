@@ -115,37 +115,37 @@ app.post('/api/contact', contactValidation, async (req, res) => {
 
     const { name, email, phone, goals, experience, message, recaptchaToken } = req.body;
 
-    // Verify reCAPTCHA if token is provided
-    if (recaptchaToken) {
-      try {
-        console.log(`🔍 Verifying reCAPTCHA token for ${email}...`);
-        const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
-        });
+    // COMMENTED OUT - reCAPTCHA verification - Revisit later
+    // if (recaptchaToken) {
+    //   try {
+    //     console.log(`🔍 Verifying reCAPTCHA token for ${email}...`);
+    //     const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/x-www-form-urlencoded',
+    //       },
+    //       body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+    //     });
 
-        const recaptchaData = await recaptchaResponse.json();
-        console.log(`🔍 reCAPTCHA response:`, recaptchaData);
+    //     const recaptchaData = await recaptchaResponse.json();
+    //     console.log(`🔍 reCAPTCHA response:`, recaptchaData);
         
-        // reCAPTCHA v2 only returns success true/false (no score)
-        if (recaptchaData.success) {
-          console.log(`✅ reCAPTCHA v2 verification passed for ${email}`);
-        } else {
-          console.log(`⚠️ reCAPTCHA v2 verification failed for ${email}`);
-          return res.status(400).json({
-            success: false,
-            message: 'reCAPTCHA verification failed. Please try again.'
-          });
-        }
-      } catch (error) {
-        console.log(`⚠️ reCAPTCHA verification error: ${error.message}`);
-      }
-    } else {
-      console.log(`⚠️ No reCAPTCHA token provided for ${email}`);
-    }
+    //     // reCAPTCHA v2 only returns success true/false (no score)
+    //     if (recaptchaData.success) {
+    //       console.log(`✅ reCAPTCHA v2 verification passed for ${email}`);
+    //     } else {
+    //       console.log(`⚠️ reCAPTCHA v2 verification failed for ${email}`);
+    //       return res.status(400).json({
+    //         success: false,
+    //         message: 'reCAPTCHA verification failed. Please try again.'
+    //       });
+    //     }
+    //   } catch (error) {
+    //     console.log(`⚠️ reCAPTCHA verification error: ${error.message}`);
+    //   }
+    // } else {
+    //   console.log(`⚠️ No reCAPTCHA token provided for ${email}`);
+    // }
 
     // Create email content
     const emailSubject = `🏋️ New PT Consultation Request from ${name}`;

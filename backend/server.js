@@ -4,7 +4,8 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
 const { Client } = require('@microsoft/microsoft-graph-client');
-const { ClientCredentialProvider } = require('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
+const { TokenCredentialAuthenticationProvider } = require('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
+const { ClientSecretCredential } = require('@azure/identity');
 require('dotenv').config();
 
 const app = express();

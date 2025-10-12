@@ -248,8 +248,8 @@ def main():
     if expected_tests_passed == 0:
         print("\n❌ CRITICAL: None of the expected endpoints are implemented")
         print("The backend appears to be missing the contact form and reCAPTCHA functionality")
-    elif expected_tests_passed < 3:
-        print(f"\n⚠️  WARNING: Only {expected_tests_passed}/3 expected tests passed")
+    elif expected_tests_passed < 4:
+        print(f"\n⚠️  WARNING: Only {expected_tests_passed}/4 expected tests passed")
     else:
         print("\n✅ All expected functionality working correctly")
     

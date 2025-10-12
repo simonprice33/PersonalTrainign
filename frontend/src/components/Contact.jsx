@@ -248,10 +248,14 @@ const Contact = () => {
               <div className="flex justify-center mb-6">
                 <div 
                   className="g-recaptcha" 
-                  data-sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                  data-sitekey="6Lf6jecrAAAAAGEOA_BPqtCQoyglQ3mYtXNm4iOa"
                   data-callback="onRecaptchaSuccess"
                   data-theme="dark"
                 ></div>
+              </div>
+              {/* Debug info */}
+              <div className="text-center text-xs mb-4" style={{ color: 'var(--text-light)' }}>
+                Debug: Site Key = {process.env.REACT_APP_RECAPTCHA_SITE_KEY || 'NOT LOADED'}
               </div>
 
               <button

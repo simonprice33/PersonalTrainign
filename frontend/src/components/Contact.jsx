@@ -44,27 +44,28 @@ const Contact = () => {
     setSubmitStatus(null);
 
     try {
-      // Debug: Check if environment variable is loaded
+      // Get reCAPTCHA token
+      let token;
       const siteKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
-      console.log('reCAPTCHA Site Key:', siteKey);
       
-      if (!siteKey) {
-        throw new Error('reCAPTCHA site key not found in environment variables');
+      if (window.grecaptcha && siteKey) {
+        try {
+          token = await new Promise((resolve, reject) => {
+            window.grecaptcha.ready(() => {
+              window.grecaptcha.execute(siteKey, { action: 'contact_form' })
+                .then(resolve)
+                .catch(reject);
+            });
+          });
+          console.log('✅ reCAPTCHA token obtained');
+        } catch (error) {
+          console.warn('⚠️ reCAPTCHA failed, proceeding without it:', error);
+          token = null;
+        }
+      } else {
+        console.warn('⚠️ reCAPTCHA not available, proceeding without it');
+        token = null;
       }
-
-      if (!window.grecaptcha) {
-        throw new Error('reCAPTCHA script not loaded');
-      }
-
-      // Wait for reCAPTCHA to be ready
-      await window.grecaptcha.ready(async () => {
-        console.log('reCAPTCHA ready');
-      });
-
-      // Execute reCAPTCHA v3
-      const token = await window.grecaptcha.execute(siteKey, {
-        action: 'contact_form'
-      });
 
       if (!token) {
         throw new Error('reCAPTCHA verification failed');

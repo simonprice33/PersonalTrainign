@@ -245,14 +245,15 @@ const Contact = () => {
                 />
               </div>
 
-              {/* reCAPTCHA v2 Checkbox */}
+              {/* reCAPTCHA v2 Component */}
               <div className="flex justify-center mb-6">
-                <div 
-                  className="g-recaptcha" 
-                  data-sitekey="6Lf6jecrAAAAAGEOA_BPqtCQoyglQ3mYtXNm4iOa"
-                  data-callback="onRecaptchaSuccess"
-                  data-theme="dark"
-                ></div>
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                  onChange={handleRecaptchaChange}
+                  onExpired={handleRecaptchaExpired}
+                  theme="dark"
+                />
               </div>
 
               <button

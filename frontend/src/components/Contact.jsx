@@ -28,6 +28,16 @@ const Contact = () => {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
+    // Check if reCAPTCHA is completed
+    if (!recaptchaToken) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Please complete the reCAPTCHA verification.'
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       // Send to local Node.js backend
       const response = await fetch('http://localhost:3001/api/contact', {
@@ -35,7 +45,10 @@ const Contact = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          recaptchaToken: recaptchaToken
+        })
       });
 
       const data = await response.json();

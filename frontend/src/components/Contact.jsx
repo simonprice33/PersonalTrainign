@@ -244,7 +244,15 @@ const Contact = () => {
                 />
               </div>
 
-              {/* reCAPTCHA temporarily disabled - add back when keys are working */}
+              {/* reCAPTCHA v2 Checkbox */}
+              <div className="flex justify-center mb-6">
+                <div 
+                  className="g-recaptcha" 
+                  data-sitekey="6Lf6jecrAAAAAGEOA_BPqtCQoyglQ3mYtXNm4iOa"
+                  data-callback="onRecaptchaSuccess"
+                  data-theme="dark"
+                ></div>
+              </div>
 
               <button
                 type="submit"

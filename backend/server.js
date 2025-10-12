@@ -136,6 +136,17 @@ app.post('/api/contact', contactValidation, async (req, res) => {
       });
     }
 
+    // reCAPTCHA v3 score check (0.0 = bot, 1.0 = human)
+    if (recaptchaData.score < 0.5) {
+      console.log(`⚠️ Low reCAPTCHA score: ${recaptchaData.score} for ${email}`);
+      return res.status(400).json({
+        success: false,
+        message: 'Security verification failed. Please try again or contact us directly.'
+      });
+    }
+
+    console.log(`✅ reCAPTCHA passed - Score: ${recaptchaData.score} for ${email}`);
+
     // Create email content
     const emailSubject = `🏋️ New PT Consultation Request from ${name}`;
     const emailText = `

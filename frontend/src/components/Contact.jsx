@@ -249,8 +249,8 @@ const Contact = () => {
 
               <button
                 type="submit"
-                disabled={isSubmitting || !recaptchaToken}
-                className={`btn-cta w-full group ${!recaptchaToken ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={isSubmitting}
+                className="btn-cta w-full group"
               >
                 {isSubmitting ? (
                   <>

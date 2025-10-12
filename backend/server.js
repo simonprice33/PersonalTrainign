@@ -59,8 +59,8 @@ const createTransporter = () => {
     connectionTimeout: 60000,
     greetingTimeout: 30000,
     socketTimeout: 60000,
-    // Try different auth methods for Exchange Online
-    authMethod: 'PLAIN'
+    // Exchange Online SMTP AUTH requirements
+    authMethod: 'LOGIN'
   });
 };
 

@@ -87,10 +87,7 @@ const contactValidation = [
     .optional()
     .isLength({ max: 1000 })
     .withMessage('Message must be less than 1000 characters')
-    .trim(),
-  body('recaptchaToken')
-    .optional()
-    .withMessage('reCAPTCHA verification failed')
+    .trim()
 ];
 
 // Health check endpoint

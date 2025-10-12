@@ -1,12 +1,25 @@
-# Nginx Configuration Setup for Simon Price PT
+# Combined Nginx Configuration Setup
+
+⚠️ **IMPORTANT**: This configuration replaces your entire nginx.conf and includes **ALL** websites.
+
+This configuration handles **multiple websites** on the same server:
+- **IISHF websites**: www.iishf.com, events.iishf.com, dev.iishf.com, my-iis-site.com (ports 5000, 2000, 8080)
+- **Simon Price PT**: simonprice-pt.co.uk (ports 3000 frontend, 8001 backend)
+
+You **cannot** run multiple nginx instances on the same ports. This single configuration handles all domains.
 
 ## Prerequisites
 
 1. **Nginx installed** on your Windows server
-2. **SSL Certificate** for simonprice-pt.co.uk
-3. **Frontend and Backend services** running:
-   - Frontend: `http://localhost:3000`
-   - Backend: `http://localhost:8001`
+2. **SSL Certificates**:
+   - IISHF: `C:/nginx/ssl/fullchain.crt` and `C:/nginx/ssl/STAR.iishf.com.key`
+   - Simon Price PT: `C:/nginx/ssl/simonprice-pt.co.uk/fullchain.crt` and private key
+3. **All services running**:
+   - IISHF Production: `http://localhost:5000`
+   - IISHF Dev: `http://localhost:2000`
+   - Legacy IIS: `http://localhost:8080`
+   - Simon Price PT Frontend: `http://localhost:3000`
+   - Simon Price PT Backend: `http://localhost:8001`
 
 ## Installation Steps
 
@@ -27,9 +40,12 @@ ssl_certificate      C:/nginx/ssl/simonprice-pt.co.uk/fullchain.crt;
 ssl_certificate_key  C:/nginx/ssl/simonprice-pt.co.uk/private.key;
 ```
 
-### 3. Update Domain Name
+### 3. Backup Your Current Config
 
-If using a different domain, replace all instances of `simonprice-pt.co.uk` with your domain.
+Before replacing, backup your existing configuration:
+```cmd
+copy C:\nginx\conf\nginx.conf C:\nginx\conf\nginx.conf.backup
+```
 
 ### 4. Create Log Directory
 
@@ -37,26 +53,15 @@ If using a different domain, replace all instances of `simonprice-pt.co.uk` with
 mkdir C:\nginx\logs
 ```
 
-### 5. Configure Nginx
+### 5. Replace Nginx Configuration
 
-**Option A: Replace entire nginx.conf**
+**This config includes ALL your websites (IISHF + Simon Price PT):**
+
 ```cmd
-copy nginx.conf C:\nginx\conf\nginx.conf
+copy C:\Sites\simonprice-pt\nginx.conf C:\nginx\conf\nginx.conf
 ```
 
-**Option B: Include as separate file (Recommended)**
-
-Add this to your existing `C:\nginx\conf\nginx.conf` inside the `http` block:
-```nginx
-http {
-    # ... your existing config ...
-    
-    # Include Simon Price PT configuration
-    include C:/Sites/simonprice-pt/nginx.conf;
-}
-```
-
-Then copy just the server blocks from the provided nginx.conf.
+This replaces your entire nginx configuration with the combined config that handles both IISHF and Simon Price PT websites.
 
 ### 6. Test Configuration
 
@@ -82,6 +87,21 @@ nginx
 ```cmd
 nginx -s stop
 ```
+
+## What This Configuration Does
+
+### IISHF Websites (Unchanged)
+- ✅ **www.iishf.com** → Umbraco on port 5000 (with SignalR WebSockets)
+- ✅ **events.iishf.com** → Umbraco on port 5000
+- ✅ **dev.iishf.com** → Development instance on port 2000
+- ✅ **my-iis-site.com** → Legacy IIS on port 8080
+- ✅ Static files served from disk (media, CSS, JS)
+
+### Simon Price PT Website (New)
+- ✅ **simonprice-pt.co.uk** → React frontend (port 3000) + Node.js API (port 8001)
+- ✅ API endpoints: `/api/*` routed to backend
+- ✅ Rate limiting on contact form
+- ✅ Separate SSL certificate
 
 ## Configuration Features
 
@@ -110,15 +130,19 @@ nginx -s stop
 
 ## DNS Configuration
 
-Point your domain to your server's IP address:
+### For Simon Price PT
+Point your domain to your server's IP address (same server as IISHF):
 
 ```
 A Record:
-simonprice-pt.co.uk → YOUR_SERVER_IP
+simonprice-pt.co.uk → YOUR_SERVER_IP (same as IISHF)
 
 CNAME Record (optional):
 www.simonprice-pt.co.uk → simonprice-pt.co.uk
 ```
+
+### For IISHF (Already Configured)
+Your existing IISHF DNS should remain unchanged.
 
 ## Troubleshooting
 

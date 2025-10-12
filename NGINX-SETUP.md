@@ -1,8 +1,12 @@
 # Combined Nginx Configuration Setup
 
+⚠️ **IMPORTANT**: This configuration replaces your entire nginx.conf and includes **ALL** websites.
+
 This configuration handles **multiple websites** on the same server:
-- **IISHF websites**: www.iishf.com, events.iishf.com, dev.iishf.com, my-iis-site.com
-- **Simon Price PT**: simonprice-pt.co.uk
+- **IISHF websites**: www.iishf.com, events.iishf.com, dev.iishf.com, my-iis-site.com (ports 5000, 2000, 8080)
+- **Simon Price PT**: simonprice-pt.co.uk (ports 3000 frontend, 8001 backend)
+
+You **cannot** run multiple nginx instances on the same ports. This single configuration handles all domains.
 
 ## Prerequisites
 

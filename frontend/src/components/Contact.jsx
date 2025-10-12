@@ -53,15 +53,15 @@ const Contact = () => {
       }
 
       console.log('✅ reCAPTCHA v2 token available:', recaptchaToken ? 'SUCCESS' : 'FAILED');
-      // Send to local Node.js backend
-      const response = await fetch('http://localhost:3001/api/contact', {
+      // Send to backend using environment variable
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...formData,
-          recaptchaToken: token
+          recaptchaToken: recaptchaToken
         })
       });
 

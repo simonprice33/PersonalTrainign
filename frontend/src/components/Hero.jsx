@@ -91,16 +91,26 @@ const Hero = () => {
           <div className="flex justify-center lg:justify-end">
             <div className="relative">
               <div 
-                className="w-96 h-96 rounded-full flex items-center justify-center"
+                className="w-96 h-96 rounded-full overflow-hidden flex items-center justify-center relative"
                 style={{ 
-                  background: 'linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-hover) 100%)',
-                  boxShadow: '0 20px 40px rgba(0, 191, 255, 0.3)'
+                  border: '8px solid var(--brand-primary)',
+                  boxShadow: '0 20px 40px rgba(0, 191, 255, 0.5), inset 0 0 0 4px rgba(0, 191, 255, 0.1)'
                 }}
               >
-                <div className="text-center text-white">
-                  <div className="text-6xl font-bold mb-2">SP</div>
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_simonfitcoach/artifacts/sbmcvjkm_IMG_0200.JPEG"
+                  alt="Simon Price - Personal Trainer"
+                  className="w-full h-full object-cover"
+                  style={{ objectPosition: 'center 30%' }}
+                />
+                <div 
+                  className="absolute bottom-0 left-0 right-0 text-center text-white py-4"
+                  style={{ 
+                    background: 'linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 50%, transparent 100%)'
+                  }}
+                >
                   <div className="text-xl font-semibold">Personal Training</div>
-                  <div className="text-sm opacity-90 mt-2">Your Success, My Mission</div>
+                  <div className="text-sm opacity-90 mt-1">Your Success, My Mission</div>
                 </div>
               </div>
               

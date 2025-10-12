@@ -125,8 +125,8 @@ body {
 
 .btn-secondary {
   background: transparent;
-  color: var(--brand-dark);
-  border: 2px solid var(--brand-dark);
+  color: var(--brand-primary);
+  border: 2px solid var(--brand-primary);
   border-radius: 25px;
   padding: 12px 30px;
   font-size: clamp(1rem, 2vw, 1.125rem);
@@ -142,8 +142,8 @@ body {
 }
 
 .btn-secondary:hover {
-  background: var(--brand-dark);
-  color: white;
+  background: var(--brand-primary);
+  color: var(--brand-dark);
   transform: translateY(-2px);
 }
 

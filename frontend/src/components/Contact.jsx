@@ -13,6 +13,7 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

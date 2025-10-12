@@ -15,16 +15,7 @@ const Contact = () => {
   const [submitStatus, setSubmitStatus] = useState(null);
   const [recaptchaToken, setRecaptchaToken] = useState(null);
 
-  // Set up reCAPTCHA callback
-  useEffect(() => {
-    window.onRecaptchaSuccess = (token) => {
-      setRecaptchaToken(token);
-    };
-    
-    return () => {
-      delete window.onRecaptchaSuccess;
-    };
-  }, []);
+  // reCAPTCHA v3 loads automatically, no callback needed
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

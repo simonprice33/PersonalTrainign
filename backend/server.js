@@ -45,17 +45,18 @@ app.use('/api/contact', contactLimiter);
 
 // Microsoft Graph API client configuration
 const createGraphClient = () => {
-  const clientCredentialProvider = new ClientCredentialProvider(
+  const credential = new ClientSecretCredential(
     process.env.TENANT_ID,
     process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET,
-    {
-      scopes: ['https://graph.microsoft.com/.default']
-    }
+    process.env.CLIENT_SECRET
   );
 
+  const authProvider = new TokenCredentialAuthenticationProvider(credential, {
+    scopes: ['https://graph.microsoft.com/.default']
+  });
+
   return Client.initWithMiddleware({
-    authProvider: clientCredentialProvider
+    authProvider: authProvider
   });
 };
 

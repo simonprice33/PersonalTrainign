@@ -49,26 +49,15 @@ copy C:\nginx\conf\nginx.conf C:\nginx\conf\nginx.conf.backup
 mkdir C:\nginx\logs
 ```
 
-### 5. Configure Nginx
+### 5. Replace Nginx Configuration
 
-**Option A: Replace entire nginx.conf**
+**This config includes ALL your websites (IISHF + Simon Price PT):**
+
 ```cmd
-copy nginx.conf C:\nginx\conf\nginx.conf
+copy C:\Sites\simonprice-pt\nginx.conf C:\nginx\conf\nginx.conf
 ```
 
-**Option B: Include as separate file (Recommended)**
-
-Add this to your existing `C:\nginx\conf\nginx.conf` inside the `http` block:
-```nginx
-http {
-    # ... your existing config ...
-    
-    # Include Simon Price PT configuration
-    include C:/Sites/simonprice-pt/nginx.conf;
-}
-```
-
-Then copy just the server blocks from the provided nginx.conf.
+This replaces your entire nginx configuration with the combined config that handles both IISHF and Simon Price PT websites.
 
 ### 6. Test Configuration
 

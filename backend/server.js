@@ -173,15 +173,21 @@ Submitted at: ${new Date().toLocaleString('en-GB')}
     </div>
     `;
 
-    // TEMPORARY: Mock email sending for testing
-    // TODO: Replace with real email when credentials are ready
-    console.log('📧 MOCK EMAIL SENT:');
-    console.log('To:', process.env.EMAIL_TO);
-    console.log('Subject:', emailSubject);
-    console.log('Content:', emailText);
-    
-    // Simulate email delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Create and verify transporter
+    const transporter = createTransporter();
+    await transporter.verify();
+
+    // Send email
+    const mailOptions = {
+      from: `"Simon Price PT Website" <${process.env.EMAIL_FROM}>`,
+      to: process.env.EMAIL_TO,
+      replyTo: email,
+      subject: emailSubject,
+      text: emailText,
+      html: emailHtml
+    };
+
+    await transporter.sendMail(mailOptions);
 
     // Log successful submission (don't log sensitive data in production)
     console.log(`✅ Contact form submitted by ${name} (${email}) at ${new Date().toISOString()}`);

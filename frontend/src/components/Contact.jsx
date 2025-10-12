@@ -67,6 +67,12 @@ const Contact = () => {
           experience: '',
           message: ''
         });
+        
+        // Reset reCAPTCHA
+        setRecaptchaToken(null);
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
       } else {
         throw new Error(data.message || 'Failed to send message');
       }

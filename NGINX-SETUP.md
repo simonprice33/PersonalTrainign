@@ -84,6 +84,21 @@ nginx
 nginx -s stop
 ```
 
+## What This Configuration Does
+
+### IISHF Websites (Unchanged)
+- ✅ **www.iishf.com** → Umbraco on port 5000 (with SignalR WebSockets)
+- ✅ **events.iishf.com** → Umbraco on port 5000
+- ✅ **dev.iishf.com** → Development instance on port 2000
+- ✅ **my-iis-site.com** → Legacy IIS on port 8080
+- ✅ Static files served from disk (media, CSS, JS)
+
+### Simon Price PT Website (New)
+- ✅ **simonprice-pt.co.uk** → React frontend (port 3000) + Node.js API (port 8001)
+- ✅ API endpoints: `/api/*` routed to backend
+- ✅ Rate limiting on contact form
+- ✅ Separate SSL certificate
+
 ## Configuration Features
 
 ### ✅ Security

@@ -15,20 +15,7 @@ const Contact = () => {
   const [submitStatus, setSubmitStatus] = useState(null);
   const [recaptchaToken, setRecaptchaToken] = useState(null);
 
-  // Load reCAPTCHA script dynamically
-  useEffect(() => {
-    const loadRecaptcha = () => {
-      const script = document.createElement('script');
-      script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.REACT_APP_RECAPTCHA_SITE_KEY}`;
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
-    };
-
-    if (!window.grecaptcha && process.env.REACT_APP_RECAPTCHA_SITE_KEY) {
-      loadRecaptcha();
-    }
-  }, []);
+  // reCAPTCHA temporarily disabled for development
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

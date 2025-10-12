@@ -225,12 +225,7 @@ const Contact = () => {
                 />
               </div>
 
-              {/* reCAPTCHA v3 - Invisible */}
-              <div className="text-center text-sm text-gray-500 mb-4">
-                This site is protected by reCAPTCHA and the Google{' '}
-                <a href="https://policies.google.com/privacy" className="underline">Privacy Policy</a>{' '}
-                and <a href="https://policies.google.com/terms" className="underline">Terms of Service</a> apply.
-              </div>
+              {/* reCAPTCHA temporarily disabled for development */}
 
               <button
                 type="submit"

@@ -250,7 +250,7 @@ const Contact = () => {
               <div className="flex justify-center">
                 <div 
                   className="g-recaptcha" 
-                  data-sitekey="YOUR_RECAPTCHA_SITE_KEY"
+                  data-sitekey="6LcshucrAAAAAKevdKc13wURKz141TLzoge60C"
                   data-callback="onRecaptchaSuccess"
                   data-theme="dark"
                 ></div>

@@ -15,6 +15,17 @@ const Contact = () => {
   const [submitStatus, setSubmitStatus] = useState(null);
   const [recaptchaToken, setRecaptchaToken] = useState(null);
 
+  // Set up reCAPTCHA callback
+  useEffect(() => {
+    window.onRecaptchaSuccess = (token) => {
+      setRecaptchaToken(token);
+    };
+    
+    return () => {
+      delete window.onRecaptchaSuccess;
+    };
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({

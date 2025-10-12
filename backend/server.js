@@ -130,11 +130,15 @@ app.post('/api/contact', contactValidation, async (req, res) => {
         const recaptchaData = await recaptchaResponse.json();
         console.log(`🔍 reCAPTCHA response:`, recaptchaData);
         
-        if (recaptchaData.success && recaptchaData.score >= 0.5) {
-          console.log(`✅ reCAPTCHA passed - Score: ${recaptchaData.score} for ${email}`);
+        // reCAPTCHA v2 only returns success true/false (no score)
+        if (recaptchaData.success) {
+          console.log(`✅ reCAPTCHA v2 verification passed for ${email}`);
         } else {
-          console.log(`⚠️ reCAPTCHA failed or low score: ${recaptchaData.score || 'N/A'} for ${email}`);
-          // Continue anyway for now, just log the issue
+          console.log(`⚠️ reCAPTCHA v2 verification failed for ${email}`);
+          return res.status(400).json({
+            success: false,
+            message: 'reCAPTCHA verification failed. Please try again.'
+          });
         }
       } catch (error) {
         console.log(`⚠️ reCAPTCHA verification error: ${error.message}`);

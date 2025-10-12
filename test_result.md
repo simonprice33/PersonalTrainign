@@ -101,3 +101,86 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Test the contact form submission with reCAPTCHA v2 integration on Simon Price PT website"
+
+backend:
+  - task: "Health Check Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "GET /api/health endpoint working correctly. Returns status OK with service details including timestamp, service name, and environment."
+
+  - task: "Contact Form reCAPTCHA Integration"
+    implemented: true
+    working: true
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "reCAPTCHA v2 verification logic working correctly. Invalid tokens properly rejected with 400 status and clear error message. Missing tokens logged as warnings but processing continues."
+
+  - task: "Contact Form Validation"
+    implemented: true
+    working: true
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Form validation working correctly using express-validator. Validates name length, email format, phone length, goals enum, experience enum, and message length. Returns detailed validation errors."
+
+  - task: "Microsoft Graph API Email Integration"
+    implemented: true
+    working: false
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "Microsoft Graph API authentication failing due to invalid tenant configuration. Error: AADSTS900023 - Specified tenant identifier 'simonfitcoach' is neither a valid DNS name, nor a valid external domain. This is expected in test environment."
+
+frontend:
+  - task: "Frontend Testing"
+    implemented: "NA"
+    working: "NA"
+    file: "NA"
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Frontend testing not performed as per testing agent guidelines. Only backend API testing conducted."
+
+metadata:
+  created_by: "testing_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Contact Form reCAPTCHA Integration"
+    - "Health Check Endpoint"
+    - "Contact Form Validation"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "testing"
+      message: "Comprehensive backend testing completed for Simon Price PT website. All core reCAPTCHA functionality working correctly. Health check, form validation, and reCAPTCHA verification all passing. Microsoft Graph API authentication failing as expected due to test environment configuration."

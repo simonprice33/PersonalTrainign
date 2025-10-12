@@ -77,11 +77,7 @@ const Contact = () => {
           message: ''
         });
         
-        // Reset reCAPTCHA
-        setRecaptchaToken(null);
-        if (window.grecaptcha) {
-          window.grecaptcha.reset();
-        }
+        // reCAPTCHA v3 doesn't need reset
       } else {
         throw new Error(data.message || 'Failed to send message');
       }

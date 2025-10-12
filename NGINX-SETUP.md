@@ -36,9 +36,12 @@ ssl_certificate      C:/nginx/ssl/simonprice-pt.co.uk/fullchain.crt;
 ssl_certificate_key  C:/nginx/ssl/simonprice-pt.co.uk/private.key;
 ```
 
-### 3. Update Domain Name
+### 3. Backup Your Current Config
 
-If using a different domain, replace all instances of `simonprice-pt.co.uk` with your domain.
+Before replacing, backup your existing configuration:
+```cmd
+copy C:\nginx\conf\nginx.conf C:\nginx\conf\nginx.conf.backup
+```
 
 ### 4. Create Log Directory
 

@@ -82,11 +82,11 @@ const Contact = () => {
           message: ''
         });
         
-        // Reset reCAPTCHA
-        setRecaptchaToken(null);
-        if (recaptchaRef.current) {
-          recaptchaRef.current.reset();
-        }
+        // COMMENTED OUT - Reset reCAPTCHA - Revisit later
+        // setRecaptchaToken(null);
+        // if (recaptchaRef.current) {
+        //   recaptchaRef.current.reset();
+        // }
       } else {
         throw new Error(data.message || 'Failed to send message');
       }

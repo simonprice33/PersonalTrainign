@@ -240,9 +240,10 @@ def main():
     print(f"Health Check (/api/health): {'✅ PASS' if results['health_check'] else '❌ FAIL'}")
     print(f"Contact Form (no reCAPTCHA): {'✅ PASS' if results['contact_without_recaptcha'] else '❌ FAIL'}")
     print(f"Contact Form (invalid reCAPTCHA): {'✅ PASS' if results['contact_invalid_recaptcha'] else '❌ FAIL'}")
+    print(f"Form Validation: {'✅ PASS' if results['form_validation'] else '❌ FAIL'}")
     
     # Overall assessment
-    expected_tests_passed = sum([results["health_check"], results["contact_without_recaptcha"], results["contact_invalid_recaptcha"]])
+    expected_tests_passed = sum([results["health_check"], results["contact_without_recaptcha"], results["contact_invalid_recaptcha"], results["form_validation"]])
     
     if expected_tests_passed == 0:
         print("\n❌ CRITICAL: None of the expected endpoints are implemented")

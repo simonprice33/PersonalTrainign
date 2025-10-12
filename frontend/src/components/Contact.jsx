@@ -39,6 +39,15 @@ const Contact = () => {
         throw new Error('reCAPTCHA site key not found in environment variables');
       }
 
+      if (!window.grecaptcha) {
+        throw new Error('reCAPTCHA script not loaded');
+      }
+
+      // Wait for reCAPTCHA to be ready
+      await window.grecaptcha.ready(async () => {
+        console.log('reCAPTCHA ready');
+      });
+
       // Execute reCAPTCHA v3
       const token = await window.grecaptcha.execute(siteKey, {
         action: 'contact_form'

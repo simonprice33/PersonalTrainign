@@ -174,21 +174,38 @@ Submitted at: ${new Date().toLocaleString('en-GB')}
     </div>
     `;
 
-    // Create and verify transporter
-    const transporter = createTransporter();
-    await transporter.verify();
+    // Create Graph client and send email
+    const graphClient = createGraphClient();
 
-    // Send email
-    const mailOptions = {
-      from: `"Simon Price PT Website" <${process.env.EMAIL_FROM}>`,
-      to: process.env.EMAIL_TO,
-      replyTo: email,
+    const message = {
       subject: emailSubject,
-      text: emailText,
-      html: emailHtml
+      body: {
+        contentType: 'HTML',
+        content: emailHtml
+      },
+      toRecipients: [
+        {
+          emailAddress: {
+            address: process.env.EMAIL_TO
+          }
+        }
+      ],
+      replyTo: [
+        {
+          emailAddress: {
+            address: email,
+            name: name
+          }
+        }
+      ]
     };
 
-    await transporter.sendMail(mailOptions);
+    await graphClient
+      .api(`/users/${process.env.EMAIL_FROM}/sendMail`)
+      .post({
+        message: message,
+        saveToSentItems: true
+      });
 
     // Log successful submission (don't log sensitive data in production)
     console.log(`✅ Contact form submitted by ${name} (${email}) at ${new Date().toISOString()}`);

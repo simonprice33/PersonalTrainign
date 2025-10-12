@@ -14,19 +14,19 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
-  const [recaptchaToken, setRecaptchaToken] = useState(null);
-  const recaptchaRef = useRef(null);
+  // const [recaptchaToken, setRecaptchaToken] = useState(null); // COMMENTED OUT - Revisit later
+  // const recaptchaRef = useRef(null);
 
-  // reCAPTCHA handlers
-  const handleRecaptchaChange = (token) => {
-    setRecaptchaToken(token);
-    console.log('✅ reCAPTCHA token received:', token ? 'SUCCESS' : 'EXPIRED');
-  };
+  // reCAPTCHA handlers - COMMENTED OUT - Revisit later
+  // const handleRecaptchaChange = (token) => {
+  //   setRecaptchaToken(token);
+  //   console.log('✅ reCAPTCHA token received:', token ? 'SUCCESS' : 'EXPIRED');
+  // };
 
-  const handleRecaptchaExpired = () => {
-    setRecaptchaToken(null);
-    console.log('⚠️ reCAPTCHA expired');
-  };
+  // const handleRecaptchaExpired = () => {
+  //   setRecaptchaToken(null);
+  //   console.log('⚠️ reCAPTCHA expired');
+  // };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

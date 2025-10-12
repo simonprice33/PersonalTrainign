@@ -42,26 +42,19 @@ const contactLimiter = rateLimit({
 // Apply rate limiting to contact form
 app.use('/api/contact', contactLimiter);
 
-// Email transporter configuration
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT),
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    },
-    tls: {
-      ciphers: 'SSLv3',
-      rejectUnauthorized: false
-    },
-    requireTLS: true,
-    connectionTimeout: 60000,
-    greetingTimeout: 30000,
-    socketTimeout: 60000,
-    // Exchange Online SMTP AUTH requirements
-    authMethod: 'LOGIN'
+// Microsoft Graph API client configuration
+const createGraphClient = () => {
+  const clientCredentialProvider = new ClientCredentialProvider(
+    process.env.TENANT_ID,
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    {
+      scopes: ['https://graph.microsoft.com/.default']
+    }
+  );
+
+  return Client.initWithMiddleware({
+    authProvider: clientCredentialProvider
   });
 };
 

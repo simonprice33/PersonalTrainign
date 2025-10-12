@@ -42,17 +42,17 @@ const Contact = () => {
     setSubmitStatus(null);
 
     try {
-      // Check if reCAPTCHA v2 is completed
-      if (!recaptchaToken) {
-        setSubmitStatus({
-          type: 'error',
-          message: 'Please complete the reCAPTCHA verification.'
-        });
-        setIsSubmitting(false);
-        return;
-      }
+      // COMMENTED OUT - reCAPTCHA validation - Revisit later
+      // if (!recaptchaToken) {
+      //   setSubmitStatus({
+      //     type: 'error',
+      //     message: 'Please complete the reCAPTCHA verification.'
+      //   });
+      //   setIsSubmitting(false);
+      //   return;
+      // }
 
-      console.log('✅ reCAPTCHA v2 token available:', recaptchaToken ? 'SUCCESS' : 'FAILED');
+      // console.log('✅ reCAPTCHA v2 token available:', recaptchaToken ? 'SUCCESS' : 'FAILED');
       // Send to backend using environment variable
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/contact`, {
         method: 'POST',
@@ -60,8 +60,8 @@ const Contact = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
-          recaptchaToken: recaptchaToken
+          ...formData
+          // recaptchaToken: recaptchaToken // COMMENTED OUT - Revisit later
         })
       });
 

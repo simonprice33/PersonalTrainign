@@ -223,16 +223,14 @@ def main():
         "health_check": False,
         "contact_without_recaptcha": False, 
         "contact_invalid_recaptcha": False,
-        "existing_endpoints": True  # Will test what's actually implemented
+        "form_validation": False
     }
     
     # Run tests for expected endpoints (from review request)
     results["health_check"] = test_health_endpoint(backend_url)
     results["contact_without_recaptcha"] = test_contact_form_without_recaptcha(backend_url)
     results["contact_invalid_recaptcha"] = test_contact_form_with_invalid_recaptcha(backend_url)
-    
-    # Test what's actually implemented
-    test_existing_endpoints(backend_url)
+    results["form_validation"] = test_contact_form_validation(backend_url)
     
     # Summary
     print("\n" + "=" * 60)

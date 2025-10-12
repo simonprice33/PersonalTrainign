@@ -159,20 +159,6 @@ const About = () => {
                   </p>
                 </div>
               </div>
-
-              {/* Floating Achievement Cards */}
-              <div 
-                className="absolute -top-4 -right-6 p-3 rounded-2xl shadow-lg"
-                style={{ background: 'white' }}
-              >
-                <Award size={24} style={{ color: 'var(--brand-primary)' }} />
-              </div>
-              <div 
-                className="absolute -bottom-4 -left-6 p-3 rounded-2xl shadow-lg"
-                style={{ background: 'white' }}
-              >
-                <Target size={24} style={{ color: 'var(--brand-primary)' }} />
-              </div>
             </div>
           </div>
         </div>

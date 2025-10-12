@@ -153,25 +153,18 @@ const Footer = () => {
               <h5 className="font-semibold">Follow Me</h5>
               <div className="flex gap-4">
                 <a 
-                  href="#" 
+                  href="https://www.instagram.com/simonprice.fatlosscoach/" 
                   className="p-2 rounded-full transition-all duration-200 hover:scale-110"
                   style={{ background: 'rgba(255, 255, 255, 0.1)' }}
                 >
                   <Instagram size={20} />
                 </a>
                 <a 
-                  href="#" 
+                  href="https://www.facebook.com/simon.price.92" 
                   className="p-2 rounded-full transition-all duration-200 hover:scale-110"
                   style={{ background: 'rgba(255, 255, 255, 0.1)' }}
                 >
                   <Facebook size={20} />
-                </a>
-                <a 
-                  href="#" 
-                  className="p-2 rounded-full transition-all duration-200 hover:scale-110"
-                  style={{ background: 'rgba(255, 255, 255, 0.1)' }}
-                >
-                  <Linkedin size={20} />
                 </a>
               </div>
             </div>

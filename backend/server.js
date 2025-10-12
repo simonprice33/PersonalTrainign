@@ -177,7 +177,7 @@ Submitted at: ${new Date().toLocaleString('en-GB')}
     // Create Graph client and send email
     const graphClient = createGraphClient();
 
-    const message = {
+    const emailMessage = {
       subject: emailSubject,
       body: {
         contentType: 'HTML',
@@ -203,7 +203,7 @@ Submitted at: ${new Date().toLocaleString('en-GB')}
     await graphClient
       .api(`/users/${process.env.EMAIL_FROM}/sendMail`)
       .post({
-        message: message,
+        message: emailMessage,
         saveToSentItems: true
       });
 

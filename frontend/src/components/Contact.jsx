@@ -261,17 +261,14 @@ const Contact = () => {
                 />
               </div>
 
-              {/* reCAPTCHA v3 - Invisible Protection */}
-              <div className="text-center text-sm mb-4" style={{ color: 'var(--text-light)' }}>
-                This site is protected by reCAPTCHA and the Google{' '}
-                <a href="https://policies.google.com/privacy" className="underline" style={{ color: 'var(--brand-primary)' }}>
-                  Privacy Policy
-                </a>{' '}
-                and{' '}
-                <a href="https://policies.google.com/terms" className="underline" style={{ color: 'var(--brand-primary)' }}>
-                  Terms of Service
-                </a>{' '}
-                apply.
+              {/* reCAPTCHA v2 Checkbox */}
+              <div className="flex justify-center mb-6">
+                <div 
+                  className="g-recaptcha" 
+                  data-sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                  data-callback="onRecaptchaSuccess"
+                  data-theme="dark"
+                ></div>
               </div>
 
               <button

@@ -31,8 +31,16 @@ const Contact = () => {
     setSubmitStatus(null);
 
     try {
+      // Debug: Check if environment variable is loaded
+      const siteKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+      console.log('reCAPTCHA Site Key:', siteKey);
+      
+      if (!siteKey) {
+        throw new Error('reCAPTCHA site key not found in environment variables');
+      }
+
       // Execute reCAPTCHA v3
-      const token = await window.grecaptcha.execute(process.env.REACT_APP_RECAPTCHA_SITE_KEY, {
+      const token = await window.grecaptcha.execute(siteKey, {
         action: 'contact_form'
       });
 

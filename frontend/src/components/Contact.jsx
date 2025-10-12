@@ -45,8 +45,34 @@ const Contact = () => {
     setSubmitStatus(null);
 
     try {
-      // reCAPTCHA disabled for development - form works without it
-      const token = null;
+      // Get reCAPTCHA token
+      let token = null;
+      const siteKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+      console.log('🔑 Attempting reCAPTCHA with site key:', siteKey);
+      
+      if (window.grecaptcha && siteKey) {
+        try {
+          token = await new Promise((resolve, reject) => {
+            window.grecaptcha.ready(() => {
+              console.log('✅ reCAPTCHA ready, executing...');
+              window.grecaptcha.execute(siteKey, { action: 'contact_form' })
+                .then((token) => {
+                  console.log('✅ reCAPTCHA token obtained:', token ? 'SUCCESS' : 'FAILED');
+                  resolve(token);
+                })
+                .catch((error) => {
+                  console.error('❌ reCAPTCHA execute failed:', error);
+                  reject(error);
+                });
+            });
+          });
+        } catch (error) {
+          console.warn('⚠️ reCAPTCHA failed, proceeding without it:', error);
+          token = null;
+        }
+      } else {
+        console.warn('⚠️ reCAPTCHA not available - grecaptcha:', !!window.grecaptcha, 'siteKey:', !!siteKey);
+      }
       // Send to local Node.js backend
       const response = await fetch('http://localhost:3001/api/contact', {
         method: 'POST',

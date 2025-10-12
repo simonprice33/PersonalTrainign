@@ -17,17 +17,16 @@ const Contact = () => {
   const [recaptchaToken, setRecaptchaToken] = useState(null);
   const recaptchaRef = useRef(null);
 
-  // Set up reCAPTCHA v2 callback
-  useEffect(() => {
-    window.onRecaptchaSuccess = (token) => {
-      setRecaptchaToken(token);
-      console.log('✅ reCAPTCHA v2 token received');
-    };
-    
-    return () => {
-      delete window.onRecaptchaSuccess;
-    };
-  }, []);
+  // reCAPTCHA handlers
+  const handleRecaptchaChange = (token) => {
+    setRecaptchaToken(token);
+    console.log('✅ reCAPTCHA token received:', token ? 'SUCCESS' : 'EXPIRED');
+  };
+
+  const handleRecaptchaExpired = () => {
+    setRecaptchaToken(null);
+    console.log('⚠️ reCAPTCHA expired');
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

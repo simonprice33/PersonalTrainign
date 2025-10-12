@@ -118,6 +118,7 @@ app.post('/api/contact', contactValidation, async (req, res) => {
     // Verify reCAPTCHA if token is provided
     if (recaptchaToken) {
       try {
+        console.log(`🔍 Verifying reCAPTCHA token for ${email}...`);
         const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
           method: 'POST',
           headers: {
@@ -127,11 +128,13 @@ app.post('/api/contact', contactValidation, async (req, res) => {
         });
 
         const recaptchaData = await recaptchaResponse.json();
+        console.log(`🔍 reCAPTCHA response:`, recaptchaData);
         
         if (recaptchaData.success && recaptchaData.score >= 0.5) {
           console.log(`✅ reCAPTCHA passed - Score: ${recaptchaData.score} for ${email}`);
         } else {
           console.log(`⚠️ reCAPTCHA failed or low score: ${recaptchaData.score || 'N/A'} for ${email}`);
+          // Continue anyway for now, just log the issue
         }
       } catch (error) {
         console.log(`⚠️ reCAPTCHA verification error: ${error.message}`);

@@ -53,12 +53,14 @@ const createTransporter = () => {
     },
     tls: {
       ciphers: 'SSLv3',
-      rejectUnauthorized: false // Accept self-signed certificates
+      rejectUnauthorized: false
     },
     requireTLS: true,
-    connectionTimeout: 60000, // 60 seconds
-    greetingTimeout: 30000,   // 30 seconds
-    socketTimeout: 60000      // 60 seconds
+    connectionTimeout: 60000,
+    greetingTimeout: 30000,
+    socketTimeout: 60000,
+    // Try different auth methods for Exchange Online
+    authMethod: 'PLAIN'
   });
 };
 

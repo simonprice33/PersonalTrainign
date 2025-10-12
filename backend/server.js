@@ -52,8 +52,13 @@ const createTransporter = () => {
       pass: process.env.EMAIL_PASS
     },
     tls: {
-      ciphers: 'SSLv3'
-    }
+      ciphers: 'SSLv3',
+      rejectUnauthorized: false // Accept self-signed certificates
+    },
+    requireTLS: true,
+    connectionTimeout: 60000, // 60 seconds
+    greetingTimeout: 30000,   // 30 seconds
+    socketTimeout: 60000      // 60 seconds
   });
 };
 

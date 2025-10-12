@@ -77,13 +77,13 @@ export const aboutStats = {
 };
 
 export const contactInfo = {
-  phone: "+44 7123 456789",
+  phone: "+44 7471 931 170",
   email: "simon@simonpricept.com",
-  location: "Greater Manchester, UK",
+  location: "Bognor Regis, West Sussex, UK",
   socialMedia: {
-    instagram: "@simonpricept",
-    facebook: "Simon Price Personal Training",
-    linkedin: "simon-price-pt"
+    instagram: "@simonprice.fatlosscoach",
+    // facebook: "Simon Price Personal Training",
+    // linkedin: "simon-price-pt"
   }
 };
 

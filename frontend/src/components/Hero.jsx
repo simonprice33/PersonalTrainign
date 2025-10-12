@@ -113,20 +113,6 @@ const Hero = () => {
                   <div className="text-sm opacity-90 mt-1">Your Success, My Mission</div>
                 </div>
               </div>
-              
-              {/* Floating Elements */}
-              <div 
-                className="absolute -top-4 -right-4 p-3 rounded-full shadow-lg"
-                style={{ background: 'white' }}
-              >
-                <Trophy size={24} style={{ color: 'var(--brand-primary)' }} />
-              </div>
-              <div 
-                className="absolute -bottom-4 -left-4 p-3 rounded-full shadow-lg"
-                style={{ background: 'white' }}
-              >
-                <Star size={24} style={{ color: 'var(--brand-primary)' }} />
-              </div>
             </div>
           </div>
         </div>

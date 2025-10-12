@@ -95,10 +95,18 @@ const About = () => {
               >
                 <div className="text-center mb-6">
                   <div 
-                    className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white"
-                    style={{ background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-hover))' }}
+                    className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden"
+                    style={{ 
+                      border: '3px solid var(--brand-primary)',
+                      boxShadow: '0 4px 12px rgba(0, 191, 255, 0.3)'
+                    }}
                   >
-                    SP
+                    <img 
+                      src="https://customer-assets.emergentagent.com/job_simonfitcoach/artifacts/sbmcvjkm_IMG_0200.JPEG"
+                      alt="Simon Price"
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: 'center' }}
+                    />
                   </div>
                   <h3 className="heading-3 mb-2">Simon Price</h3>
                   <p className="body-medium" style={{ color: 'var(--text-secondary)' }}>

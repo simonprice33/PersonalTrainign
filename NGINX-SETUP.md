@@ -126,15 +126,19 @@ nginx -s stop
 
 ## DNS Configuration
 
-Point your domain to your server's IP address:
+### For Simon Price PT
+Point your domain to your server's IP address (same server as IISHF):
 
 ```
 A Record:
-simonprice-pt.co.uk → YOUR_SERVER_IP
+simonprice-pt.co.uk → YOUR_SERVER_IP (same as IISHF)
 
 CNAME Record (optional):
 www.simonprice-pt.co.uk → simonprice-pt.co.uk
 ```
+
+### For IISHF (Already Configured)
+Your existing IISHF DNS should remain unchanged.
 
 ## Troubleshooting
 

@@ -87,12 +87,12 @@ def test_contact_form_with_invalid_recaptcha(base_url):
     print("\n=== Testing Contact Form With Invalid reCAPTCHA ===")
     
     form_data = {
-        "name": "Test User",
-        "email": "test@example.com",
+        "name": "Simon Test Client",
+        "email": "simon.invalid@example.com",
         "phone": "+44 7123 456789", 
-        "goals": "weight-loss",
-        "experience": "beginner",
-        "message": "This is a test message for reCAPTCHA integration",
+        "goals": "muscle-gain",
+        "experience": "intermediate",
+        "message": "This is a test message for invalid reCAPTCHA token testing",
         "recaptchaToken": "invalid_token_12345"
     }
     
@@ -101,20 +101,57 @@ def test_contact_form_with_invalid_recaptcha(base_url):
         print(f"Testing: POST {url}")
         print(f"Data: {json.dumps(form_data, indent=2)}")
         
-        response = requests.post(url, json=form_data, timeout=10)
+        response = requests.post(url, json=form_data, timeout=15)
         print(f"Status Code: {response.status_code}")
         print(f"Response: {response.text}")
         
         # Should return 400 error about reCAPTCHA verification failed
         if response.status_code == 400:
-            print("✅ Contact form with invalid reCAPTCHA properly rejected")
-            return True
-        else:
-            print("❌ Contact form with invalid reCAPTCHA not properly handled")
-            return False
+            response_data = response.json()
+            if "recaptcha verification failed" in response_data.get("message", "").lower():
+                print("✅ Contact form with invalid reCAPTCHA properly rejected")
+                return True
+        
+        print("❌ Contact form with invalid reCAPTCHA not properly handled")
+        return False
             
     except requests.exceptions.RequestException as e:
         print(f"❌ Contact form with invalid reCAPTCHA error: {e}")
+        return False
+
+def test_contact_form_validation(base_url):
+    """Test POST /api/contact with invalid form data"""
+    print("\n=== Testing Contact Form Validation ===")
+    
+    # Test with invalid email
+    invalid_data = {
+        "name": "T",  # Too short
+        "email": "invalid-email",  # Invalid format
+        "goals": "invalid-goal",  # Invalid goal
+        "experience": "expert"  # Invalid experience level
+    }
+    
+    try:
+        url = f"{base_url}/api/contact"
+        print(f"Testing: POST {url}")
+        print(f"Data: {json.dumps(invalid_data, indent=2)}")
+        
+        response = requests.post(url, json=invalid_data, timeout=10)
+        print(f"Status Code: {response.status_code}")
+        print(f"Response: {response.text}")
+        
+        # Should return 400 error with validation errors
+        if response.status_code == 400:
+            response_data = response.json()
+            if "check your form inputs" in response_data.get("message", "").lower():
+                print("✅ Form validation working correctly")
+                return True
+        
+        print("❌ Form validation not working properly")
+        return False
+            
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Form validation test error: {e}")
         return False
 
 def test_existing_endpoints(base_url):

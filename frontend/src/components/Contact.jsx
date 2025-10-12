@@ -31,30 +31,8 @@ const Contact = () => {
     setSubmitStatus(null);
 
     try {
-      // Get reCAPTCHA token
-      let token;
-      const siteKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
-      
-      if (window.grecaptcha && siteKey) {
-        try {
-          token = await new Promise((resolve, reject) => {
-            window.grecaptcha.ready(() => {
-              window.grecaptcha.execute(siteKey, { action: 'contact_form' })
-                .then(resolve)
-                .catch(reject);
-            });
-          });
-          console.log('✅ reCAPTCHA token obtained');
-        } catch (error) {
-          console.warn('⚠️ reCAPTCHA failed, proceeding without it:', error);
-          token = null;
-        }
-      } else {
-        console.warn('⚠️ reCAPTCHA not available, proceeding without it');
-        token = null;
-      }
-
-      // Continue even if reCAPTCHA fails (for testing)
+      // reCAPTCHA disabled for development - form works without it
+      const token = null;
       // Send to local Node.js backend
       const response = await fetch('http://localhost:3001/api/contact', {
         method: 'POST',

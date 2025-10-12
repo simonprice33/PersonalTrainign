@@ -89,8 +89,8 @@ const contactValidation = [
     .withMessage('Message must be less than 1000 characters')
     .trim(),
   body('recaptchaToken')
-    .notEmpty()
-    .withMessage('reCAPTCHA verification is required')
+    .optional()
+    .withMessage('reCAPTCHA verification failed')
 ];
 
 // Health check endpoint

@@ -116,7 +116,25 @@ app.post('/api/contact', contactValidation, async (req, res) => {
       });
     }
 
-    const { name, email, phone, goals, experience, message } = req.body;
+    const { name, email, phone, goals, experience, message, recaptchaToken } = req.body;
+
+    // Verify reCAPTCHA
+    const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+    });
+
+    const recaptchaData = await recaptchaResponse.json();
+    
+    if (!recaptchaData.success) {
+      return res.status(400).json({
+        success: false,
+        message: 'reCAPTCHA verification failed. Please try again.'
+      });
+    }
 
     // Create email content
     const emailSubject = `🏋️ New PT Consultation Request from ${name}`;

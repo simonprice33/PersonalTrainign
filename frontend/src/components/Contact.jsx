@@ -28,34 +28,25 @@ const Contact = () => {
     setSubmitStatus(null);
 
     try {
-      // Send to Node.js backend
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
+      // TEMPORARY: Mock response for local development
+      // TODO: Replace with real backend when ready
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+      
+      console.log('Contact form submitted (MOCK):', formData);
+      
+      setSubmitStatus({
+        type: 'success',
+        message: 'Thank you for your interest! This is currently a demo - Simon will get back to you within 24 hours when the backend is live.'
       });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setSubmitStatus({
-          type: 'success',
-          message: data.message
-        });
-        
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          goals: '',
-          experience: '',
-          message: ''
-        });
-      } else {
-        throw new Error(data.message || 'Failed to send message');
-      }
+      
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        goals: '',
+        experience: '',
+        message: ''
+      });
       
     } catch (error) {
       console.error('Contact form submission failed:', error);

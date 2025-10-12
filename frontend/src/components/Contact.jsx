@@ -56,7 +56,7 @@ const Contact = () => {
         },
         body: JSON.stringify({
           ...formData,
-          recaptchaToken: recaptchaToken
+          recaptchaToken: token
         })
       });
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle, Clock, Shield } from 'lucide-react';
-import ReCAPTCHA from 'react-google-recaptcha';
+// import ReCAPTCHA from 'react-google-recaptcha'; // COMMENTED OUT - Revisit later
 import { contactInfo } from '../mock/mockData';
 
 const Contact = () => {

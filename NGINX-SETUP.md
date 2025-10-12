@@ -1,12 +1,21 @@
-# Nginx Configuration Setup for Simon Price PT
+# Combined Nginx Configuration Setup
+
+This configuration handles **multiple websites** on the same server:
+- **IISHF websites**: www.iishf.com, events.iishf.com, dev.iishf.com, my-iis-site.com
+- **Simon Price PT**: simonprice-pt.co.uk
 
 ## Prerequisites
 
 1. **Nginx installed** on your Windows server
-2. **SSL Certificate** for simonprice-pt.co.uk
-3. **Frontend and Backend services** running:
-   - Frontend: `http://localhost:3000`
-   - Backend: `http://localhost:8001`
+2. **SSL Certificates**:
+   - IISHF: `C:/nginx/ssl/fullchain.crt` and `C:/nginx/ssl/STAR.iishf.com.key`
+   - Simon Price PT: `C:/nginx/ssl/simonprice-pt.co.uk/fullchain.crt` and private key
+3. **All services running**:
+   - IISHF Production: `http://localhost:5000`
+   - IISHF Dev: `http://localhost:2000`
+   - Legacy IIS: `http://localhost:8080`
+   - Simon Price PT Frontend: `http://localhost:3000`
+   - Simon Price PT Backend: `http://localhost:8001`
 
 ## Installation Steps
 

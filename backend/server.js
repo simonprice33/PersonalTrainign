@@ -255,8 +255,9 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`🚀 Simon Price PT Backend running on port ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
-  console.log(`📧 Email configured for: ${process.env.EMAIL_TO}`);
+  console.log(`📧 Graph API configured for: ${process.env.EMAIL_TO}`);
   console.log(`🔗 CORS enabled for: ${process.env.CORS_ORIGIN}`);
+  console.log(`📨 Tenant: ${process.env.TENANT_ID}`);
 });
 
 module.exports = app;

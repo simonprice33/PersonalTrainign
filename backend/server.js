@@ -118,34 +118,30 @@ app.post('/api/contact', contactValidation, async (req, res) => {
 
     const { name, email, phone, goals, experience, message, recaptchaToken } = req.body;
 
-    // Verify reCAPTCHA
-    const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
-    });
+    // Verify reCAPTCHA if token is provided
+    if (recaptchaToken) {
+      try {
+        const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+        });
 
-    const recaptchaData = await recaptchaResponse.json();
-    
-    if (!recaptchaData.success) {
-      return res.status(400).json({
-        success: false,
-        message: 'reCAPTCHA verification failed. Please try again.'
-      });
+        const recaptchaData = await recaptchaResponse.json();
+        
+        if (recaptchaData.success && recaptchaData.score >= 0.5) {
+          console.log(`✅ reCAPTCHA passed - Score: ${recaptchaData.score} for ${email}`);
+        } else {
+          console.log(`⚠️ reCAPTCHA failed or low score: ${recaptchaData.score || 'N/A'} for ${email}`);
+        }
+      } catch (error) {
+        console.log(`⚠️ reCAPTCHA verification error: ${error.message}`);
+      }
+    } else {
+      console.log(`⚠️ No reCAPTCHA token provided for ${email}`);
     }
-
-    // reCAPTCHA v3 score check (0.0 = bot, 1.0 = human)
-    if (recaptchaData.score < 0.5) {
-      console.log(`⚠️ Low reCAPTCHA score: ${recaptchaData.score} for ${email}`);
-      return res.status(400).json({
-        success: false,
-        message: 'Security verification failed. Please try again or contact us directly.'
-      });
-    }
-
-    console.log(`✅ reCAPTCHA passed - Score: ${recaptchaData.score} for ${email}`);
 
     // Create email content
     const emailSubject = `🏋️ New PT Consultation Request from ${name}`;

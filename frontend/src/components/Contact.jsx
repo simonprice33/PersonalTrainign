@@ -249,8 +249,8 @@ const Contact = () => {
                 />
               </div>
 
-              {/* reCAPTCHA v2 Component */}
-              <div className="flex justify-center mb-6">
+              {/* COMMENTED OUT - reCAPTCHA v2 Component - Revisit later */}
+              {/* <div className="flex justify-center mb-6">
                 <ReCAPTCHA
                   ref={recaptchaRef}
                   sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
@@ -258,7 +258,7 @@ const Contact = () => {
                   onExpired={handleRecaptchaExpired}
                   theme="dark"
                 />
-              </div>
+              </div> */}
 
               <button
                 type="submit"

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle, Clock, Shield } from 'lucide-react';
 import { contactInfo } from '../mock/mockData';
 

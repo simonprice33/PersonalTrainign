@@ -82,7 +82,11 @@ const Contact = () => {
           message: ''
         });
         
-        // reCAPTCHA v3 doesn't need reset
+        // Reset reCAPTCHA
+        setRecaptchaToken(null);
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset();
+        }
       } else {
         throw new Error(data.message || 'Failed to send message');
       }

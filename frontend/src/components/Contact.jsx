@@ -235,10 +235,20 @@ const Contact = () => {
                 />
               </div>
 
+              {/* reCAPTCHA */}
+              <div className="flex justify-center">
+                <div 
+                  className="g-recaptcha" 
+                  data-sitekey="YOUR_RECAPTCHA_SITE_KEY"
+                  data-callback="onRecaptchaSuccess"
+                  data-theme="dark"
+                ></div>
+              </div>
+
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="btn-cta w-full group"
+                disabled={isSubmitting || !recaptchaToken}
+                className={`btn-cta w-full group ${!recaptchaToken ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isSubmitting ? (
                   <>

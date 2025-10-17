@@ -15,7 +15,7 @@ const About = () => {
                 Your Partner in Transformation
               </h3>
               <p className="body-large">
-                As a newly certified personal trainer with a passion for fitness and helping others, 
+                As a certified personal trainer with a passion for fitness and helping others, 
                 I believe that everyone deserves to feel confident, strong, and healthy in their own body.
               </p>
               <p className="body-medium">

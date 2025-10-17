@@ -16,14 +16,34 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
 
-// CORS configuration for local development
+// CORS configuration (minimal changes)
+// - Supports comma-separated CORS_ORIGINS env var
+// - Falls back to localhost + your domain (http & https)
+// - Allows preflight (OPTIONS)
+const defaultOrigins = [
+  'http://localhost:3000',
+  'http://simonprice-pt.co.uk',
+  'http://www.simonprice-pt.co.uk',
+  'https://simonprice-pt.co.uk',
+  'https://www.simonprice-pt.co.uk'
+];
+
+const allowedOrigins = (process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
+  : defaultOrigins);
+
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  methods: ['GET', 'POST'],
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(new Error('Not allowed by CORS'));
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 };
 app.use(cors(corsOptions));
+// Ensure preflight works for all /api/* routes
+app.options('/api/*', cors(corsOptions));
 
 // Body parser
 app.use(express.json({ limit: '10mb' }));
@@ -226,10 +246,10 @@ Submitted at: ${new Date().toLocaleString('en-GB')}
       ],
       replyTo: [
         {
-          emailAddress: {
-            address: email,
-            name: name
-          }
+            emailAddress: {
+              address: email,
+              name: name
+            }
         }
       ]
     };
@@ -290,7 +310,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Simon Price PT Backend running on port ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
   console.log(`📧 Graph API configured for: ${process.env.EMAIL_TO}`);
-  console.log(`🔗 CORS enabled for: ${process.env.CORS_ORIGIN}`);
+  console.log(`🔗 CORS allowed origins: ${allowedOrigins.join(', ')}`);
   console.log(`📨 Tenant: ${process.env.TENANT_ID}`);
 });
 

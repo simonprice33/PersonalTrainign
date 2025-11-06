@@ -268,7 +268,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                     required
                     min="15"
                     max="100"
-                    className="w-full px-3 py-2 rounded-lg border text-sm"
+                    className="w-full px-4 py-3 rounded-lg border"
                     style={{ 
                       border: '1px solid var(--border-medium)',
                       background: 'var(--bg-page)',
@@ -286,7 +286,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                     name="gender"
                     value={formData.gender}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 rounded-lg border text-sm"
+                    className="w-full px-4 py-3 rounded-lg border"
                     style={{ 
                       border: '1px solid var(--border-medium)',
                       background: 'var(--bg-page)',
@@ -357,7 +357,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                     onChange={handleInputChange}
                     required
                     step="0.1"
-                    className="w-full px-3 py-2 rounded-lg border text-sm"
+                    className="w-full px-4 py-3 rounded-lg border"
                     style={{ 
                       border: '1px solid var(--border-medium)',
                       background: 'var(--bg-page)',
@@ -376,7 +376,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                       onChange={handleInputChange}
                       required
                       min="0"
-                      className="w-full px-3 py-2 rounded-lg border text-sm"
+                      className="w-full px-4 py-3 rounded-lg border"
                       style={{ 
                         border: '1px solid var(--border-medium)',
                         background: 'var(--bg-page)',
@@ -392,7 +392,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                       min="0"
                       max="13"
                       step="0.1"
-                      className="w-full px-3 py-2 rounded-lg border text-sm"
+                      className="w-full px-4 py-3 rounded-lg border"
                       style={{ 
                         border: '1px solid var(--border-medium)',
                         background: 'var(--bg-page)',
@@ -447,7 +447,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                     value={formData.height}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 rounded-lg border text-sm"
+                    className="w-full px-4 py-3 rounded-lg border"
                     style={{ 
                       border: '1px solid var(--border-medium)',
                       background: 'var(--bg-page)',
@@ -467,7 +467,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                       required
                       min="0"
                       max="8"
-                      className="w-full px-3 py-2 rounded-lg border text-sm"
+                      className="w-full px-4 py-3 rounded-lg border"
                       style={{ 
                         border: '1px solid var(--border-medium)',
                         background: 'var(--bg-page)',
@@ -482,7 +482,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                       onChange={handleInputChange}
                       min="0"
                       max="11"
-                      className="w-full px-3 py-2 rounded-lg border text-sm"
+                      className="w-full px-4 py-3 rounded-lg border"
                       style={{ 
                         border: '1px solid var(--border-medium)',
                         background: 'var(--bg-page)',
@@ -582,7 +582,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                     min="5"
                     max="50"
                     step="0.1"
-                    className="w-full px-3 py-2 rounded-lg border text-sm"
+                    className="w-full px-4 py-3 rounded-lg border"
                     style={{ 
                       border: '1px solid var(--border-medium)',
                       background: 'var(--bg-page)',

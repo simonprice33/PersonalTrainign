@@ -570,39 +570,47 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Body Fat (Optional) and Calculate Button in same row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
-                    Body Fat % <span className="text-xs" style={{ color: 'var(--text-light)' }}>(Optional - for accuracy)</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="bodyFat"
-                    value={formData.bodyFat}
-                    onChange={handleInputChange}
-                    min="5"
-                    max="50"
-                    step="0.1"
-                    className="w-full px-3 py-2 rounded-lg border text-sm"
-                    style={{ 
-                      border: '1px solid var(--border-medium)',
-                      background: 'var(--bg-page)',
-                      color: 'var(--text-primary)'
-                    }}
-                    placeholder="e.g., 20"
-                  />
-                </div>
-
-                {/* Calculate Button */}
-                <button
-                  onClick={handleCalculate}
-                  className="btn-cta group h-fit"
-                >
-                  Calculate My TDEE
-                  <Calculator size={18} className="group-hover:scale-110 transition-transform" />
-                </button>
+              {/* Body Fat */}
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
+                  Body Fat % <span className="text-xs" style={{ color: 'var(--text-light)' }}>(Optional)</span>
+                </label>
+                <input
+                  type="number"
+                  name="bodyFat"
+                  value={formData.bodyFat}
+                  onChange={handleInputChange}
+                  min="5"
+                  max="50"
+                  step="0.1"
+                  className="w-full px-4 py-2.5 rounded-lg border"
+                  style={{ 
+                    border: '1px solid var(--border-medium)',
+                    background: 'var(--bg-page)',
+                    color: 'var(--text-primary)'
+                  }}
+                  placeholder="e.g., 20"
+                />
               </div>
+              </div>
+
+              {/* Right Column - Activity Level & Goals */}
+              <div className="space-y-4">
+              {/* Moved Activity Level and Goals here */}
+              </div>
+            </div>
+
+            {/* Calculate Button - Full Width at Bottom */}
+            <div className="mt-6">
+              <button
+                type="button"
+                onClick={handleCalculate}
+                className="btn-cta w-full group"
+              >
+                Calculate My TDEE
+                <Calculator size={20} className="group-hover:scale-110 transition-transform" />
+              </button>
+            </div>
             </div>
           ) : (
             /* Results Step */

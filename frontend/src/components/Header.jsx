@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
-import { Menu, X, Phone, Mail } from 'lucide-react';
+import { Menu, X, Phone, Mail, Calculator } from 'lucide-react';
+import TDEECalculator from './TDEECalculator';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isTDEEOpen, setIsTDEEOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const openTDEECalculator = () => {
+    setIsTDEEOpen(true);
+    setIsMenuOpen(false);
   };
 
   const scrollToSection = (sectionId) => {

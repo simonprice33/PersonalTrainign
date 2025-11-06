@@ -357,7 +357,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                     onChange={handleInputChange}
                     required
                     step="0.1"
-                    className="w-full px-4 py-3 rounded-xl border"
+                    className="w-full px-3 py-2 rounded-lg border text-sm"
                     style={{ 
                       border: '1px solid var(--border-medium)',
                       background: 'var(--bg-page)',
@@ -368,7 +368,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                 )}
 
                 {formData.weightUnit === 'stone' && (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2">
                     <input
                       type="number"
                       name="weightStone"
@@ -376,7 +376,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                       onChange={handleInputChange}
                       required
                       min="0"
-                      className="w-full px-4 py-3 rounded-xl border"
+                      className="w-full px-3 py-2 rounded-lg border text-sm"
                       style={{ 
                         border: '1px solid var(--border-medium)',
                         background: 'var(--bg-page)',
@@ -392,7 +392,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                       min="0"
                       max="13"
                       step="0.1"
-                      className="w-full px-4 py-3 rounded-xl border"
+                      className="w-full px-3 py-2 rounded-lg border text-sm"
                       style={{ 
                         border: '1px solid var(--border-medium)',
                         background: 'var(--bg-page)',

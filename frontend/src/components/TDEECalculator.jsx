@@ -413,7 +413,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                   <button
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, heightUnit: 'cm' }))}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-all ${
                       formData.heightUnit === 'cm' 
                         ? 'text-white' 
                         : 'text-gray-400 hover:text-white'
@@ -427,7 +427,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                   <button
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, heightUnit: 'imperial' }))}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-all ${
                       formData.heightUnit === 'imperial' 
                         ? 'text-white' 
                         : 'text-gray-400 hover:text-white'
@@ -436,7 +436,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                       background: formData.heightUnit === 'imperial' ? 'var(--brand-primary)' : 'var(--bg-subtle)'
                     }}
                   >
-                    FEET & INCHES
+                    FT/IN
                   </button>
                 </div>
 

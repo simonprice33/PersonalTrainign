@@ -409,7 +409,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                 <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
                   Height *
                 </label>
-                <div className="flex gap-3 mb-3">
+                <div className="flex gap-2 mb-2">
                   <button
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, heightUnit: 'cm' }))}

@@ -521,7 +521,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                         <div className="font-semibold text-sm mb-1" style={{ color: formData.activityLevel === level.value ? 'white' : 'var(--text-primary)' }}>
                           {level.label}
                         </div>
-                        <div className="text-[10px] leading-tight" style={{ color: formData.activityLevel === level.value ? 'rgba(255,255,255,0.8)' : 'var(--text-light)' }}>
+                        <div className="text-xs leading-tight" style={{ color: formData.activityLevel === level.value ? 'rgba(255,255,255,0.8)' : 'var(--text-light)' }}>
                           {level.description}
                         </div>
                       </div>
@@ -559,7 +559,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                         <div className="font-semibold text-sm text-center" style={{ color: formData.goal === goal.value ? 'white' : 'var(--text-primary)' }}>
                           {goal.label}
                         </div>
-                        <div className="text-[10px] text-center" style={{ color: formData.goal === goal.value ? 'rgba(255,255,255,0.8)' : 'var(--text-light)' }}>
+                        <div className="text-xs text-center" style={{ color: formData.goal === goal.value ? 'rgba(255,255,255,0.8)' : 'var(--text-light)' }}>
                           {goal.description}
                         </div>
                       </label>

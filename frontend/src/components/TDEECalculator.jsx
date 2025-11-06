@@ -532,16 +532,16 @@ const TDEECalculator = ({ isOpen, onClose }) => {
 
               {/* Goal */}
               <div>
-                <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-primary)' }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
                   Your Goal *
                 </label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-2">
                   {goals.map((goal) => {
                     const Icon = goal.icon;
                     return (
                       <label
                         key={goal.value}
-                        className="flex flex-col items-center gap-2 p-4 rounded-xl cursor-pointer transition-all"
+                        className="flex flex-col items-center gap-1 p-2 rounded-lg cursor-pointer transition-all"
                         style={{ 
                           background: formData.goal === goal.value ? 'var(--brand-primary)' : 'var(--bg-subtle)',
                           border: formData.goal === goal.value ? '2px solid var(--brand-primary)' : '2px solid transparent'
@@ -555,11 +555,11 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                           onChange={handleInputChange}
                           className="hidden"
                         />
-                        <Icon size={24} style={{ color: formData.goal === goal.value ? 'white' : 'var(--brand-primary)' }} />
-                        <div className="font-semibold text-center" style={{ color: formData.goal === goal.value ? 'white' : 'var(--text-primary)' }}>
+                        <Icon size={18} style={{ color: formData.goal === goal.value ? 'white' : 'var(--brand-primary)' }} />
+                        <div className="font-semibold text-xs text-center" style={{ color: formData.goal === goal.value ? 'white' : 'var(--text-primary)' }}>
                           {goal.label}
                         </div>
-                        <div className="text-xs text-center" style={{ color: formData.goal === goal.value ? 'rgba(255,255,255,0.8)' : 'var(--text-light)' }}>
+                        <div className="text-[10px] text-center" style={{ color: formData.goal === goal.value ? 'rgba(255,255,255,0.8)' : 'var(--text-light)' }}>
                           {goal.description}
                         </div>
                       </label>

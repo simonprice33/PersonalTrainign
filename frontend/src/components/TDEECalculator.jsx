@@ -224,10 +224,10 @@ const TDEECalculator = ({ isOpen, onClose }) => {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0, 0, 0, 0.85)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0, 0, 0, 0.92)' }}>
       <div 
         className="relative w-full max-w-5xl flex flex-col rounded-3xl my-auto"
-        style={{ background: 'var(--bg-card)', maxHeight: 'calc(85vh + 25px)' }}
+        style={{ background: 'var(--bg-card)', maxHeight: 'calc(85vh + 35px)' }}
       >
         {/* Header */}
         <div 

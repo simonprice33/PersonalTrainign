@@ -231,21 +231,21 @@ const TDEECalculator = ({ isOpen, onClose }) => {
       >
         {/* Header */}
         <div 
-          className="flex-shrink-0 p-5 border-b flex items-center justify-between"
+          className="flex-shrink-0 p-3 border-b flex items-center justify-between rounded-t-3xl"
           style={{ 
             background: 'linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-hover) 100%)',
             borderColor: 'var(--border-medium)'
           }}
         >
-          <div className="flex items-center gap-3">
-            <Calculator size={28} className="text-white" />
-            <h2 className="text-2xl font-bold text-white">TDEE Calculator</h2>
+          <div className="flex items-center gap-2">
+            <Calculator size={20} className="text-white" />
+            <h2 className="text-lg font-bold text-white">TDEE Calculator</h2>
           </div>
           <button
             onClick={handleClose}
-            className="p-2 rounded-full hover:bg-white/20 transition-colors"
+            className="p-1.5 rounded-full hover:bg-white/20 transition-colors"
           >
-            <X size={24} className="text-white" />
+            <X size={20} className="text-white" />
           </button>
         </div>
 

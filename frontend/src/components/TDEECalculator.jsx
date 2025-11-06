@@ -518,7 +518,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                         className="hidden"
                       />
                       <div className="text-center">
-                        <div className="font-semibold text-xs mb-0.5" style={{ color: formData.activityLevel === level.value ? 'white' : 'var(--text-primary)' }}>
+                        <div className="font-semibold text-sm mb-1" style={{ color: formData.activityLevel === level.value ? 'white' : 'var(--text-primary)' }}>
                           {level.label}
                         </div>
                         <div className="text-[10px] leading-tight" style={{ color: formData.activityLevel === level.value ? 'rgba(255,255,255,0.8)' : 'var(--text-light)' }}>
@@ -556,7 +556,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                           className="hidden"
                         />
                         <Icon size={18} style={{ color: formData.goal === goal.value ? 'white' : 'var(--brand-primary)' }} />
-                        <div className="font-semibold text-xs text-center" style={{ color: formData.goal === goal.value ? 'white' : 'var(--text-primary)' }}>
+                        <div className="font-semibold text-sm text-center" style={{ color: formData.goal === goal.value ? 'white' : 'var(--text-primary)' }}>
                           {goal.label}
                         </div>
                         <div className="text-[10px] text-center" style={{ color: formData.goal === goal.value ? 'rgba(255,255,255,0.8)' : 'var(--text-light)' }}>

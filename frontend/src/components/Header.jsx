@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Phone, Mail, Calculator } from 'lucide-react';
+import { Menu, X, Phone, Mail } from 'lucide-react';
 import TDEECalculator from './TDEECalculator';
 
 const Header = () => {

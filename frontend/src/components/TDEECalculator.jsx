@@ -224,22 +224,22 @@ const TDEECalculator = ({ isOpen, onClose }) => {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0, 0, 0, 0.8)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0, 0, 0, 0.85)' }}>
       <div 
-        className="relative w-full max-w-6xl h-[90vh] flex flex-col rounded-3xl"
+        className="relative w-full max-w-5xl max-h-[85vh] flex flex-col rounded-3xl my-auto"
         style={{ background: 'var(--bg-card)' }}
       >
         {/* Header */}
         <div 
-          className="flex-shrink-0 p-4 border-b flex items-center justify-between"
+          className="flex-shrink-0 p-5 border-b flex items-center justify-between"
           style={{ 
             background: 'linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-hover) 100%)',
             borderColor: 'var(--border-medium)'
           }}
         >
           <div className="flex items-center gap-3">
-            <Calculator size={24} className="text-white" />
-            <h2 className="text-xl font-bold text-white">TDEE Calculator</h2>
+            <Calculator size={28} className="text-white" />
+            <h2 className="text-2xl font-bold text-white">TDEE Calculator</h2>
           </div>
           <button
             onClick={handleClose}

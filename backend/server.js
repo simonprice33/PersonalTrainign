@@ -288,6 +288,158 @@ Submitted at: ${new Date().toLocaleString('en-GB')}
   }
 });
 
+// TDEE Results Email endpoint
+app.post('/api/tdee-results', [
+  body('email')
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Please provide a valid email address'),
+  body('results').isObject().withMessage('Results data is required'),
+  body('userInfo').isObject().withMessage('User info is required')
+], async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please check your form inputs',
+        errors: errors.array()
+      });
+    }
+
+    const { email, joinMailingList, results, userInfo } = req.body;
+
+    // Create email content
+    const emailSubject = `🏋️ Your TDEE Calculation Results - Simon Price PT`;
+    
+    const emailHtml = `
+    <div style="font-family: 'Arial', sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+      <!-- Header -->
+      <div style="background: linear-gradient(135deg, #00BFFF 0%, #0099cc 100%); padding: 30px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">🏋️ Your TDEE Results</h1>
+        <p style="color: rgba(255, 255, 255, 0.9); margin: 10px 0 0 0; font-size: 16px;">Simon Price Personal Training</p>
+      </div>
+      
+      <!-- User Info -->
+      <div style="padding: 30px;">
+        <div style="background: #f8f9ff; padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #00BFFF;">
+          <h2 style="color: #1a1a2e; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">Your Information</h2>
+          <div style="display: grid; gap: 10px;">
+            <div><strong style="color: #00BFFF;">Age:</strong> ${userInfo.age} years</div>
+            <div><strong style="color: #00BFFF;">Gender:</strong> ${userInfo.gender.charAt(0).toUpperCase() + userInfo.gender.slice(1)}</div>
+            <div><strong style="color: #00BFFF;">Weight:</strong> ${userInfo.weight}</div>
+            <div><strong style="color: #00BFFF;">Height:</strong> ${userInfo.height}</div>
+            <div><strong style="color: #00BFFF;">Activity Level:</strong> ${userInfo.activityLevel === '1.2' ? 'Sedentary' : userInfo.activityLevel === '1.375' ? 'Light' : userInfo.activityLevel === '1.55' ? 'Moderate' : userInfo.activityLevel === '1.725' ? 'Active' : 'Very Active'}</div>
+            <div><strong style="color: #00BFFF;">Goal:</strong> ${userInfo.goal === 'lose' ? 'Lose Weight' : userInfo.goal === 'gain' ? 'Gain Weight' : 'Maintain Weight'}</div>
+          </div>
+        </div>
+        
+        <!-- Results -->
+        <div style="background: #f0f8ff; padding: 25px; border-radius: 12px; margin-bottom: 20px;">
+          <h2 style="color: #1a1a2e; margin: 0 0 20px 0; font-size: 20px; font-weight: 600; text-align: center;">Your Results</h2>
+          
+          <div style="display: grid; gap: 15px;">
+            <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+              <div style="color: #666; font-size: 14px; margin-bottom: 5px;">BMR (Basal Metabolic Rate)</div>
+              <div style="color: #00BFFF; font-size: 32px; font-weight: bold;">${results.bmr}</div>
+              <div style="color: #999; font-size: 12px;">calories/day at rest</div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #00BFFF 0%, #0099cc 100%); padding: 20px; border-radius: 8px; text-align: center;">
+              <div style="color: rgba(255,255,255,0.9); font-size: 14px; margin-bottom: 5px;">TDEE (Total Daily Energy Expenditure)</div>
+              <div style="color: white; font-size: 36px; font-weight: bold;">${results.tdee}</div>
+              <div style="color: rgba(255,255,255,0.8); font-size: 12px;">calories/day to maintain</div>
+            </div>
+            
+            <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; border: 2px solid #00BFFF;">
+              <div style="color: #666; font-size: 14px; margin-bottom: 5px;">Goal Calories</div>
+              <div style="color: #00BFFF; font-size: 32px; font-weight: bold;">${results.goalCalories}</div>
+              <div style="color: #999; font-size: 12px;">calories/day for your goal</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Macros -->
+        <div style="background: #f8f9ff; padding: 25px; border-radius: 12px; margin-bottom: 20px;">
+          <h3 style="color: #1a1a2e; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">Recommended Macronutrients</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+            <div style="text-align: center;">
+              <div style="color: #00BFFF; font-size: 28px; font-weight: bold;">${results.macros.protein}g</div>
+              <div style="color: #666; font-size: 14px;">Protein</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="color: #00BFFF; font-size: 28px; font-weight: bold;">${results.macros.carbs}g</div>
+              <div style="color: #666; font-size: 14px;">Carbs</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="color: #00BFFF; font-size: 28px; font-weight: bold;">${results.macros.fat}g</div>
+              <div style="color: #666; font-size: 14px;">Fats</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- CTA -->
+        <div style="background: linear-gradient(135deg, #00BFFF 0%, #0099cc 100%); padding: 25px; border-radius: 12px; text-align: center;">
+          <h3 style="color: white; margin: 0 0 10px 0; font-size: 20px; font-weight: 600;">Ready to Achieve Your Goals?</h3>
+          <p style="color: rgba(255,255,255,0.9); margin: 0 0 20px 0;">Get personalized training and nutrition plans tailored to your results</p>
+          <a href="https://simonprice-pt.co.uk#contact" style="background: white; color: #00BFFF; padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: 600; display: inline-block;">Book Free Consultation</a>
+        </div>
+        
+        ${joinMailingList ? '<div style="margin-top: 20px; padding: 15px; background: #e8f5e8; border-radius: 8px; text-align: center; border: 2px solid #28a745;"><p style="margin: 0; color: #28a745; font-weight: 600;">✅ You\'ve been added to our mailing list!</p><p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">Expect exclusive fitness tips and offers soon.</p></div>' : ''}
+      </div>
+      
+      <!-- Footer -->
+      <div style="background: #1a1a2e; padding: 20px; text-align: center;">
+        <p style="color: rgba(255, 255, 255, 0.8); margin: 0; font-size: 14px;">This email was sent from Simon Price PT</p>
+        <p style="color: rgba(255, 255, 255, 0.6); margin: 5px 0 0 0; font-size: 12px;">📧 simon.price@simonprice-pt.co.uk | 🌐 simonprice-pt.co.uk</p>
+      </div>
+    </div>
+    `;
+
+    // Create Graph client and send email
+    const graphClient = createGraphClient();
+
+    const emailMessage = {
+      subject: emailSubject,
+      body: {
+        contentType: 'HTML',
+        content: emailHtml
+      },
+      toRecipients: [
+        {
+          emailAddress: {
+            address: email
+          }
+        }
+      ]
+    };
+
+    await graphClient
+      .api(`/users/${process.env.EMAIL_FROM}/sendMail`)
+      .post({
+        message: emailMessage,
+        saveToSentItems: true
+      });
+
+    // Log successful submission
+    console.log(`✅ TDEE results sent to ${email} ${joinMailingList ? '(joined mailing list)' : ''} at ${new Date().toISOString()}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Your TDEE results have been sent to your email!'
+    });
+
+  } catch (error) {
+    console.error('❌ TDEE results email error:', error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Sorry, there was a problem sending your results. Please try again or contact us directly.'
+    });
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({

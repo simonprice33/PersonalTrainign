@@ -108,6 +108,13 @@ const Header = () => {
                 Services
               </button>
               <button 
+                onClick={openTDEECalculator}
+                className="text-white text-left py-2 hover:bg-white hover:bg-opacity-10 px-4 rounded-full transition-all duration-200 flex items-center gap-2"
+              >
+                <Calculator size={16} />
+                TDEE Calculator
+              </button>
+              <button 
                 onClick={() => scrollToSection('about')}
                 className="text-white text-left py-2 hover:bg-white hover:bg-opacity-10 px-4 rounded-full transition-all duration-200"
               >
@@ -125,6 +132,9 @@ const Header = () => {
           </div>
         )}
       </div>
+
+      {/* TDEE Calculator Modal */}
+      <TDEECalculator isOpen={isTDEEOpen} onClose={() => setIsTDEEOpen(false)} />
     </header>
   );
 };

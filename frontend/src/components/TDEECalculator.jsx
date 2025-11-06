@@ -499,11 +499,11 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                 <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-primary)' }}>
                   Activity Level *
                 </label>
-                <div className="space-y-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {activityLevels.map((level) => (
                     <label
                       key={level.value}
-                      className="flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all"
+                      className="flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition-all"
                       style={{ 
                         background: formData.activityLevel === level.value ? 'var(--brand-primary)' : 'var(--bg-subtle)',
                         border: formData.activityLevel === level.value ? '2px solid var(--brand-primary)' : '2px solid transparent'
@@ -515,13 +515,13 @@ const TDEECalculator = ({ isOpen, onClose }) => {
                         value={level.value}
                         checked={formData.activityLevel === level.value}
                         onChange={handleInputChange}
-                        className="w-4 h-4"
+                        className="hidden"
                       />
-                      <div className="flex-1">
-                        <div className="font-semibold" style={{ color: formData.activityLevel === level.value ? 'white' : 'var(--text-primary)' }}>
+                      <div className="text-center">
+                        <div className="font-semibold text-sm mb-1" style={{ color: formData.activityLevel === level.value ? 'white' : 'var(--text-primary)' }}>
                           {level.label}
                         </div>
-                        <div className="text-sm" style={{ color: formData.activityLevel === level.value ? 'rgba(255,255,255,0.8)' : 'var(--text-light)' }}>
+                        <div className="text-xs" style={{ color: formData.activityLevel === level.value ? 'rgba(255,255,255,0.8)' : 'var(--text-light)' }}>
                           {level.description}
                         </div>
                       </div>

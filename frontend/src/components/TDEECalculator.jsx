@@ -812,8 +812,10 @@ const TDEECalculator = ({ isOpen, onClose }) => {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
+
+  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default TDEECalculator;

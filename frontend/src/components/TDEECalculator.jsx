@@ -224,8 +224,13 @@ const TDEECalculator = ({ isOpen, onClose }) => {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: '#000000', opacity: 0.95 }}>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ opacity: 1 }}>
+    <>
+      {/* Dark Overlay */}
+      <div className="fixed inset-0 z-50" style={{ backgroundColor: '#000000', opacity: 0.95 }}></div>
+      
+      {/* Modal Container */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ pointerEvents: 'none' }}>
+        <div style={{ pointerEvents: 'auto' }}>
       <div 
         className="relative w-full max-w-5xl flex flex-col rounded-3xl my-auto"
         style={{ background: 'var(--bg-card)', maxHeight: 'calc(85vh + 35px)' }}

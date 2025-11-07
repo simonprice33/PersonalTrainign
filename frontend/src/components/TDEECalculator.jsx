@@ -810,8 +810,10 @@ const TDEECalculator = ({ isOpen, onClose }) => {
             </div>
           )}
         </div>
+        </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

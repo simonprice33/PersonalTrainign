@@ -84,21 +84,28 @@ const TDEECalculator = ({ isOpen, onClose }) => {
     return tdee; // maintain
   };
 
-  // Calculate macros
+  // Calculate macros using Simon Price PT method
   const calculateMacros = (calories, weightKg, goal) => {
-    let proteinMultiplier = 2.2; // g per kg
-    if (goal === 'gain') proteinMultiplier = 2.4;
-    if (goal === 'lose') proteinMultiplier = 2.6;
+    let proteinMultiplier = 2;
+    let carbsMultiplier = 3;
+    let fatsMultiplier = 0.8;
+
+    if (goal === 'lose') {
+      // Cutting - lose 1lb a week
+      proteinMultiplier = 2;
+      carbsMultiplier = 2.2;
+      fatsMultiplier = 0.6;
+    } else if (goal === 'gain') {
+      // Bulking - gain 1lb a week
+      proteinMultiplier = 2;
+      carbsMultiplier = 1.5;
+      fatsMultiplier = 0.4;
+    }
+    // Maintain uses default values set above
 
     const protein = Math.round(weightKg * proteinMultiplier);
-    const proteinCalories = protein * 4;
-
-    const fatPercentage = 0.25; // 25% of calories from fat
-    const fatCalories = calories * fatPercentage;
-    const fat = Math.round(fatCalories / 9);
-
-    const remainingCalories = calories - proteinCalories - fatCalories;
-    const carbs = Math.round(remainingCalories / 4);
+    const carbs = Math.round(weightKg * carbsMultiplier);
+    const fat = Math.round(weightKg * fatsMultiplier);
 
     return { protein, carbs, fat };
   };

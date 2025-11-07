@@ -224,12 +224,18 @@ const TDEECalculator = ({ isOpen, onClose }) => {
     { value: 'gain', label: 'Gain Weight', icon: TrendingUp, description: '300 cal surplus' }
   ];
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.95)' }}>
-      <div 
-        className="relative w-full max-w-5xl flex flex-col rounded-3xl my-auto"
-        style={{ background: 'var(--bg-card)', maxHeight: 'calc(85vh + 35px)' }}
-      >
+  const modalContent = (
+    <>
+      {/* Backdrop */}
+      <div className="fixed inset-0 z-[9998]" style={{ backgroundColor: 'rgba(0, 0, 0, 0.95)' }} onClick={handleClose}></div>
+      
+      {/* Modal Panel */}
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ pointerEvents: 'none' }}>
+        <div 
+          className="relative w-full max-w-5xl flex flex-col rounded-3xl my-auto"
+          style={{ background: 'var(--bg-card)', maxHeight: 'calc(85vh + 35px)', pointerEvents: 'auto' }}
+          onClick={(e) => e.stopPropagation()}
+        >
         {/* Header */}
         <div 
           className="flex-shrink-0 p-3 border-b flex items-center justify-between rounded-t-3xl"

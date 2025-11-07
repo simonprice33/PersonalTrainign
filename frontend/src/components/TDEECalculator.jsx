@@ -224,10 +224,18 @@ const TDEECalculator = ({ isOpen, onClose }) => {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.95)' }}>
+    <div className="fixed inset-0 z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.95)' }}>
       <div 
-        className="relative w-full max-w-5xl flex flex-col rounded-3xl"
-        style={{ background: 'var(--bg-card)', maxHeight: 'calc(85vh + 35px)' }}
+        className="absolute flex flex-col rounded-3xl"
+        style={{ 
+          background: 'var(--bg-card)', 
+          maxHeight: 'calc(85vh + 35px)',
+          width: '90%',
+          maxWidth: '1200px',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
+        }}
       >
         {/* Header */}
         <div 

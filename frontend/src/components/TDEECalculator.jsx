@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { X, Calculator, Mail, TrendingDown, TrendingUp, Minus, Activity } from 'lucide-react';
 
 const TDEECalculator = ({ isOpen, onClose }) => {

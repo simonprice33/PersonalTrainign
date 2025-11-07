@@ -230,11 +230,10 @@ const TDEECalculator = ({ isOpen, onClose }) => {
       
       {/* Modal Container */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ pointerEvents: 'none' }}>
-        <div style={{ pointerEvents: 'auto' }}>
-      <div 
-        className="relative w-full max-w-5xl flex flex-col rounded-3xl my-auto"
-        style={{ background: 'var(--bg-card)', maxHeight: 'calc(85vh + 35px)' }}
-      >
+        <div 
+          className="relative w-full max-w-5xl flex flex-col rounded-3xl"
+          style={{ background: 'var(--bg-card)', maxHeight: 'calc(85vh + 35px)', pointerEvents: 'auto' }}
+        >
         {/* Header */}
         <div 
           className="flex-shrink-0 p-3 border-b flex items-center justify-between rounded-t-3xl"

@@ -231,7 +231,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
           className="relative flex flex-col rounded-3xl"
           style={{ 
             background: 'var(--bg-card)', 
-            maxHeight: 'calc(85vh + 35px)',
+            maxHeight: '90vh',
             width: '90%',
             maxWidth: '1200px'
           }}

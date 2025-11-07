@@ -224,21 +224,18 @@ const TDEECalculator = ({ isOpen, onClose }) => {
   ];
 
   return (
-    <div 
-      className="fixed inset-0 z-50 overflow-auto flex items-start justify-center pt-20 pb-20" 
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.95)' }}
-      onClick={handleClose}
-    >
-      <div 
-        className="relative flex flex-col rounded-3xl m-auto"
-        style={{ 
-          background: 'var(--bg-card)', 
-          width: '90%',
-          maxWidth: '1200px',
-          maxHeight: '90vh'
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <>
+      <div className="fixed inset-0 z-40" style={{ background: '#000000', opacity: 0.95 }}></div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div 
+          className="relative flex flex-col rounded-3xl"
+          style={{ 
+            background: 'var(--bg-card)', 
+            maxHeight: 'calc(85vh + 35px)',
+            width: '90%',
+            maxWidth: '1200px'
+          }}
+        >
         {/* Header */}
         <div 
           className="flex-shrink-0 p-3 border-b flex items-center justify-between rounded-t-3xl"
@@ -814,6 +811,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
             </div>
           )}
         </div>
+      </div>
     </div>
   );
 };

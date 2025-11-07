@@ -232,7 +232,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
           maxHeight: 'calc(85vh + 35px)',
           width: '90%',
           maxWidth: '1200px',
-          top: '50%',
+          top: '55%',
           left: '50%',
           transform: 'translate(-50%, -50%)'
         }}

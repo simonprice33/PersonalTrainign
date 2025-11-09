@@ -645,6 +645,13 @@ app.post('/api/tdee-results', [
         saveToSentItems: true
       });
 
+    // Save email to database with mailing list preference
+    await saveEmail(email, joinMailingList, 'tdee_calculator', {
+      age: userInfo.age,
+      gender: userInfo.gender,
+      goal: userInfo.goal
+    });
+
     // Log successful submission
     console.log(`✅ TDEE results sent to ${email} ${joinMailingList ? '(joined mailing list)' : ''} at ${new Date().toISOString()}`);
 

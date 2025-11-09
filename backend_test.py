@@ -615,7 +615,7 @@ def test_admin_setup_endpoint(base_url, mongo_db):
                 print("✅ Default admin user created successfully")
                 
                 # Verify admin user in database
-                if mongo_db:
+                if mongo_db is not None:
                     admin_user = admin_collection.find_one({"email": "simon.price@simonprice-pt.co.uk"})
                     if admin_user:
                         print("✅ Admin user found in database")

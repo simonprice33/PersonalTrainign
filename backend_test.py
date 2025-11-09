@@ -287,7 +287,7 @@ def test_tdee_calculator_opt_out(base_url, collection):
         
         if response.status_code == 500:
             # Check if email record was updated with opt-out
-            if collection:
+            if collection is not None:
                 email_record = collection.find_one({"email": form_data_opt_out["email"]})
                 if email_record:
                     print(f"   - opted_in: {email_record.get('opted_in')}")
@@ -398,7 +398,7 @@ def test_client_contact_opt_out(base_url, collection):
         
         if response.status_code == 500:
             # Check if email record was updated with opt-out
-            if collection:
+            if collection is not None:
                 email_record = collection.find_one({"email": form_data_opt_out["email"]})
                 if email_record:
                     print(f"   - opted_in: {email_record.get('opted_in')}")

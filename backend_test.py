@@ -935,7 +935,7 @@ def test_user_management_endpoints(base_url, access_token, mongo_db):
                             print("✅ New admin user created successfully")
                             
                             # Verify password is hashed in database
-                            if mongo_db:
+                            if mongo_db is not None:
                                 admin_collection = mongo_db["admin_users"]
                                 db_user = admin_collection.find_one({"email": "test.admin@example.com"})
                                 if db_user and db_user.get('password') != "TestPassword123!":

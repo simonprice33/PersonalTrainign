@@ -6,10 +6,89 @@ const { body, validationResult } = require('express-validator');
 const { Client } = require('@microsoft/microsoft-graph-client');
 const { TokenCredentialAuthenticationProvider } = require('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
 const { ClientSecretCredential } = require('@azure/identity');
+const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// MongoDB Connection
+const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017';
+const dbName = process.env.DB_NAME || 'simonprice_pt_db';
+let db = null;
+let emailCollection = null;
+
+// Connect to MongoDB
+MongoClient.connect(mongoUrl, { 
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000
+})
+  .then(client => {
+    console.log('✅ Connected to MongoDB');
+    db = client.db(dbName);
+    emailCollection = db.collection('mailing_list');
+    
+    // Create unique index on email field
+    emailCollection.createIndex({ email: 1 }, { unique: true })
+      .then(() => console.log('✅ Email index created'))
+      .catch(err => console.log('ℹ️ Email index already exists'));
+  })
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err.message);
+    console.log('⚠️ App will continue without database functionality');
+  });
+
+// Helper function to save or update email in database
+async function saveEmail(email, optedIn, source, additionalData = {}) {
+  if (!emailCollection) {
+    console.log('⚠️ Database not available, skipping email storage');
+    return;
+  }
+
+  try {
+    const now = new Date();
+    const existingEmail = await emailCollection.findOne({ email });
+
+    if (existingEmail) {
+      // Update existing record
+      const updateData = {
+        $set: {
+          opted_in: optedIn,
+          last_updated: now,
+          source,
+          ...additionalData
+        }
+      };
+
+      // Set opt-in or opt-out date based on status
+      if (optedIn && !existingEmail.opted_in) {
+        updateData.$set.opt_in_date = now;
+      } else if (!optedIn && existingEmail.opted_in) {
+        updateData.$set.opt_out_date = now;
+      }
+
+      await emailCollection.updateOne({ email }, updateData);
+      console.log(`📝 Updated email record for ${email} (opted_in: ${optedIn})`);
+    } else {
+      // Create new record
+      const newEmail = {
+        email,
+        opted_in: optedIn,
+        opt_in_date: optedIn ? now : null,
+        opt_out_date: optedIn ? null : now,
+        source,
+        first_collected: now,
+        last_updated: now,
+        ...additionalData
+      };
+
+      await emailCollection.insertOne(newEmail);
+      console.log(`✅ New email saved: ${email} from ${source} (opted_in: ${optedIn})`);
+    }
+  } catch (error) {
+    console.error('❌ Error saving email to database:', error.message);
+  }
+}
 
 // Security middleware
 app.use(helmet({

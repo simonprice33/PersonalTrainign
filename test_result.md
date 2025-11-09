@@ -153,6 +153,78 @@ backend:
           agent: "testing"
           comment: "Microsoft Graph API authentication failing due to invalid tenant configuration. Error: AADSTS900023 - Specified tenant identifier 'simonfitcoach' is neither a valid DNS name, nor a valid external domain. This is expected in test environment."
 
+  - task: "CORS Configuration Fix"
+    implemented: true
+    working: true
+    file: "/app/backend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Updated CORS_ORIGINS in .env to explicitly list allowed origins instead of using wildcard '*'. Now includes: http://localhost:3000, https://simonfitcoach.preview.emergentagent.com, https://simonprice-pt.co.uk, https://www.simonprice-pt.co.uk. This fixes the 'Not allowed by CORS' error that was blocking client contact form."
+
+  - task: "MongoDB Connection Setup"
+    implemented: true
+    working: true
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added MongoDB connection using mongodb driver v7.0.0. Connection string from MONGO_URL env var, database name from DB_NAME env var (simonprice_pt_db). Creates 'mailing_list' collection with unique index on email field. Gracefully handles connection failures and allows app to continue without database functionality."
+
+  - task: "Email Storage Helper Function"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created saveEmail() helper function that handles email storage with duplicate detection. If email exists, updates opt-in/opt-out status and dates. If new, creates record with email, opted_in status, opt_in_date/opt_out_date, source (contact_form, tdee_calculator, client_inquiry), first_collected, last_updated, and additional data (name, phone, goals, etc.)."
+
+  - task: "Contact Form Email Storage"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Updated /api/contact endpoint to save email to MongoDB after successful email send. Assumes opted_in=true for contact form submissions. Stores name, phone, goals, and experience as additional data. Source tagged as 'contact_form'."
+
+  - task: "TDEE Calculator Email Storage"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Updated /api/tdee-results endpoint to save email to MongoDB. Uses joinMailingList boolean from request to set opted_in status. Stores age, gender, and goal as additional data. Source tagged as 'tdee_calculator'."
+
+  - task: "Client Contact Form Email Storage"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Updated /api/client-contact endpoint to save email to MongoDB. Handles inverted opt-out logic: if joinMailingList checkbox is checked (user does NOT want to join), opted_in=false. Stores name, phone, and best_time_to_call as additional data. Source tagged as 'client_inquiry'."
+
 frontend:
   - task: "Frontend Testing"
     implemented: "NA"

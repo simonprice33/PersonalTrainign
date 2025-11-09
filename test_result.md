@@ -406,12 +406,13 @@ metadata:
 
 test_plan:
   current_focus:
-    - "MongoDB Connection Setup"
-    - "Email Storage Helper Function"
-    - "Contact Form Email Storage"
-    - "TDEE Calculator Email Storage"
-    - "Client Contact Form Email Storage"
-    - "CORS Configuration Fix"
+    - "Admin Setup Endpoint"
+    - "Admin Login Endpoint"
+    - "Token Refresh Endpoint"
+    - "Change Password Endpoint"
+    - "User Management Endpoints"
+    - "Email Viewing Endpoints"
+    - "JWT Authentication System"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"

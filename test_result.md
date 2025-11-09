@@ -174,11 +174,14 @@ backend:
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Added MongoDB connection using mongodb driver v7.0.0. Connection string from MONGO_URL env var, database name from DB_NAME env var (simonprice_pt_db). Creates 'mailing_list' collection with unique index on email field. Gracefully handles connection failures and allows app to continue without database functionality."
+        - working: true
+          agent: "testing"
+          comment: "MongoDB connection tested and working correctly. Successfully connected to mongodb://localhost:27017 with database 'simonprice_pt_db'. Mailing_list collection exists with unique index on email field. Connection logs show '✅ Connected to MongoDB' and '✅ Email index created'."
 
   - task: "Email Storage Helper Function"
     implemented: true

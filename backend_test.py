@@ -55,7 +55,7 @@ def test_mongodb_connection(collection):
     """Test MongoDB connection and mailing_list collection"""
     print("\n=== Testing MongoDB Connection ===")
     try:
-        if not collection:
+        if collection is None:
             print("❌ MongoDB connection failed")
             return False
             

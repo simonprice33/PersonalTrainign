@@ -230,99 +230,123 @@ backend:
 
   - task: "Client Contact Form Email Storage"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Updated /api/client-contact endpoint to save email to MongoDB. Handles inverted opt-out logic: if joinMailingList checkbox is checked (user does NOT want to join), opted_in=false. Stores name, phone, and best_time_to_call as additional data. Source tagged as 'client_inquiry'."
+        - working: true
+          agent: "testing"
+          comment: "Client contact form email storage tested and working correctly. Verified inverted opt-out logic: joinMailingList=false results in opted_in=true, joinMailingList=true results in opted_in=false. Email saved with proper source='client_inquiry', additional data (name, phone, best_time_to_call) stored correctly. Opt-in to opt-out transitions working properly."
 
   - task: "JWT Authentication System"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Implemented JWT authentication with bcrypt password hashing. Access tokens expire in 20 minutes, refresh tokens in 7 days. Added JWT_SECRET, JWT_ACCESS_EXPIRY, JWT_REFRESH_EXPIRY to .env. Created generateAccessToken(), generateRefreshToken(), and authenticateToken() middleware functions."
+        - working: true
+          agent: "testing"
+          comment: "JWT authentication system tested and working correctly. Access tokens expire in 20 minutes, refresh tokens in 7 days. All protected endpoints require valid JWT tokens (401 without token, 403 with invalid token). Password security verified - all passwords stored as bcrypt hashes with proper salt rounds."
 
   - task: "Admin Setup Endpoint"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created POST /api/admin/setup endpoint for one-time admin user creation. Default credentials: email=simon.price@simonprice-pt.co.uk, password=Qwerty1234!!!. Checks if admin already exists before creating. Passwords hashed with bcrypt (10 rounds)."
+        - working: true
+          agent: "testing"
+          comment: "Admin setup endpoint tested and working correctly. Successfully creates default admin user with email=simon.price@simonprice-pt.co.uk and hashed password (not plain text). Second setup call properly rejected with 'Admin user already exists' error. Admin user correctly stored in MongoDB admin_users collection."
 
   - task: "Admin Login Endpoint"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created POST /api/admin/login with email/password validation. Verifies credentials with bcrypt.compare(). Returns access token, refresh token, and user info. Updates last_login timestamp. Returns 401 for invalid credentials."
+        - working: true
+          agent: "testing"
+          comment: "Admin login endpoint tested and working correctly. Successful login with correct credentials returns valid JWT access token, refresh token, and user object. Wrong password and non-existent email both correctly rejected with 401 status. Tokens are valid JWTs with proper expiration times."
 
   - task: "Token Refresh Endpoint"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created POST /api/admin/refresh to renew access tokens using valid refresh token. Verifies refresh token, checks user exists, generates new access token. Returns 403 for invalid/expired tokens."
+        - working: true
+          agent: "testing"
+          comment: "Token refresh endpoint tested and working correctly. Valid refresh token successfully generates new access token. Invalid/expired refresh tokens correctly rejected with 403 status. New access tokens are valid JWTs with proper structure and expiration."
 
   - task: "Change Password Endpoint"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created POST /api/admin/change-password (JWT protected). Validates current password, requires new password min 8 chars. Hashes new password with bcrypt before saving. Updates updated_at timestamp."
+        - working: true
+          agent: "testing"
+          comment: "Change password endpoint tested and working correctly. Requires valid JWT token (401 without token). Validates current password correctly (401 for wrong current password). Successfully changes password with proper bcrypt hashing. New password properly stored in database."
 
   - task: "User Management Endpoints"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created JWT-protected endpoints: GET /api/admin/users (list all admins), POST /api/admin/users (create new admin), POST /api/admin/users/:id/reset-password (reset user password), DELETE /api/admin/users/:id (delete user, prevents self-deletion). All passwords hashed with bcrypt."
+        - working: true
+          agent: "testing"
+          comment: "User management endpoints tested and working correctly. GET /api/admin/users lists users without password field. POST /api/admin/users creates new admin with hashed password, rejects duplicate emails. Password reset endpoint works with proper hashing. DELETE endpoint works and prevents self-deletion. All endpoints properly JWT-protected."
 
   - task: "Email Viewing Endpoints"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created JWT-protected endpoints: GET /api/admin/emails (list emails with optional filters for source/opt-in status), GET /api/admin/emails/export (export all emails to CSV format with headers). Sorted by last_updated descending."
+        - working: true
+          agent: "testing"
+          comment: "Email viewing endpoints tested and working correctly. GET /api/admin/emails returns email list with count, supports source and opted_in filters. GET /api/admin/emails/export returns proper CSV format with correct headers and content-type. Both endpoints properly JWT-protected and sorted by last_updated descending."
 
 frontend:
   - task: "Admin Login Page"

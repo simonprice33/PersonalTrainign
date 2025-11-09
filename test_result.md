@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the contact form submission with reCAPTCHA v2 integration on Simon Price PT website"
+user_problem_statement: "Implement MongoDB email storage for all forms (Contact, TDEE Calculator, Client Contact) with opt-in/opt-out tracking and duplicate handling. Fix CORS configuration to use explicit origins."
 
 backend:
   - task: "Health Check Endpoint"

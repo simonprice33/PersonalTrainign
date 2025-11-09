@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement MongoDB email storage for all forms (Contact, TDEE Calculator, Client Contact) with opt-in/opt-out tracking and duplicate handling. Fix CORS configuration to use explicit origins."
+user_problem_statement: "Implement secure admin authentication system with JWT (20-minute access tokens + refresh tokens), user management, password reset functionality, MongoDB email storage for all forms with opt-in/opt-out tracking, and React admin dashboard with email/user management interfaces."
 
 backend:
   - task: "Health Check Endpoint"

@@ -288,6 +288,137 @@ Submitted at: ${new Date().toLocaleString('en-GB')}
   }
 });
 
+// Client Contact Request endpoint
+app.post('/api/client-contact', [
+  body('name').trim().notEmpty().withMessage('Name is required'),
+  body('email').isEmail().normalizeEmail().withMessage('Please provide a valid email address'),
+  body('phone').trim().notEmpty().withMessage('Phone number is required'),
+  body('bestTimeToCall').trim().notEmpty().withMessage('Best time to call is required')
+], async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please check your form inputs',
+        errors: errors.array()
+      });
+    }
+
+    const { name, email, phone, bestTimeToCall, joinMailingList } = req.body;
+
+    // Create email content for Simon
+    const emailSubject = `🔔 New Client Contact Request from ${name}`;
+    
+    const emailHtml = `
+    <div style="font-family: 'Arial', sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+      <!-- Header -->
+      <div style="background: linear-gradient(135deg, #00BFFF 0%, #0099cc 100%); padding: 30px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">📞 New Client Contact Request</h1>
+      </div>
+      
+      <!-- Content -->
+      <div style="padding: 30px;">
+        <p style="color: #1a1a2e; font-size: 16px; margin-bottom: 25px;">
+          You have a new contact request from your website:
+        </p>
+        
+        <!-- Client Details -->
+        <div style="background: #f8f9ff; padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #00BFFF;">
+          <h2 style="color: #1a1a2e; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">Client Information</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; color: #00BFFF; font-weight: 600; width: 40%;">Name:</td>
+              <td style="padding: 8px 0; color: #1a1a2e;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #00BFFF; font-weight: 600;">Email:</td>
+              <td style="padding: 8px 0; color: #1a1a2e;"><a href="mailto:${email}" style="color: #00BFFF; text-decoration: none;">${email}</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #00BFFF; font-weight: 600;">Phone:</td>
+              <td style="padding: 8px 0; color: #1a1a2e;"><a href="tel:${phone}" style="color: #00BFFF; text-decoration: none;">${phone}</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #00BFFF; font-weight: 600;">Best Time to Call:</td>
+              <td style="padding: 8px 0; color: #1a1a2e; font-weight: 600;">${bestTimeToCall.replace(/-/g, ' ').toUpperCase()}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #00BFFF; font-weight: 600;">Mailing List:</td>
+              <td style="padding: 8px 0; color: #1a1a2e;">${joinMailingList ? '✅ Yes' : '❌ No'}</td>
+            </tr>
+          </table>
+        </div>
+        
+        <!-- Action Button -->
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="tel:${phone}" style="display: inline-block; background: linear-gradient(135deg, #00BFFF 0%, #0099cc 100%); color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: 600;">
+            📞 Call ${name.split(' ')[0]} Now
+          </a>
+        </div>
+        
+        <!-- Timestamp -->
+        <div style="text-align: center; padding: 15px; background: #f0f0f0; border-radius: 8px; margin-top: 20px;">
+          <p style="margin: 0; color: #666; font-size: 14px;">
+            Received: ${new Date().toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'short' })}
+          </p>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div style="background: #1a1a2e; padding: 20px; text-align: center;">
+        <p style="color: rgba(255, 255, 255, 0.8); margin: 0; font-size: 14px;">Simon Price Personal Training</p>
+        <p style="color: rgba(255, 255, 255, 0.6); margin: 5px 0 0 0; font-size: 12px;">Client Contact Request System</p>
+      </div>
+    </div>
+    `;
+
+    // Create Graph client and send email
+    const graphClient = createGraphClient();
+
+    const emailMessage = {
+      subject: emailSubject,
+      body: {
+        contentType: 'HTML',
+        content: emailHtml
+      },
+      toRecipients: [
+        {
+          emailAddress: {
+            address: process.env.EMAIL_TO || 'simon.price@simonprice-pt.co.uk'
+          }
+        }
+      ]
+    };
+
+    await graphClient
+      .api(`/users/${process.env.EMAIL_FROM}/sendMail`)
+      .post({
+        message: emailMessage,
+        saveToSentItems: true
+      });
+
+    // Log successful submission
+    console.log(`✅ Client contact request from ${name} (${email}) sent to ${process.env.EMAIL_TO} at ${new Date().toISOString()}`);
+    console.log(`   Best time to call: ${bestTimeToCall}, Mailing list: ${joinMailingList ? 'Yes' : 'No'}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Your request has been submitted successfully!'
+    });
+
+  } catch (error) {
+    console.error('❌ Client contact request error:', error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Sorry, there was a problem submitting your request. Please try again or contact us directly.'
+    });
+  }
+});
+
+
 // TDEE Results Email endpoint
 app.post('/api/tdee-results', [
   body('email')

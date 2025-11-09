@@ -19,6 +19,7 @@ const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017';
 const dbName = process.env.DB_NAME || 'simonprice_pt_db';
 let db = null;
 let emailCollection = null;
+let adminUsersCollection = null;
 
 // Connect to MongoDB
 MongoClient.connect(mongoUrl, { 
@@ -28,11 +29,17 @@ MongoClient.connect(mongoUrl, {
     console.log('✅ Connected to MongoDB');
     db = client.db(dbName);
     emailCollection = db.collection('mailing_list');
+    adminUsersCollection = db.collection('admin_users');
     
     // Create unique index on email field
     emailCollection.createIndex({ email: 1 }, { unique: true })
       .then(() => console.log('✅ Email index created'))
       .catch(err => console.log('ℹ️ Email index already exists'));
+    
+    // Create unique index on admin email field
+    adminUsersCollection.createIndex({ email: 1 }, { unique: true })
+      .then(() => console.log('✅ Admin users index created'))
+      .catch(err => console.log('ℹ️ Admin users index already exists'));
   })
   .catch(err => {
     console.error('❌ MongoDB connection error:', err.message);

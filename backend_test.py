@@ -442,7 +442,7 @@ def test_duplicate_email_handling(base_url, collection):
         response1 = requests.post(url, json=contact_data, timeout=15)
         print(f"Status Code: {response1.status_code}")
         
-        if collection and response1.status_code == 500:
+        if collection is not None and response1.status_code == 500:
             # Check first record
             first_record = collection.find_one({"email": test_email})
             if first_record:

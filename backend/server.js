@@ -34,7 +34,12 @@ const allowedOrigins = (process.env.CORS_ORIGINS
 
 const corsOptions = {
   origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    // If CORS_ORIGINS is "*", allow all origins
+    if (allowedOrigins.includes('*')) return cb(null, true);
+    // If no origin (like Postman/curl), allow it
+    if (!origin) return cb(null, true);
+    // Check if origin is in allowed list
+    if (allowedOrigins.includes(origin)) return cb(null, true);
     return cb(new Error('Not allowed by CORS'));
   },
   methods: ['GET', 'POST', 'OPTIONS'],

@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
 Backend API Testing Script for Simon Price PT Website
-Tests the contact form submission with reCAPTCHA v2 integration
+Tests MongoDB email storage implementation for all forms
 """
 
 import requests
 import json
 import sys
 from datetime import datetime
+import pymongo
+import os
 
 # Get backend URL from frontend .env
 def get_backend_url():

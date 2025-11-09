@@ -311,6 +311,14 @@ Submitted at: ${new Date().toLocaleString('en-GB')}
     </div>
     `;
 
+    // Save email to database first (assume opted in from contact form)
+    await saveEmail(email, true, 'contact_form', {
+      name,
+      phone: phone || null,
+      goals,
+      experience: experience || null
+    });
+
     // Create Graph client and send email
     const graphClient = createGraphClient();
 
@@ -343,14 +351,6 @@ Submitted at: ${new Date().toLocaleString('en-GB')}
         message: emailMessage,
         saveToSentItems: true
       });
-
-    // Save email to database (assume opted in from contact form)
-    await saveEmail(email, true, 'contact_form', {
-      name,
-      phone: phone || null,
-      goals,
-      experience: experience || null
-    });
 
     // Log successful submission (don't log sensitive data in production)
     console.log(`✅ Contact form submitted by ${name} (${email}) at ${new Date().toISOString()}`);

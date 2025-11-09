@@ -1134,7 +1134,11 @@ def test_jwt_authentication_middleware(base_url):
         
         for endpoint in protected_endpoints:
             print(f"\nTesting endpoint without token: {endpoint}")
-            response = requests.get(endpoint, timeout=10)
+            # Use appropriate HTTP method for each endpoint
+            if 'change-password' in endpoint:
+                response = requests.post(endpoint, json={}, timeout=10)
+            else:
+                response = requests.get(endpoint, timeout=10)
             print(f"Status Code: {response.status_code}")
             
             if response.status_code != 401:

@@ -37,7 +37,7 @@ def get_mongo_connection():
 
 def cleanup_test_emails(collection):
     """Clean up test emails from database"""
-    if collection:
+    if collection is not None:
         try:
             test_emails = [
                 "test.contact@example.com",

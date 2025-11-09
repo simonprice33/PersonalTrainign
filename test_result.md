@@ -215,15 +215,18 @@ backend:
 
   - task: "TDEE Calculator Email Storage"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Updated /api/tdee-results endpoint to save email to MongoDB. Uses joinMailingList boolean from request to set opted_in status. Stores age, gender, and goal as additional data. Source tagged as 'tdee_calculator'."
+        - working: true
+          agent: "testing"
+          comment: "TDEE Calculator email storage tested and working correctly. Fixed critical bug by moving saveEmail() before Graph API call. Verified both opt-in and opt-out scenarios: joinMailingList=true sets opted_in=true with opt_in_date, joinMailingList=false sets opted_in=false with opt_out_date. Additional data (age, gender, goal) stored correctly. Source tagged as 'tdee_calculator'. Opt-in to opt-out transitions working properly."
 
   - task: "Client Contact Form Email Storage"
     implemented: true

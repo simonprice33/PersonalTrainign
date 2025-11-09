@@ -25,7 +25,7 @@ let adminUsersCollection = null;
 MongoClient.connect(mongoUrl, { 
   serverSelectionTimeoutMS: 5000
 })
-  .then(client => {
+  .then(async client => {
     console.log('✅ Connected to MongoDB');
     db = client.db(dbName);
     emailCollection = db.collection('mailing_list');
@@ -40,6 +40,38 @@ MongoClient.connect(mongoUrl, {
     adminUsersCollection.createIndex({ email: 1 }, { unique: true })
       .then(() => console.log('✅ Admin users index created'))
       .catch(err => console.log('ℹ️ Admin users index already exists'));
+    
+    // Check for default admin user and create if not present
+    try {
+      const adminCount = await adminUsersCollection.countDocuments();
+      
+      if (adminCount === 0) {
+        console.log('🔧 No admin users found. Creating default admin user...');
+        
+        const defaultEmail = 'simon.price@simonprice-pt.co.uk';
+        const defaultPassword = 'Qwerty1234!!!';
+        const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+        
+        const defaultAdmin = {
+          email: defaultEmail,
+          password: hashedPassword,
+          name: 'Simon Price',
+          role: 'admin',
+          created_at: new Date(),
+          last_login: null
+        };
+        
+        await adminUsersCollection.insertOne(defaultAdmin);
+        console.log('✅ Default admin user created successfully');
+        console.log(`   📧 Email: ${defaultEmail}`);
+        console.log(`   🔑 Password: ${defaultPassword}`);
+        console.log('   ⚠️  Please change the password after first login!');
+      } else {
+        console.log(`ℹ️  Found ${adminCount} admin user(s) in database`);
+      }
+    } catch (err) {
+      console.error('❌ Error checking/creating default admin:', err.message);
+    }
   })
   .catch(err => {
     console.error('❌ MongoDB connection error:', err.message);

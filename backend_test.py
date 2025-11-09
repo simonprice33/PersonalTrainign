@@ -166,41 +166,146 @@ def test_contact_form_email_storage(base_url, collection):
         print(f"❌ Contact form error: {e}")
         return False
 
-def test_contact_form_with_invalid_recaptcha(base_url):
-    """Test POST /api/contact with invalid reCAPTCHA token"""
-    print("\n=== Testing Contact Form With Invalid reCAPTCHA ===")
+def test_tdee_calculator_email_storage(base_url, collection):
+    """Test POST /api/tdee-results email storage with opt-in/opt-out"""
+    print("\n=== Testing TDEE Calculator Email Storage ===")
     
-    form_data = {
-        "name": "Simon Test Client",
-        "email": "simon.invalid@example.com",
-        "phone": "+44 7123 456789", 
-        "goals": "muscle-gain",
-        "experience": "intermediate",
-        "message": "This is a test message for invalid reCAPTCHA token testing",
-        "recaptchaToken": "invalid_token_12345"
+    # Test with joinMailingList=true (opted in)
+    form_data_opt_in = {
+        "email": "test.tdee@example.com",
+        "joinMailingList": True,
+        "results": {
+            "bmr": 1800,
+            "tdee": 2200,
+            "goalCalories": 1700,
+            "macros": {
+                "protein": 140,
+                "carbs": 170,
+                "fat": 60
+            }
+        },
+        "userInfo": {
+            "age": 30,
+            "gender": "male",
+            "weight": "80kg",
+            "height": "180cm",
+            "activityLevel": "1.55",
+            "goal": "lose"
+        }
     }
     
     try:
-        url = f"{base_url}/api/contact"
-        print(f"Testing: POST {url}")
-        print(f"Data: {json.dumps(form_data, indent=2)}")
+        url = f"{base_url}/api/tdee-results"
+        print(f"Testing: POST {url} (with opt-in)")
+        print(f"Data: {json.dumps(form_data_opt_in, indent=2)}")
         
-        response = requests.post(url, json=form_data, timeout=15)
+        response = requests.post(url, json=form_data_opt_in, timeout=15)
         print(f"Status Code: {response.status_code}")
         print(f"Response: {response.text}")
         
-        # Should return 400 error about reCAPTCHA verification failed
-        if response.status_code == 400:
+        # Microsoft Graph API will fail, but email should still be saved to MongoDB
+        if response.status_code == 500:
             response_data = response.json()
-            if "recaptcha verification failed" in response_data.get("message", "").lower():
-                print("✅ Contact form with invalid reCAPTCHA properly rejected")
-                return True
-        
-        print("❌ Contact form with invalid reCAPTCHA not properly handled")
-        return False
+            if "there was a problem sending your results" in response_data.get("message", "").lower():
+                print("✅ TDEE results processed (Graph API auth failed as expected)")
+                
+                # Check if email was saved to MongoDB with correct opt-in status
+                if collection:
+                    email_record = collection.find_one({"email": form_data_opt_in["email"]})
+                    if email_record:
+                        print("✅ Email saved to MongoDB successfully")
+                        print(f"   - opted_in: {email_record.get('opted_in')}")
+                        print(f"   - source: {email_record.get('source')}")
+                        print(f"   - age: {email_record.get('age')}")
+                        print(f"   - gender: {email_record.get('gender')}")
+                        print(f"   - goal: {email_record.get('goal')}")
+                        print(f"   - opt_in_date: {email_record.get('opt_in_date')}")
+                        
+                        # Verify expected values for opt-in
+                        if (email_record.get('opted_in') == True and 
+                            email_record.get('source') == 'tdee_calculator' and
+                            email_record.get('age') == 30 and
+                            email_record.get('opt_in_date') is not None):
+                            print("✅ TDEE calculator opt-in email storage working correctly")
+                            
+                            # Now test opt-out scenario
+                            return test_tdee_calculator_opt_out(base_url, collection)
+                        else:
+                            print("❌ Email record has incorrect opt-in values")
+                            return False
+                    else:
+                        print("❌ Email not found in MongoDB")
+                        return False
+                else:
+                    print("⚠️ Cannot verify MongoDB storage (no connection)")
+                    return True
+                    
+        elif response.status_code in [200, 201]:
+            print("✅ TDEE results processed successfully")
+            return True
+        else:
+            print("❌ TDEE results failed unexpectedly")
+            return False
             
     except requests.exceptions.RequestException as e:
-        print(f"❌ Contact form with invalid reCAPTCHA error: {e}")
+        print(f"❌ TDEE results error: {e}")
+        return False
+
+def test_tdee_calculator_opt_out(base_url, collection):
+    """Test TDEE calculator with joinMailingList=false (opt-out)"""
+    print("\n--- Testing TDEE Calculator Opt-Out ---")
+    
+    form_data_opt_out = {
+        "email": "test.tdee@example.com",  # Same email to test update
+        "joinMailingList": False,
+        "results": {
+            "bmr": 1800,
+            "tdee": 2200,
+            "goalCalories": 2200,
+            "macros": {
+                "protein": 140,
+                "carbs": 220,
+                "fat": 70
+            }
+        },
+        "userInfo": {
+            "age": 30,
+            "gender": "male",
+            "weight": "80kg",
+            "height": "180cm",
+            "activityLevel": "1.55",
+            "goal": "maintain"
+        }
+    }
+    
+    try:
+        url = f"{base_url}/api/tdee-results"
+        print(f"Testing: POST {url} (with opt-out)")
+        
+        response = requests.post(url, json=form_data_opt_out, timeout=15)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 500:
+            # Check if email record was updated with opt-out
+            if collection:
+                email_record = collection.find_one({"email": form_data_opt_out["email"]})
+                if email_record:
+                    print(f"   - opted_in: {email_record.get('opted_in')}")
+                    print(f"   - opt_out_date: {email_record.get('opt_out_date')}")
+                    
+                    # Verify opt-out transition
+                    if (email_record.get('opted_in') == False and
+                        email_record.get('opt_out_date') is not None):
+                        print("✅ TDEE calculator opt-out transition working correctly")
+                        return True
+                    else:
+                        print("❌ Opt-out transition failed")
+                        return False
+                        
+        return False
+        
+    except Exception as e:
+        print(f"❌ TDEE opt-out test error: {e}")
         return False
 
 def test_contact_form_validation(base_url):

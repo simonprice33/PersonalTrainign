@@ -569,9 +569,9 @@ def test_existing_endpoints(base_url):
         print(f"❌ Status POST endpoint error: {e}")
 
 def main():
-    print("=" * 60)
-    print("Backend API Testing - Simon Price PT Website")
-    print("=" * 60)
+    print("=" * 80)
+    print("MongoDB Email Storage Testing - Simon Price PT Website")
+    print("=" * 80)
     
     # Get backend URL
     backend_url = get_backend_url()
@@ -581,42 +581,71 @@ def main():
     
     print(f"Backend URL: {backend_url}")
     
+    # Get MongoDB connection
+    mongo_client, mongo_db, email_collection = get_mongo_connection()
+    
+    # Clean up any existing test emails
+    cleanup_test_emails(email_collection)
+    
     # Test results tracking
     results = {
+        "mongodb_connection": False,
         "health_check": False,
-        "contact_without_recaptcha": False, 
-        "contact_invalid_recaptcha": False,
-        "form_validation": False
+        "contact_form_storage": False,
+        "tdee_calculator_storage": False,
+        "client_contact_storage": False,
+        "duplicate_handling": False,
+        "cors_configuration": False
     }
     
-    # Run tests for expected endpoints (from review request)
+    # Run MongoDB email storage tests
+    results["mongodb_connection"] = test_mongodb_connection(email_collection)
     results["health_check"] = test_health_endpoint(backend_url)
-    results["contact_without_recaptcha"] = test_contact_form_without_recaptcha(backend_url)
-    results["contact_invalid_recaptcha"] = test_contact_form_with_invalid_recaptcha(backend_url)
-    results["form_validation"] = test_contact_form_validation(backend_url)
+    results["contact_form_storage"] = test_contact_form_email_storage(backend_url, email_collection)
+    results["tdee_calculator_storage"] = test_tdee_calculator_email_storage(backend_url, email_collection)
+    results["client_contact_storage"] = test_client_contact_form_email_storage(backend_url, email_collection)
+    results["duplicate_handling"] = test_duplicate_email_handling(backend_url, email_collection)
+    results["cors_configuration"] = test_cors_configuration(backend_url)
+    
+    # Clean up test emails after testing
+    cleanup_test_emails(email_collection)
+    
+    # Close MongoDB connection
+    if mongo_client:
+        mongo_client.close()
     
     # Summary
-    print("\n" + "=" * 60)
-    print("TEST SUMMARY")
-    print("=" * 60)
+    print("\n" + "=" * 80)
+    print("MONGODB EMAIL STORAGE TEST SUMMARY")
+    print("=" * 80)
     
-    print(f"Health Check (/api/health): {'✅ PASS' if results['health_check'] else '❌ FAIL'}")
-    print(f"Contact Form (no reCAPTCHA): {'✅ PASS' if results['contact_without_recaptcha'] else '❌ FAIL'}")
-    print(f"Contact Form (invalid reCAPTCHA): {'✅ PASS' if results['contact_invalid_recaptcha'] else '❌ FAIL'}")
-    print(f"Form Validation: {'✅ PASS' if results['form_validation'] else '❌ FAIL'}")
+    print(f"MongoDB Connection & Index: {'✅ PASS' if results['mongodb_connection'] else '❌ FAIL'}")
+    print(f"Health Check Endpoint: {'✅ PASS' if results['health_check'] else '❌ FAIL'}")
+    print(f"Contact Form Email Storage: {'✅ PASS' if results['contact_form_storage'] else '❌ FAIL'}")
+    print(f"TDEE Calculator Email Storage: {'✅ PASS' if results['tdee_calculator_storage'] else '❌ FAIL'}")
+    print(f"Client Contact Email Storage: {'✅ PASS' if results['client_contact_storage'] else '❌ FAIL'}")
+    print(f"Duplicate Email Handling: {'✅ PASS' if results['duplicate_handling'] else '❌ FAIL'}")
+    print(f"CORS Configuration: {'✅ PASS' if results['cors_configuration'] else '❌ FAIL'}")
     
     # Overall assessment
-    expected_tests_passed = sum([results["health_check"], results["contact_without_recaptcha"], results["contact_invalid_recaptcha"], results["form_validation"]])
+    total_tests = len(results)
+    passed_tests = sum(results.values())
     
-    if expected_tests_passed == 0:
-        print("\n❌ CRITICAL: None of the expected endpoints are implemented")
-        print("The backend appears to be missing the contact form and reCAPTCHA functionality")
-    elif expected_tests_passed < 4:
-        print(f"\n⚠️  WARNING: Only {expected_tests_passed}/4 expected tests passed")
+    print(f"\n📊 OVERALL RESULTS: {passed_tests}/{total_tests} tests passed")
+    
+    if passed_tests == total_tests:
+        print("🎉 ALL TESTS PASSED - MongoDB email storage implementation working correctly!")
+    elif passed_tests >= total_tests * 0.8:
+        print("⚠️ MOSTLY WORKING - Minor issues detected")
+    elif passed_tests >= total_tests * 0.5:
+        print("⚠️ PARTIAL SUCCESS - Several issues need attention")
     else:
-        print("\n✅ All expected functionality working correctly")
+        print("❌ CRITICAL ISSUES - Major problems with MongoDB email storage")
     
-    print(f"\nTimestamp: {datetime.now().isoformat()}")
+    print(f"\n🕒 Test completed at: {datetime.now().isoformat()}")
+    
+    # Return results for external processing
+    return results
 
 if __name__ == "__main__":
     main()

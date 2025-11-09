@@ -595,7 +595,7 @@ def test_admin_setup_endpoint(base_url, mongo_db):
     
     try:
         # First, clean up any existing admin users for clean test
-        if mongo_db:
+        if mongo_db is not None:
             admin_collection = mongo_db["admin_users"]
             admin_collection.delete_many({})  # Clear all admin users for clean test
             print("🧹 Cleared existing admin users for clean test")

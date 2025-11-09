@@ -734,6 +734,495 @@ app.post('/api/tdee-results', [
   }
 });
 
+// ============================================================================
+// ADMIN AUTHENTICATION & MANAGEMENT ENDPOINTS
+// ============================================================================
+
+// Admin Setup Endpoint - Creates default admin user (one-time use)
+app.post('/api/admin/setup', async (req, res) => {
+  try {
+    if (!adminUsersCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    // Check if any admin users exist
+    const existingAdmin = await adminUsersCollection.findOne({});
+    if (existingAdmin) {
+      return res.status(400).json({
+        success: false,
+        message: 'Admin user already exists. Use login instead.'
+      });
+    }
+
+    // Create default admin user
+    const defaultEmail = 'simon.price@simonprice-pt.co.uk';
+    const defaultPassword = 'Qwerty1234!!!';
+    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+
+    const adminUser = {
+      email: defaultEmail,
+      password: hashedPassword,
+      name: 'Simon Price',
+      role: 'admin',
+      created_at: new Date(),
+      last_login: null
+    };
+
+    await adminUsersCollection.insertOne(adminUser);
+
+    console.log(`✅ Default admin user created: ${defaultEmail}`);
+
+    res.status(201).json({
+      success: true,
+      message: 'Default admin user created successfully',
+      email: defaultEmail
+    });
+
+  } catch (error) {
+    console.error('❌ Admin setup error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error creating admin user'
+    });
+  }
+});
+
+// Admin Login
+app.post('/api/admin/login', [
+  body('email').isEmail().normalizeEmail(),
+  body('password').notEmpty()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid credentials',
+        errors: errors.array()
+      });
+    }
+
+    if (!adminUsersCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    const { email, password } = req.body;
+
+    // Find admin user
+    const admin = await adminUsersCollection.findOne({ email });
+    if (!admin) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
+    }
+
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, admin.password);
+    if (!isValidPassword) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
+    }
+
+    // Update last login
+    await adminUsersCollection.updateOne(
+      { _id: admin._id },
+      { $set: { last_login: new Date() } }
+    );
+
+    // Generate tokens
+    const accessToken = generateAccessToken(admin);
+    const refreshToken = generateRefreshToken(admin);
+
+    console.log(`✅ Admin login successful: ${email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      accessToken,
+      refreshToken,
+      user: {
+        email: admin.email,
+        name: admin.name,
+        role: admin.role
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Admin login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Login failed'
+    });
+  }
+});
+
+// Refresh Access Token
+app.post('/api/admin/refresh', async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: 'Refresh token required'
+      });
+    }
+
+    jwt.verify(refreshToken, JWT_SECRET, async (err, user) => {
+      if (err) {
+        return res.status(403).json({
+          success: false,
+          message: 'Invalid or expired refresh token'
+        });
+      }
+
+      // Generate new access token
+      const admin = await adminUsersCollection.findOne({ email: user.email });
+      if (!admin) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      const accessToken = generateAccessToken(admin);
+
+      res.status(200).json({
+        success: true,
+        accessToken
+      });
+    });
+
+  } catch (error) {
+    console.error('❌ Token refresh error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Token refresh failed'
+    });
+  }
+});
+
+// Change Password (requires authentication)
+app.post('/api/admin/change-password', authenticateToken, [
+  body('currentPassword').notEmpty(),
+  body('newPassword').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input',
+        errors: errors.array()
+      });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+    const admin = await adminUsersCollection.findOne({ email: req.user.email });
+
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Verify current password
+    const isValidPassword = await bcrypt.compare(currentPassword, admin.password);
+    if (!isValidPassword) {
+      return res.status(401).json({
+        success: false,
+        message: 'Current password is incorrect'
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    await adminUsersCollection.updateOne(
+      { _id: admin._id },
+      { $set: { password: hashedPassword, updated_at: new Date() } }
+    );
+
+    console.log(`✅ Password changed for: ${req.user.email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Password changed successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Change password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to change password'
+    });
+  }
+});
+
+// Get All Admin Users (protected)
+app.get('/api/admin/users', authenticateToken, async (req, res) => {
+  try {
+    if (!adminUsersCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    const users = await adminUsersCollection.find({}).project({ password: 0 }).toArray();
+
+    res.status(200).json({
+      success: true,
+      users
+    });
+
+  } catch (error) {
+    console.error('❌ Get users error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch users'
+    });
+  }
+});
+
+// Create New Admin User (protected)
+app.post('/api/admin/users', authenticateToken, [
+  body('email').isEmail().normalizeEmail(),
+  body('password').isLength({ min: 8 }),
+  body('name').notEmpty()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input',
+        errors: errors.array()
+      });
+    }
+
+    const { email, password, name } = req.body;
+
+    // Check if user already exists
+    const existingUser = await adminUsersCollection.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'User with this email already exists'
+      });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = {
+      email,
+      password: hashedPassword,
+      name,
+      role: 'admin',
+      created_at: new Date(),
+      created_by: req.user.email,
+      last_login: null
+    };
+
+    const result = await adminUsersCollection.insertOne(newUser);
+
+    console.log(`✅ New admin user created: ${email} by ${req.user.email}`);
+
+    res.status(201).json({
+      success: true,
+      message: 'User created successfully',
+      user: {
+        _id: result.insertedId,
+        email,
+        name,
+        role: 'admin'
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Create user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create user'
+    });
+  }
+});
+
+// Reset User Password (protected, admin can reset another user's password)
+app.post('/api/admin/users/:id/reset-password', authenticateToken, [
+  body('newPassword').isLength({ min: 8 })
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 8 characters',
+        errors: errors.array()
+      });
+    }
+
+    const { id } = req.params;
+    const { newPassword } = req.body;
+    const { ObjectId } = require('mongodb');
+
+    const user = await adminUsersCollection.findOne({ _id: new ObjectId(id) });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await adminUsersCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { password: hashedPassword, updated_at: new Date(), updated_by: req.user.email } }
+    );
+
+    console.log(`✅ Password reset for ${user.email} by ${req.user.email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Reset password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to reset password'
+    });
+  }
+});
+
+// Delete Admin User (protected)
+app.delete('/api/admin/users/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { ObjectId } = require('mongodb');
+
+    // Prevent deleting self
+    const userToDelete = await adminUsersCollection.findOne({ _id: new ObjectId(id) });
+    if (!userToDelete) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    if (userToDelete.email === req.user.email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot delete your own account'
+      });
+    }
+
+    await adminUsersCollection.deleteOne({ _id: new ObjectId(id) });
+
+    console.log(`✅ User ${userToDelete.email} deleted by ${req.user.email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'User deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Delete user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete user'
+    });
+  }
+});
+
+// Get All Emails (protected)
+app.get('/api/admin/emails', authenticateToken, async (req, res) => {
+  try {
+    if (!emailCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    const { source, opted_in } = req.query;
+    const filter = {};
+
+    if (source) {
+      filter.source = source;
+    }
+
+    if (opted_in !== undefined) {
+      filter.opted_in = opted_in === 'true';
+    }
+
+    const emails = await emailCollection.find(filter).sort({ last_updated: -1 }).toArray();
+
+    res.status(200).json({
+      success: true,
+      count: emails.length,
+      emails
+    });
+
+  } catch (error) {
+    console.error('❌ Get emails error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch emails'
+    });
+  }
+});
+
+// Export Emails to CSV (protected)
+app.get('/api/admin/emails/export', authenticateToken, async (req, res) => {
+  try {
+    if (!emailCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    const emails = await emailCollection.find({}).sort({ last_updated: -1 }).toArray();
+
+    // Convert to CSV
+    const csvHeader = 'Email,Opted In,Source,Name,Phone,First Collected,Last Updated\n';
+    const csvRows = emails.map(e => {
+      return `"${e.email}","${e.opted_in}","${e.source}","${e.name || ''}","${e.phone || ''}","${e.first_collected}","${e.last_updated}"`;
+    }).join('\n');
+
+    const csv = csvHeader + csvRows;
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=emails-export.csv');
+    res.status(200).send(csv);
+
+    console.log(`✅ Email export by ${req.user.email}`);
+
+  } catch (error) {
+    console.error('❌ Export emails error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to export emails'
+    });
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({

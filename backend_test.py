@@ -129,7 +129,7 @@ def test_contact_form_email_storage(base_url, collection):
                 print("✅ Contact form processed (Graph API auth failed as expected)")
                 
                 # Check if email was saved to MongoDB
-                if collection:
+                if collection is not None:
                     email_record = collection.find_one({"email": form_data["email"]})
                     if email_record:
                         print("✅ Email saved to MongoDB successfully")

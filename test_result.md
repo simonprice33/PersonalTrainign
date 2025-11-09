@@ -246,9 +246,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Contact Form reCAPTCHA Integration"
-    - "Health Check Endpoint"
-    - "Contact Form Validation"
+    - "MongoDB Connection Setup"
+    - "Email Storage Helper Function"
+    - "Contact Form Email Storage"
+    - "TDEE Calculator Email Storage"
+    - "Client Contact Form Email Storage"
+    - "CORS Configuration Fix"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -256,3 +259,5 @@ test_plan:
 agent_communication:
     - agent: "testing"
       message: "Comprehensive backend testing completed for Simon Price PT website. All core reCAPTCHA functionality working correctly. Health check, form validation, and reCAPTCHA verification all passing. Microsoft Graph API authentication failing as expected due to test environment configuration."
+    - agent: "main"
+      message: "Implemented MongoDB email storage system for all three forms. Key changes: 1) Fixed CORS_ORIGINS in .env to use explicit origins instead of wildcard. 2) Installed mongodb@7.0.0 package. 3) Added MongoDB connection with mailing_list collection and unique email index. 4) Created saveEmail() helper function that handles duplicate detection and opt-in/opt-out tracking. 5) Updated all three endpoints (/api/contact, /api/tdee-results, /api/client-contact) to save emails after successful processing. 6) Changed DB_NAME from 'test_database' to 'simonprice_pt_db'. MongoDB connection successful with logs showing '✅ Connected to MongoDB' and '✅ Email index created'. Need testing to verify email storage works correctly for all three forms."

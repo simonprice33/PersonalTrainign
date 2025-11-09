@@ -22,6 +22,35 @@ def get_backend_url():
         print(f"Error reading frontend .env: {e}")
         return None
 
+# MongoDB connection for testing
+def get_mongo_connection():
+    try:
+        client = pymongo.MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000)
+        db = client["simonprice_pt_db"]
+        collection = db["mailing_list"]
+        # Test connection
+        client.server_info()
+        return client, db, collection
+    except Exception as e:
+        print(f"❌ MongoDB connection error: {e}")
+        return None, None, None
+
+def cleanup_test_emails(collection):
+    """Clean up test emails from database"""
+    if collection:
+        try:
+            test_emails = [
+                "test.contact@example.com",
+                "test.tdee@example.com", 
+                "test.client@example.com",
+                "duplicate.test@example.com"
+            ]
+            for email in test_emails:
+                collection.delete_many({"email": email})
+            print("🧹 Cleaned up test emails from database")
+        except Exception as e:
+            print(f"⚠️ Error cleaning up test emails: {e}")
+
 def test_health_endpoint(base_url):
     """Test GET /api/health endpoint"""
     print("\n=== Testing Health Check Endpoint ===")

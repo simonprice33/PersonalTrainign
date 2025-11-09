@@ -9,6 +9,13 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import ClientContactForm from "./components/ClientContactForm";
 
+// Admin Components
+import AdminLogin from "./components/admin/AdminLogin";
+import AdminDashboard from "./components/admin/AdminDashboard";
+import EmailManagement from "./components/admin/EmailManagement";
+import UserManagement from "./components/admin/UserManagement";
+import ChangePassword from "./components/admin/ChangePassword";
+
 function App() {
   return (
     <Router>
@@ -16,6 +23,13 @@ function App() {
         <Routes>
           {/* Client Contact Form Route - No navigation */}
           <Route path="/client-contact-request" element={<ClientContactForm />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/emails" element={<EmailManagement />} />
+          <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/admin/change-password" element={<ChangePassword />} />
           
           {/* Main Website Route */}
           <Route path="/" element={

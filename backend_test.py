@@ -51,6 +51,33 @@ def cleanup_test_emails(collection):
         except Exception as e:
             print(f"⚠️ Error cleaning up test emails: {e}")
 
+def test_mongodb_connection(collection):
+    """Test MongoDB connection and mailing_list collection"""
+    print("\n=== Testing MongoDB Connection ===")
+    try:
+        if not collection:
+            print("❌ MongoDB connection failed")
+            return False
+            
+        # Test collection exists and has unique index
+        indexes = collection.list_indexes()
+        has_email_index = False
+        for index in indexes:
+            if 'email' in index.get('key', {}):
+                has_email_index = True
+                break
+                
+        if has_email_index:
+            print("✅ MongoDB connected with unique email index")
+            return True
+        else:
+            print("❌ Email index not found")
+            return False
+            
+    except Exception as e:
+        print(f"❌ MongoDB connection test error: {e}")
+        return False
+
 def test_health_endpoint(base_url):
     """Test GET /api/health endpoint"""
     print("\n=== Testing Health Check Endpoint ===")

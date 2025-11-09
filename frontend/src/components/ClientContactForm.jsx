@@ -139,7 +139,7 @@ const ClientContactForm = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <img 
-            src="https://customer-assets.emergentagent.com/job_simonfitcoach/artifacts/0hdz4muu_simon_price_logo.png"
+            src="https://customer-assets.emergentagent.com/job_personal-trainer-24/artifacts/g2n7e7ey_Logo%20800x770.png"
             alt="Simon Price PT"
             className="h-16 mx-auto mb-6"
           />

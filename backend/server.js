@@ -491,9 +491,20 @@ app.post('/api/client-contact', [
         saveToSentItems: true
       });
 
+    // Save email to database
+    // Note: joinMailingList is inverted logic (opt-out checkbox)
+    // If checkbox is checked, user does NOT want to join (opted_in = false)
+    // If checkbox is unchecked, user wants to join (opted_in = true)
+    const optedIn = !joinMailingList;
+    await saveEmail(email, optedIn, 'client_inquiry', {
+      name,
+      phone,
+      best_time_to_call: bestTimeToCall
+    });
+
     // Log successful submission
     console.log(`✅ Client contact request from ${name} (${email}) sent to ${process.env.EMAIL_TO} at ${new Date().toISOString()}`);
-    console.log(`   Best time to call: ${bestTimeToCall}, Mailing list: ${joinMailingList ? 'Yes' : 'No'}`);
+    console.log(`   Best time to call: ${bestTimeToCall}, Mailing list: ${joinMailingList ? 'No' : 'Yes'}`);
 
     res.status(200).json({
       success: true,

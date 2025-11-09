@@ -240,6 +240,151 @@ backend:
           agent: "main"
           comment: "Updated /api/client-contact endpoint to save email to MongoDB. Handles inverted opt-out logic: if joinMailingList checkbox is checked (user does NOT want to join), opted_in=false. Stores name, phone, and best_time_to_call as additional data. Source tagged as 'client_inquiry'."
 
+  - task: "JWT Authentication System"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Implemented JWT authentication with bcrypt password hashing. Access tokens expire in 20 minutes, refresh tokens in 7 days. Added JWT_SECRET, JWT_ACCESS_EXPIRY, JWT_REFRESH_EXPIRY to .env. Created generateAccessToken(), generateRefreshToken(), and authenticateToken() middleware functions."
+
+  - task: "Admin Setup Endpoint"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created POST /api/admin/setup endpoint for one-time admin user creation. Default credentials: email=simon.price@simonprice-pt.co.uk, password=Qwerty1234!!!. Checks if admin already exists before creating. Passwords hashed with bcrypt (10 rounds)."
+
+  - task: "Admin Login Endpoint"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created POST /api/admin/login with email/password validation. Verifies credentials with bcrypt.compare(). Returns access token, refresh token, and user info. Updates last_login timestamp. Returns 401 for invalid credentials."
+
+  - task: "Token Refresh Endpoint"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created POST /api/admin/refresh to renew access tokens using valid refresh token. Verifies refresh token, checks user exists, generates new access token. Returns 403 for invalid/expired tokens."
+
+  - task: "Change Password Endpoint"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created POST /api/admin/change-password (JWT protected). Validates current password, requires new password min 8 chars. Hashes new password with bcrypt before saving. Updates updated_at timestamp."
+
+  - task: "User Management Endpoints"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created JWT-protected endpoints: GET /api/admin/users (list all admins), POST /api/admin/users (create new admin), POST /api/admin/users/:id/reset-password (reset user password), DELETE /api/admin/users/:id (delete user, prevents self-deletion). All passwords hashed with bcrypt."
+
+  - task: "Email Viewing Endpoints"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created JWT-protected endpoints: GET /api/admin/emails (list emails with optional filters for source/opt-in status), GET /api/admin/emails/export (export all emails to CSV format with headers). Sorted by last_updated descending."
+
+frontend:
+  - task: "Admin Login Page"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/admin/AdminLogin.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created admin login page at /admin route. Form with email/password inputs. Calls POST /api/admin/login, stores access/refresh tokens in localStorage. Redirects to /admin/dashboard on success. Dark theme with cyan accents."
+
+  - task: "Admin Dashboard"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/admin/AdminDashboard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created dashboard at /admin/dashboard with 3 cards: Email Management (links to /admin/emails), User Management (links to /admin/users), Change Password (links to /admin/change-password). Checks JWT token on mount, redirects to login if missing. Logout button clears tokens."
+
+  - task: "Email Management Page"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/admin/EmailManagement.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created email management interface at /admin/emails. Fetches emails from GET /api/admin/emails with JWT auth. Table displays email, name, source (with colored badges), opt-in status (with icons), phone, last updated. Filters for source and opt-in status. Export to CSV button. Dark theme matching dashboard."
+
+  - task: "User Management Page"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/admin/UserManagement.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created user management interface at /admin/users. Lists all admin users with name, email, role, last login. Create User button opens modal for adding new admin. Each user row has Reset Password and Delete buttons. Modals for creating users and resetting passwords. Prevents self-deletion."
+
+  - task: "Change Password Page"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/admin/ChangePassword.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created change password page at /admin/change-password. Form with current password, new password, confirm password fields. Validates passwords match and min 8 chars. Calls POST /api/admin/change-password with JWT auth. Shows success/error messages. Password requirements displayed below form."
+
 frontend:
   - task: "Frontend Testing"
     implemented: "NA"

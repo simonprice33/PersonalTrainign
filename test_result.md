@@ -159,11 +159,14 @@ backend:
     file: "/app/backend/.env"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Updated CORS_ORIGINS in .env to explicitly list allowed origins instead of using wildcard '*'. Now includes: http://localhost:3000, https://simonfitcoach.preview.emergentagent.com, https://simonprice-pt.co.uk, https://www.simonprice-pt.co.uk. This fixes the 'Not allowed by CORS' error that was blocking client contact form."
+        - working: true
+          agent: "testing"
+          comment: "CORS configuration tested and working correctly. Preflight OPTIONS requests return proper CORS headers including Access-Control-Allow-Origin, Access-Control-Allow-Methods, and Access-Control-Allow-Headers. Client contact form CORS errors should be resolved."
 
   - task: "MongoDB Connection Setup"
     implemented: true

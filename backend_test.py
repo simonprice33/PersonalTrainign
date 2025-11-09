@@ -983,7 +983,7 @@ def test_user_management_endpoints(base_url, access_token, mongo_db):
                                         print("✅ User deletion successful")
                                         
                                         # Test self-deletion prevention (try to delete main admin)
-                                        if mongo_db:
+                                        if mongo_db is not None:
                                             main_admin = admin_collection.find_one({"email": "simon.price@simonprice-pt.co.uk"})
                                             if main_admin:
                                                 main_admin_id = str(main_admin['_id'])

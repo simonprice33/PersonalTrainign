@@ -210,7 +210,7 @@ def test_tdee_calculator_email_storage(base_url, collection):
                 print("✅ TDEE results processed (Graph API auth failed as expected)")
                 
                 # Check if email was saved to MongoDB with correct opt-in status
-                if collection:
+                if collection is not None:
                     email_record = collection.find_one({"email": form_data_opt_in["email"]})
                     if email_record:
                         print("✅ Email saved to MongoDB successfully")

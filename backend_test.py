@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Backend API Testing Script for Simon Price PT Website
-Tests MongoDB email storage implementation for all forms
+Tests admin authentication system and MongoDB email storage implementation
 """
 
 import requests
@@ -10,6 +10,8 @@ import sys
 from datetime import datetime
 import pymongo
 import os
+import jwt
+import time
 
 # Get backend URL from frontend .env
 def get_backend_url():

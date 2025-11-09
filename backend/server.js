@@ -20,7 +20,6 @@ let emailCollection = null;
 
 // Connect to MongoDB
 MongoClient.connect(mongoUrl, { 
-  useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000
 })
   .then(client => {

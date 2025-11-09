@@ -47,7 +47,11 @@ const ClientContactForm = () => {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/client-contact`, {
+      const url = `${process.env.REACT_APP_BACKEND_URL}/api/client-contact`;
+      console.log('Submitting to:', url);
+      console.log('Form data:', formData);
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

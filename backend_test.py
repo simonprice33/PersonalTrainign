@@ -1166,7 +1166,7 @@ def test_password_security(mongo_db):
     print("\n=== Testing Password Security ===")
     
     try:
-        if not mongo_db:
+        if mongo_db is None:
             print("⚠️ Cannot test password security without database connection")
             return True
         

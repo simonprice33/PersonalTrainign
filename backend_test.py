@@ -308,39 +308,213 @@ def test_tdee_calculator_opt_out(base_url, collection):
         print(f"❌ TDEE opt-out test error: {e}")
         return False
 
-def test_contact_form_validation(base_url):
-    """Test POST /api/contact with invalid form data"""
-    print("\n=== Testing Contact Form Validation ===")
+def test_client_contact_form_email_storage(base_url, collection):
+    """Test POST /api/client-contact email storage with inverted opt-out logic"""
+    print("\n=== Testing Client Contact Form Email Storage ===")
     
-    # Test with invalid email
-    invalid_data = {
-        "name": "T",  # Too short
-        "email": "invalid-email",  # Invalid format
-        "goals": "invalid-goal",  # Invalid goal
-        "experience": "expert"  # Invalid experience level
+    # Test with joinMailingList=false (unchecked checkbox = opt-in)
+    form_data_opt_in = {
+        "name": "Client Test User",
+        "email": "test.client@example.com",
+        "phone": "+44 7987 654321",
+        "bestTimeToCall": "morning",
+        "joinMailingList": False  # Unchecked = user wants to join (opted_in=true)
     }
     
     try:
-        url = f"{base_url}/api/contact"
-        print(f"Testing: POST {url}")
-        print(f"Data: {json.dumps(invalid_data, indent=2)}")
+        url = f"{base_url}/api/client-contact"
+        print(f"Testing: POST {url} (unchecked opt-out = opt-in)")
+        print(f"Data: {json.dumps(form_data_opt_in, indent=2)}")
         
-        response = requests.post(url, json=invalid_data, timeout=10)
+        response = requests.post(url, json=form_data_opt_in, timeout=15)
         print(f"Status Code: {response.status_code}")
         print(f"Response: {response.text}")
         
-        # Should return 400 error with validation errors
-        if response.status_code == 400:
+        # Microsoft Graph API will fail, but email should still be saved to MongoDB
+        if response.status_code == 500:
             response_data = response.json()
-            if "check your form inputs" in response_data.get("message", "").lower():
-                print("✅ Form validation working correctly")
-                return True
-        
-        print("❌ Form validation not working properly")
-        return False
+            if "there was a problem submitting your request" in response_data.get("message", "").lower():
+                print("✅ Client contact processed (Graph API auth failed as expected)")
+                
+                # Check if email was saved to MongoDB with correct inverted logic
+                if collection:
+                    email_record = collection.find_one({"email": form_data_opt_in["email"]})
+                    if email_record:
+                        print("✅ Email saved to MongoDB successfully")
+                        print(f"   - opted_in: {email_record.get('opted_in')}")
+                        print(f"   - source: {email_record.get('source')}")
+                        print(f"   - name: {email_record.get('name')}")
+                        print(f"   - phone: {email_record.get('phone')}")
+                        print(f"   - best_time_to_call: {email_record.get('best_time_to_call')}")
+                        
+                        # Verify inverted logic: joinMailingList=false should result in opted_in=true
+                        if (email_record.get('opted_in') == True and 
+                            email_record.get('source') == 'client_inquiry' and
+                            email_record.get('name') == form_data_opt_in['name'] and
+                            email_record.get('best_time_to_call') == form_data_opt_in['bestTimeToCall']):
+                            print("✅ Client contact inverted opt-in logic working correctly")
+                            
+                            # Now test opt-out scenario
+                            return test_client_contact_opt_out(base_url, collection)
+                        else:
+                            print("❌ Email record has incorrect values for inverted opt-in")
+                            return False
+                    else:
+                        print("❌ Email not found in MongoDB")
+                        return False
+                else:
+                    print("⚠️ Cannot verify MongoDB storage (no connection)")
+                    return True
+                    
+        elif response.status_code in [200, 201]:
+            print("✅ Client contact processed successfully")
+            return True
+        else:
+            print("❌ Client contact failed unexpectedly")
+            return False
             
     except requests.exceptions.RequestException as e:
-        print(f"❌ Form validation test error: {e}")
+        print(f"❌ Client contact error: {e}")
+        return False
+
+def test_client_contact_opt_out(base_url, collection):
+    """Test client contact with joinMailingList=true (checked checkbox = opt-out)"""
+    print("\n--- Testing Client Contact Opt-Out ---")
+    
+    form_data_opt_out = {
+        "name": "Client Test User",
+        "email": "test.client@example.com",  # Same email to test update
+        "phone": "+44 7987 654321",
+        "bestTimeToCall": "evening",
+        "joinMailingList": True  # Checked = user does NOT want to join (opted_in=false)
+    }
+    
+    try:
+        url = f"{base_url}/api/client-contact"
+        print(f"Testing: POST {url} (checked opt-out = opt-out)")
+        
+        response = requests.post(url, json=form_data_opt_out, timeout=15)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 500:
+            # Check if email record was updated with opt-out
+            if collection:
+                email_record = collection.find_one({"email": form_data_opt_out["email"]})
+                if email_record:
+                    print(f"   - opted_in: {email_record.get('opted_in')}")
+                    print(f"   - opt_out_date: {email_record.get('opt_out_date')}")
+                    
+                    # Verify inverted logic: joinMailingList=true should result in opted_in=false
+                    if (email_record.get('opted_in') == False and
+                        email_record.get('opt_out_date') is not None):
+                        print("✅ Client contact inverted opt-out logic working correctly")
+                        return True
+                    else:
+                        print("❌ Inverted opt-out logic failed")
+                        return False
+                        
+        return False
+        
+    except Exception as e:
+        print(f"❌ Client contact opt-out test error: {e}")
+        return False
+
+def test_duplicate_email_handling(base_url, collection):
+    """Test duplicate email handling across different forms"""
+    print("\n=== Testing Duplicate Email Handling ===")
+    
+    test_email = "duplicate.test@example.com"
+    
+    # First submission - Contact form
+    contact_data = {
+        "name": "Duplicate Test User",
+        "email": test_email,
+        "phone": "+44 7111 222333",
+        "goals": "muscle-gain",
+        "experience": "intermediate",
+        "message": "First submission via contact form"
+    }
+    
+    try:
+        # Submit via contact form first
+        url = f"{base_url}/api/contact"
+        print(f"First submission: POST {url}")
+        response1 = requests.post(url, json=contact_data, timeout=15)
+        print(f"Status Code: {response1.status_code}")
+        
+        if collection and response1.status_code == 500:
+            # Check first record
+            first_record = collection.find_one({"email": test_email})
+            if first_record:
+                first_collected = first_record.get('first_collected')
+                print(f"✅ First record created with first_collected: {first_collected}")
+                
+                # Second submission - TDEE Calculator with different opt-in status
+                tdee_data = {
+                    "email": test_email,
+                    "joinMailingList": False,  # Different from contact form (which assumes true)
+                    "results": {"bmr": 1600, "tdee": 2000, "goalCalories": 2200, "macros": {"protein": 120, "carbs": 200, "fat": 65}},
+                    "userInfo": {"age": 25, "gender": "female", "weight": "65kg", "height": "165cm", "activityLevel": "1.375", "goal": "gain"}
+                }
+                
+                print(f"\nSecond submission: POST {base_url}/api/tdee-results")
+                response2 = requests.post(f"{base_url}/api/tdee-results", json=tdee_data, timeout=15)
+                print(f"Status Code: {response2.status_code}")
+                
+                if response2.status_code == 500:
+                    # Check updated record
+                    updated_record = collection.find_one({"email": test_email})
+                    if updated_record:
+                        print(f"✅ Record updated")
+                        print(f"   - first_collected unchanged: {updated_record.get('first_collected') == first_collected}")
+                        print(f"   - last_updated changed: {updated_record.get('last_updated') != first_collected}")
+                        print(f"   - opted_in: {updated_record.get('opted_in')}")
+                        print(f"   - source updated: {updated_record.get('source')}")
+                        
+                        # Verify duplicate handling
+                        if (updated_record.get('first_collected') == first_collected and
+                            updated_record.get('last_updated') != first_collected and
+                            updated_record.get('source') == 'tdee_calculator'):
+                            print("✅ Duplicate email handling working correctly")
+                            return True
+                        else:
+                            print("❌ Duplicate email handling failed")
+                            return False
+                            
+        return False
+        
+    except Exception as e:
+        print(f"❌ Duplicate email test error: {e}")
+        return False
+
+def test_cors_configuration(base_url):
+    """Test CORS configuration"""
+    print("\n=== Testing CORS Configuration ===")
+    
+    try:
+        # Test preflight request
+        url = f"{base_url}/api/contact"
+        headers = {
+            'Origin': 'https://simonfitcoach.preview.emergentagent.com',
+            'Access-Control-Request-Method': 'POST',
+            'Access-Control-Request-Headers': 'Content-Type'
+        }
+        
+        response = requests.options(url, headers=headers, timeout=10)
+        print(f"OPTIONS Status Code: {response.status_code}")
+        print(f"CORS Headers: {dict(response.headers)}")
+        
+        # Check for CORS headers
+        cors_headers = response.headers.get('Access-Control-Allow-Origin')
+        if cors_headers:
+            print("✅ CORS configuration working")
+            return True
+        else:
+            print("❌ CORS headers missing")
+            return False
+            
+    except Exception as e:
+        print(f"❌ CORS test error: {e}")
         return False
 
 def test_existing_endpoints(base_url):

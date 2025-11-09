@@ -98,6 +98,51 @@ async function saveEmail(email, optedIn, source, additionalData = {}) {
   }
 }
 
+// JWT Helper Functions
+const JWT_SECRET = process.env.JWT_SECRET || 'change_this_secret_key_in_production';
+const JWT_ACCESS_EXPIRY = process.env.JWT_ACCESS_EXPIRY || '20m';
+const JWT_REFRESH_EXPIRY = process.env.JWT_REFRESH_EXPIRY || '7d';
+
+function generateAccessToken(user) {
+  return jwt.sign(
+    { id: user._id, email: user.email, role: 'admin' },
+    JWT_SECRET,
+    { expiresIn: JWT_ACCESS_EXPIRY }
+  );
+}
+
+function generateRefreshToken(user) {
+  return jwt.sign(
+    { id: user._id, email: user.email, role: 'admin' },
+    JWT_SECRET,
+    { expiresIn: JWT_REFRESH_EXPIRY }
+  );
+}
+
+// JWT Authentication Middleware
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: 'Access token required'
+    });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({
+        success: false,
+        message: 'Invalid or expired token'
+      });
+    }
+    req.user = user;
+    next();
+  });
+}
+
 // Security middleware
 app.use(helmet({
   crossOriginEmbedderPolicy: false

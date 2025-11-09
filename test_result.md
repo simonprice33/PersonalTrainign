@@ -185,15 +185,18 @@ backend:
 
   - task: "Email Storage Helper Function"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created saveEmail() helper function that handles email storage with duplicate detection. If email exists, updates opt-in/opt-out status and dates. If new, creates record with email, opted_in status, opt_in_date/opt_out_date, source (contact_form, tdee_calculator, client_inquiry), first_collected, last_updated, and additional data (name, phone, goals, etc.)."
+        - working: true
+          agent: "testing"
+          comment: "Email storage helper function tested and working correctly. Successfully handles new email creation with all required fields (email, opted_in, source, first_collected, last_updated, additional data). Duplicate detection working - updates existing records while preserving first_collected timestamp. Opt-in/opt-out transitions properly set opt_in_date and opt_out_date. Logs show '✅ New email saved' and '📝 Updated email record' messages."
 
   - task: "Contact Form Email Storage"
     implemented: true

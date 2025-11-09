@@ -964,7 +964,7 @@ def test_user_management_endpoints(base_url, access_token, mongo_db):
                                     print("✅ Password reset successful")
                                     
                                     # Verify new password is hashed
-                                    if mongo_db:
+                                    if mongo_db is not None:
                                         updated_user = admin_collection.find_one({"_id": db_user['_id']})
                                         if updated_user and updated_user.get('password') != "ResetPassword123!":
                                             print("✅ Reset password is properly hashed")

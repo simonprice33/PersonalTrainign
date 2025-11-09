@@ -200,15 +200,18 @@ backend:
 
   - task: "Contact Form Email Storage"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Updated /api/contact endpoint to save email to MongoDB after successful email send. Assumes opted_in=true for contact form submissions. Stores name, phone, goals, and experience as additional data. Source tagged as 'contact_form'."
+        - working: true
+          agent: "testing"
+          comment: "Contact form email storage tested and working correctly. Fixed critical bug where email storage happened after Microsoft Graph API call - moved saveEmail() before email sending so storage works even when Graph API fails. Verified: opted_in=true, source='contact_form', additional data (name, phone, goals, experience) stored correctly. Email saved with proper timestamps (first_collected, last_updated)."
 
   - task: "TDEE Calculator Email Storage"
     implemented: true

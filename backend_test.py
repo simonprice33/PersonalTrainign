@@ -1151,7 +1151,7 @@ def test_jwt_authentication_middleware(base_url):
         invalid_headers = {"Authorization": "Bearer invalid.jwt.token"}
         
         print(f"\nTesting with invalid token")
-        response = requests.get(protected_endpoints[0], headers=invalid_headers, timeout=10)
+        response = requests.post(protected_endpoints[0], json={}, headers=invalid_headers, timeout=10)
         print(f"Status Code: {response.status_code}")
         
         if response.status_code == 403:

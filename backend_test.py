@@ -570,9 +570,638 @@ def test_existing_endpoints(base_url):
     except Exception as e:
         print(f"❌ Status POST endpoint error: {e}")
 
+# ============================================================================
+# ADMIN AUTHENTICATION SYSTEM TESTS
+# ============================================================================
+
+def cleanup_test_admin_users(mongo_db):
+    """Clean up test admin users from database"""
+    if mongo_db is not None:
+        try:
+            admin_collection = mongo_db["admin_users"]
+            test_emails = [
+                "test.admin@example.com",
+                "new.admin@example.com"
+            ]
+            for email in test_emails:
+                admin_collection.delete_many({"email": email})
+            print("🧹 Cleaned up test admin users from database")
+        except Exception as e:
+            print(f"⚠️ Error cleaning up test admin users: {e}")
+
+def test_admin_setup_endpoint(base_url, mongo_db):
+    """Test POST /api/admin/setup - One-time admin creation"""
+    print("\n=== Testing Admin Setup Endpoint ===")
+    
+    try:
+        # First, clean up any existing admin users for clean test
+        if mongo_db:
+            admin_collection = mongo_db["admin_users"]
+            admin_collection.delete_many({})  # Clear all admin users for clean test
+            print("🧹 Cleared existing admin users for clean test")
+        
+        url = f"{base_url}/api/admin/setup"
+        print(f"Testing: POST {url}")
+        
+        # First call should create admin
+        response = requests.post(url, timeout=10)
+        print(f"Status Code: {response.status_code}")
+        print(f"Response: {response.text}")
+        
+        if response.status_code == 201:
+            response_data = response.json()
+            if (response_data.get('success') == True and 
+                response_data.get('email') == 'simon.price@simonprice-pt.co.uk'):
+                print("✅ Default admin user created successfully")
+                
+                # Verify admin user in database
+                if mongo_db:
+                    admin_user = admin_collection.find_one({"email": "simon.price@simonprice-pt.co.uk"})
+                    if admin_user:
+                        print("✅ Admin user found in database")
+                        print(f"   - Email: {admin_user.get('email')}")
+                        print(f"   - Name: {admin_user.get('name')}")
+                        print(f"   - Role: {admin_user.get('role')}")
+                        
+                        # Verify password is hashed (not plain text)
+                        if admin_user.get('password') != 'Qwerty1234!!!':
+                            print("✅ Password is properly hashed (not plain text)")
+                            
+                            # Test second call should return error
+                            response2 = requests.post(url, timeout=10)
+                            print(f"\nSecond call Status Code: {response2.status_code}")
+                            print(f"Second call Response: {response2.text}")
+                            
+                            if response2.status_code == 400:
+                                response2_data = response2.json()
+                                if "already exists" in response2_data.get('message', '').lower():
+                                    print("✅ Second setup call properly rejected")
+                                    return True
+                                else:
+                                    print("❌ Second setup call error message incorrect")
+                                    return False
+                            else:
+                                print("❌ Second setup call should return 400")
+                                return False
+                        else:
+                            print("❌ Password is not hashed (stored as plain text)")
+                            return False
+                    else:
+                        print("❌ Admin user not found in database")
+                        return False
+                else:
+                    print("⚠️ Cannot verify database storage (no connection)")
+                    return True
+            else:
+                print("❌ Setup response missing required fields")
+                return False
+        else:
+            print("❌ Admin setup failed")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Admin setup test error: {e}")
+        return False
+
+def test_admin_login_endpoint(base_url):
+    """Test POST /api/admin/login with correct and incorrect credentials"""
+    print("\n=== Testing Admin Login Endpoint ===")
+    
+    try:
+        url = f"{base_url}/api/admin/login"
+        print(f"Testing: POST {url}")
+        
+        # Test with correct credentials
+        correct_credentials = {
+            "email": "simon.price@simonprice-pt.co.uk",
+            "password": "Qwerty1234!!!"
+        }
+        
+        print(f"Testing with correct credentials: {correct_credentials['email']}")
+        response = requests.post(url, json=correct_credentials, timeout=10)
+        print(f"Status Code: {response.status_code}")
+        print(f"Response: {response.text}")
+        
+        if response.status_code == 200:
+            response_data = response.json()
+            if (response_data.get('success') == True and 
+                'accessToken' in response_data and 
+                'refreshToken' in response_data and
+                'user' in response_data):
+                
+                print("✅ Login successful with correct credentials")
+                
+                # Verify tokens are valid JWTs
+                access_token = response_data['accessToken']
+                refresh_token = response_data['refreshToken']
+                
+                try:
+                    # Decode without verification to check structure
+                    access_payload = jwt.decode(access_token, options={"verify_signature": False})
+                    refresh_payload = jwt.decode(refresh_token, options={"verify_signature": False})
+                    
+                    print("✅ Tokens are valid JWTs")
+                    print(f"   - Access token expires: {datetime.fromtimestamp(access_payload['exp'])}")
+                    print(f"   - Refresh token expires: {datetime.fromtimestamp(refresh_payload['exp'])}")
+                    
+                    # Test with wrong password
+                    wrong_password = {
+                        "email": "simon.price@simonprice-pt.co.uk",
+                        "password": "WrongPassword123"
+                    }
+                    
+                    print(f"\nTesting with wrong password")
+                    response2 = requests.post(url, json=wrong_password, timeout=10)
+                    print(f"Status Code: {response2.status_code}")
+                    
+                    if response2.status_code == 401:
+                        print("✅ Wrong password correctly rejected with 401")
+                        
+                        # Test with non-existent email
+                        wrong_email = {
+                            "email": "nonexistent@example.com",
+                            "password": "Qwerty1234!!!"
+                        }
+                        
+                        print(f"\nTesting with non-existent email")
+                        response3 = requests.post(url, json=wrong_email, timeout=10)
+                        print(f"Status Code: {response3.status_code}")
+                        
+                        if response3.status_code == 401:
+                            print("✅ Non-existent email correctly rejected with 401")
+                            return access_token, refresh_token  # Return tokens for further testing
+                        else:
+                            print("❌ Non-existent email should return 401")
+                            return False
+                    else:
+                        print("❌ Wrong password should return 401")
+                        return False
+                        
+                except jwt.InvalidTokenError:
+                    print("❌ Tokens are not valid JWTs")
+                    return False
+            else:
+                print("❌ Login response missing required fields")
+                return False
+        else:
+            print("❌ Login failed with correct credentials")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Admin login test error: {e}")
+        return False
+
+def test_token_refresh_endpoint(base_url, refresh_token):
+    """Test POST /api/admin/refresh with valid and invalid tokens"""
+    print("\n=== Testing Token Refresh Endpoint ===")
+    
+    try:
+        url = f"{base_url}/api/admin/refresh"
+        print(f"Testing: POST {url}")
+        
+        # Test with valid refresh token
+        refresh_data = {"refreshToken": refresh_token}
+        
+        print("Testing with valid refresh token")
+        response = requests.post(url, json=refresh_data, timeout=10)
+        print(f"Status Code: {response.status_code}")
+        print(f"Response: {response.text}")
+        
+        if response.status_code == 200:
+            response_data = response.json()
+            if (response_data.get('success') == True and 
+                'accessToken' in response_data):
+                
+                print("✅ Token refresh successful with valid token")
+                new_access_token = response_data['accessToken']
+                
+                # Verify new token is valid JWT
+                try:
+                    payload = jwt.decode(new_access_token, options={"verify_signature": False})
+                    print("✅ New access token is valid JWT")
+                    
+                    # Test with invalid refresh token
+                    invalid_refresh_data = {"refreshToken": "invalid.token.here"}
+                    
+                    print("\nTesting with invalid refresh token")
+                    response2 = requests.post(url, json=invalid_refresh_data, timeout=10)
+                    print(f"Status Code: {response2.status_code}")
+                    
+                    if response2.status_code == 403:
+                        print("✅ Invalid refresh token correctly rejected with 403")
+                        return new_access_token
+                    else:
+                        print("❌ Invalid refresh token should return 403")
+                        return False
+                        
+                except jwt.InvalidTokenError:
+                    print("❌ New access token is not valid JWT")
+                    return False
+            else:
+                print("❌ Refresh response missing accessToken")
+                return False
+        else:
+            print("❌ Token refresh failed with valid token")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Token refresh test error: {e}")
+        return False
+
+def test_change_password_endpoint(base_url, access_token):
+    """Test POST /api/admin/change-password with JWT protection"""
+    print("\n=== Testing Change Password Endpoint ===")
+    
+    try:
+        url = f"{base_url}/api/admin/change-password"
+        print(f"Testing: POST {url}")
+        
+        # Test without JWT token (should return 401)
+        change_data = {
+            "currentPassword": "Qwerty1234!!!",
+            "newPassword": "NewPassword123!"
+        }
+        
+        print("Testing without JWT token")
+        response = requests.post(url, json=change_data, timeout=10)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 401:
+            print("✅ Request without JWT token correctly rejected with 401")
+            
+            # Test with valid JWT token and correct current password
+            headers = {"Authorization": f"Bearer {access_token}"}
+            
+            print("\nTesting with valid JWT token and correct current password")
+            response2 = requests.post(url, json=change_data, headers=headers, timeout=10)
+            print(f"Status Code: {response2.status_code}")
+            print(f"Response: {response2.text}")
+            
+            if response2.status_code == 200:
+                response2_data = response2.json()
+                if response2_data.get('success') == True:
+                    print("✅ Password change successful with correct current password")
+                    
+                    # Test with wrong current password
+                    wrong_current_data = {
+                        "currentPassword": "WrongCurrentPassword",
+                        "newPassword": "AnotherNewPassword123!"
+                    }
+                    
+                    print("\nTesting with wrong current password")
+                    response3 = requests.post(url, json=wrong_current_data, headers=headers, timeout=10)
+                    print(f"Status Code: {response3.status_code}")
+                    
+                    if response3.status_code == 401:
+                        print("✅ Wrong current password correctly rejected with 401")
+                        
+                        # Change password back to original for other tests
+                        restore_data = {
+                            "currentPassword": "NewPassword123!",
+                            "newPassword": "Qwerty1234!!!"
+                        }
+                        
+                        print("\nRestoring original password for other tests")
+                        restore_response = requests.post(url, json=restore_data, headers=headers, timeout=10)
+                        if restore_response.status_code == 200:
+                            print("✅ Password restored to original")
+                            return True
+                        else:
+                            print("⚠️ Could not restore original password")
+                            return True  # Still consider test passed
+                    else:
+                        print("❌ Wrong current password should return 401")
+                        return False
+                else:
+                    print("❌ Password change response indicates failure")
+                    return False
+            else:
+                print("❌ Password change failed with correct credentials")
+                return False
+        else:
+            print("❌ Request without JWT token should return 401")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Change password test error: {e}")
+        return False
+
+def test_user_management_endpoints(base_url, access_token, mongo_db):
+    """Test user management endpoints (GET, POST, DELETE)"""
+    print("\n=== Testing User Management Endpoints ===")
+    
+    try:
+        # Test GET /api/admin/users (list all admins)
+        users_url = f"{base_url}/api/admin/users"
+        headers = {"Authorization": f"Bearer {access_token}"}
+        
+        print(f"Testing: GET {users_url}")
+        response = requests.get(users_url, headers=headers, timeout=10)
+        print(f"Status Code: {response.status_code}")
+        print(f"Response: {response.text}")
+        
+        if response.status_code == 200:
+            response_data = response.json()
+            if (response_data.get('success') == True and 
+                'users' in response_data):
+                
+                users = response_data['users']
+                print(f"✅ User list retrieved successfully ({len(users)} users)")
+                
+                # Verify no password field in response
+                password_exposed = any('password' in user for user in users)
+                if not password_exposed:
+                    print("✅ Password field properly excluded from user list")
+                    
+                    # Test POST /api/admin/users (create new admin)
+                    new_user_data = {
+                        "email": "test.admin@example.com",
+                        "password": "TestPassword123!",
+                        "name": "Test Admin User"
+                    }
+                    
+                    print(f"\nTesting: POST {users_url} (create new admin)")
+                    response2 = requests.post(users_url, json=new_user_data, headers=headers, timeout=10)
+                    print(f"Status Code: {response2.status_code}")
+                    print(f"Response: {response2.text}")
+                    
+                    if response2.status_code == 201:
+                        response2_data = response2.json()
+                        if (response2_data.get('success') == True and 
+                            'user' in response2_data):
+                            
+                            new_user = response2_data['user']
+                            new_user_id = new_user['_id']
+                            print("✅ New admin user created successfully")
+                            
+                            # Verify password is hashed in database
+                            if mongo_db:
+                                admin_collection = mongo_db["admin_users"]
+                                db_user = admin_collection.find_one({"email": "test.admin@example.com"})
+                                if db_user and db_user.get('password') != "TestPassword123!":
+                                    print("✅ New user password is properly hashed")
+                                else:
+                                    print("❌ New user password is not hashed")
+                                    return False
+                            
+                            # Test duplicate email creation
+                            print(f"\nTesting duplicate email creation")
+                            response3 = requests.post(users_url, json=new_user_data, headers=headers, timeout=10)
+                            print(f"Status Code: {response3.status_code}")
+                            
+                            if response3.status_code == 400:
+                                print("✅ Duplicate email correctly rejected with 400")
+                                
+                                # Test password reset for the new user
+                                reset_url = f"{base_url}/api/admin/users/{new_user_id}/reset-password"
+                                reset_data = {"newPassword": "ResetPassword123!"}
+                                
+                                print(f"\nTesting: POST {reset_url} (reset password)")
+                                response4 = requests.post(reset_url, json=reset_data, headers=headers, timeout=10)
+                                print(f"Status Code: {response4.status_code}")
+                                
+                                if response4.status_code == 200:
+                                    print("✅ Password reset successful")
+                                    
+                                    # Verify new password is hashed
+                                    if mongo_db:
+                                        updated_user = admin_collection.find_one({"_id": db_user['_id']})
+                                        if updated_user and updated_user.get('password') != "ResetPassword123!":
+                                            print("✅ Reset password is properly hashed")
+                                        else:
+                                            print("❌ Reset password is not hashed")
+                                            return False
+                                    
+                                    # Test DELETE user
+                                    delete_url = f"{base_url}/api/admin/users/{new_user_id}"
+                                    
+                                    print(f"\nTesting: DELETE {delete_url}")
+                                    response5 = requests.delete(delete_url, headers=headers, timeout=10)
+                                    print(f"Status Code: {response5.status_code}")
+                                    
+                                    if response5.status_code == 200:
+                                        print("✅ User deletion successful")
+                                        
+                                        # Test self-deletion prevention (try to delete main admin)
+                                        if mongo_db:
+                                            main_admin = admin_collection.find_one({"email": "simon.price@simonprice-pt.co.uk"})
+                                            if main_admin:
+                                                main_admin_id = str(main_admin['_id'])
+                                                self_delete_url = f"{base_url}/api/admin/users/{main_admin_id}"
+                                                
+                                                print(f"\nTesting self-deletion prevention: DELETE {self_delete_url}")
+                                                response6 = requests.delete(self_delete_url, headers=headers, timeout=10)
+                                                print(f"Status Code: {response6.status_code}")
+                                                
+                                                if response6.status_code == 400:
+                                                    print("✅ Self-deletion correctly prevented with 400")
+                                                    return True
+                                                else:
+                                                    print("❌ Self-deletion should return 400")
+                                                    return False
+                                        
+                                        return True
+                                    else:
+                                        print("❌ User deletion failed")
+                                        return False
+                                else:
+                                    print("❌ Password reset failed")
+                                    return False
+                            else:
+                                print("❌ Duplicate email should return 400")
+                                return False
+                        else:
+                            print("❌ Create user response missing required fields")
+                            return False
+                    else:
+                        print("❌ New admin user creation failed")
+                        return False
+                else:
+                    print("❌ Password field exposed in user list")
+                    return False
+            else:
+                print("❌ User list response missing required fields")
+                return False
+        else:
+            print("❌ User list retrieval failed")
+            return False
+            
+    except Exception as e:
+        print(f"❌ User management test error: {e}")
+        return False
+
+def test_email_viewing_endpoints(base_url, access_token):
+    """Test email viewing and export endpoints"""
+    print("\n=== Testing Email Viewing Endpoints ===")
+    
+    try:
+        # Test GET /api/admin/emails (list all emails)
+        emails_url = f"{base_url}/api/admin/emails"
+        headers = {"Authorization": f"Bearer {access_token}"}
+        
+        print(f"Testing: GET {emails_url}")
+        response = requests.get(emails_url, headers=headers, timeout=10)
+        print(f"Status Code: {response.status_code}")
+        print(f"Response: {response.text}")
+        
+        if response.status_code == 200:
+            response_data = response.json()
+            if (response_data.get('success') == True and 
+                'emails' in response_data and
+                'count' in response_data):
+                
+                emails = response_data['emails']
+                count = response_data['count']
+                print(f"✅ Email list retrieved successfully ({count} emails)")
+                
+                # Test with source filter
+                print(f"\nTesting with source filter: ?source=contact_form")
+                filter_response = requests.get(f"{emails_url}?source=contact_form", headers=headers, timeout=10)
+                print(f"Status Code: {filter_response.status_code}")
+                
+                if filter_response.status_code == 200:
+                    filter_data = filter_response.json()
+                    if 'emails' in filter_data:
+                        print("✅ Source filter working")
+                        
+                        # Test with opted_in filter
+                        print(f"\nTesting with opted_in filter: ?opted_in=true")
+                        optin_response = requests.get(f"{emails_url}?opted_in=true", headers=headers, timeout=10)
+                        print(f"Status Code: {optin_response.status_code}")
+                        
+                        if optin_response.status_code == 200:
+                            print("✅ Opted_in filter working")
+                            
+                            # Test CSV export
+                            export_url = f"{base_url}/api/admin/emails/export"
+                            
+                            print(f"\nTesting: GET {export_url} (CSV export)")
+                            export_response = requests.get(export_url, headers=headers, timeout=10)
+                            print(f"Status Code: {export_response.status_code}")
+                            print(f"Content-Type: {export_response.headers.get('Content-Type')}")
+                            
+                            if export_response.status_code == 200:
+                                content_type = export_response.headers.get('Content-Type')
+                                if content_type and 'text/csv' in content_type:
+                                    print("✅ CSV export successful with correct content type")
+                                    
+                                    # Check CSV format
+                                    csv_content = export_response.text
+                                    lines = csv_content.split('\n')
+                                    if len(lines) > 0 and 'Email,Opted In,Source' in lines[0]:
+                                        print("✅ CSV format correct with proper headers")
+                                        print(f"   CSV preview: {lines[0]}")
+                                        return True
+                                    else:
+                                        print("❌ CSV format incorrect or missing headers")
+                                        return False
+                                else:
+                                    print("❌ CSV export wrong content type")
+                                    return False
+                            else:
+                                print("❌ CSV export failed")
+                                return False
+                        else:
+                            print("❌ Opted_in filter failed")
+                            return False
+                    else:
+                        print("❌ Source filter response missing emails")
+                        return False
+                else:
+                    print("❌ Source filter failed")
+                    return False
+            else:
+                print("❌ Email list response missing required fields")
+                return False
+        else:
+            print("❌ Email list retrieval failed")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Email viewing test error: {e}")
+        return False
+
+def test_jwt_authentication_middleware(base_url):
+    """Test JWT authentication middleware on protected endpoints"""
+    print("\n=== Testing JWT Authentication Middleware ===")
+    
+    try:
+        protected_endpoints = [
+            f"{base_url}/api/admin/change-password",
+            f"{base_url}/api/admin/users",
+            f"{base_url}/api/admin/emails"
+        ]
+        
+        for endpoint in protected_endpoints:
+            print(f"\nTesting endpoint without token: {endpoint}")
+            response = requests.get(endpoint, timeout=10)
+            print(f"Status Code: {response.status_code}")
+            
+            if response.status_code != 401:
+                print(f"❌ Endpoint should return 401 without token")
+                return False
+        
+        print("✅ All protected endpoints correctly require authentication")
+        
+        # Test with invalid token
+        invalid_headers = {"Authorization": "Bearer invalid.jwt.token"}
+        
+        print(f"\nTesting with invalid token")
+        response = requests.get(protected_endpoints[0], headers=invalid_headers, timeout=10)
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 403:
+            print("✅ Invalid token correctly rejected with 403")
+            return True
+        else:
+            print("❌ Invalid token should return 403")
+            return False
+            
+    except Exception as e:
+        print(f"❌ JWT middleware test error: {e}")
+        return False
+
+def test_password_security(mongo_db):
+    """Test password security (bcrypt hashing)"""
+    print("\n=== Testing Password Security ===")
+    
+    try:
+        if not mongo_db:
+            print("⚠️ Cannot test password security without database connection")
+            return True
+        
+        admin_collection = mongo_db["admin_users"]
+        admin_users = list(admin_collection.find({}))
+        
+        if not admin_users:
+            print("⚠️ No admin users found to test password security")
+            return True
+        
+        print(f"Testing password security for {len(admin_users)} admin users")
+        
+        for user in admin_users:
+            password_hash = user.get('password')
+            if password_hash:
+                # Check if it looks like a bcrypt hash
+                if password_hash.startswith('$2b$') or password_hash.startswith('$2a$'):
+                    print(f"✅ User {user.get('email')} has bcrypt hashed password")
+                else:
+                    print(f"❌ User {user.get('email')} password is not bcrypt hashed")
+                    return False
+            else:
+                print(f"❌ User {user.get('email')} has no password field")
+                return False
+        
+        print("✅ All passwords are properly bcrypt hashed")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Password security test error: {e}")
+        return False
+
 def main():
     print("=" * 80)
-    print("MongoDB Email Storage Testing - Simon Price PT Website")
+    print("ADMIN AUTHENTICATION & EMAIL STORAGE TESTING - Simon Price PT Website")
     print("=" * 80)
     
     # Get backend URL
@@ -586,11 +1215,23 @@ def main():
     # Get MongoDB connection
     mongo_client, mongo_db, email_collection = get_mongo_connection()
     
-    # Clean up any existing test emails
+    # Clean up any existing test data
     cleanup_test_emails(email_collection)
+    cleanup_test_admin_users(mongo_db)
     
     # Test results tracking
     results = {
+        # Admin Authentication Tests
+        "admin_setup": False,
+        "admin_login": False,
+        "token_refresh": False,
+        "change_password": False,
+        "user_management": False,
+        "email_viewing": False,
+        "jwt_middleware": False,
+        "password_security": False,
+        
+        # Email Storage Tests (existing)
         "mongodb_connection": False,
         "health_check": False,
         "contact_form_storage": False,
@@ -600,7 +1241,41 @@ def main():
         "cors_configuration": False
     }
     
-    # Run MongoDB email storage tests
+    # Run Admin Authentication Tests
+    print("\n" + "🔐" * 40)
+    print("ADMIN AUTHENTICATION SYSTEM TESTS")
+    print("🔐" * 40)
+    
+    results["admin_setup"] = test_admin_setup_endpoint(backend_url, mongo_db)
+    
+    # Login test returns tokens for further testing
+    login_result = test_admin_login_endpoint(backend_url)
+    if login_result and isinstance(login_result, tuple):
+        access_token, refresh_token = login_result
+        results["admin_login"] = True
+        
+        # Use tokens for subsequent tests
+        refresh_result = test_token_refresh_endpoint(backend_url, refresh_token)
+        if refresh_result:
+            results["token_refresh"] = True
+            # Use new access token for remaining tests
+            access_token = refresh_result
+        
+        results["change_password"] = test_change_password_endpoint(backend_url, access_token)
+        results["user_management"] = test_user_management_endpoints(backend_url, access_token, mongo_db)
+        results["email_viewing"] = test_email_viewing_endpoints(backend_url, access_token)
+    else:
+        results["admin_login"] = False
+        print("⚠️ Skipping token-dependent tests due to login failure")
+    
+    results["jwt_middleware"] = test_jwt_authentication_middleware(backend_url)
+    results["password_security"] = test_password_security(mongo_db)
+    
+    # Run Email Storage Tests (existing functionality)
+    print("\n" + "📧" * 40)
+    print("EMAIL STORAGE SYSTEM TESTS")
+    print("📧" * 40)
+    
     results["mongodb_connection"] = test_mongodb_connection(email_collection)
     results["health_check"] = test_health_endpoint(backend_url)
     results["contact_form_storage"] = test_contact_form_email_storage(backend_url, email_collection)
@@ -609,8 +1284,9 @@ def main():
     results["duplicate_handling"] = test_duplicate_email_handling(backend_url, email_collection)
     results["cors_configuration"] = test_cors_configuration(backend_url)
     
-    # Clean up test emails after testing
+    # Clean up test data after testing
     cleanup_test_emails(email_collection)
+    cleanup_test_admin_users(mongo_db)
     
     # Close MongoDB connection
     if mongo_client:
@@ -618,9 +1294,22 @@ def main():
     
     # Summary
     print("\n" + "=" * 80)
-    print("MONGODB EMAIL STORAGE TEST SUMMARY")
+    print("COMPREHENSIVE TEST SUMMARY")
     print("=" * 80)
     
+    # Admin Authentication Results
+    print("\n🔐 ADMIN AUTHENTICATION SYSTEM:")
+    print(f"Admin Setup Endpoint: {'✅ PASS' if results['admin_setup'] else '❌ FAIL'}")
+    print(f"Admin Login Endpoint: {'✅ PASS' if results['admin_login'] else '❌ FAIL'}")
+    print(f"Token Refresh Endpoint: {'✅ PASS' if results['token_refresh'] else '❌ FAIL'}")
+    print(f"Change Password Endpoint: {'✅ PASS' if results['change_password'] else '❌ FAIL'}")
+    print(f"User Management Endpoints: {'✅ PASS' if results['user_management'] else '❌ FAIL'}")
+    print(f"Email Viewing Endpoints: {'✅ PASS' if results['email_viewing'] else '❌ FAIL'}")
+    print(f"JWT Authentication Middleware: {'✅ PASS' if results['jwt_middleware'] else '❌ FAIL'}")
+    print(f"Password Security (bcrypt): {'✅ PASS' if results['password_security'] else '❌ FAIL'}")
+    
+    # Email Storage Results
+    print("\n📧 EMAIL STORAGE SYSTEM:")
     print(f"MongoDB Connection & Index: {'✅ PASS' if results['mongodb_connection'] else '❌ FAIL'}")
     print(f"Health Check Endpoint: {'✅ PASS' if results['health_check'] else '❌ FAIL'}")
     print(f"Contact Form Email Storage: {'✅ PASS' if results['contact_form_storage'] else '❌ FAIL'}")
@@ -635,14 +1324,30 @@ def main():
     
     print(f"\n📊 OVERALL RESULTS: {passed_tests}/{total_tests} tests passed")
     
+    # Separate admin and email test results
+    admin_tests = ['admin_setup', 'admin_login', 'token_refresh', 'change_password', 
+                   'user_management', 'email_viewing', 'jwt_middleware', 'password_security']
+    email_tests = ['mongodb_connection', 'health_check', 'contact_form_storage', 
+                   'tdee_calculator_storage', 'client_contact_storage', 'duplicate_handling', 'cors_configuration']
+    
+    admin_passed = sum(results[test] for test in admin_tests)
+    email_passed = sum(results[test] for test in email_tests)
+    
+    print(f"🔐 Admin Authentication: {admin_passed}/{len(admin_tests)} tests passed")
+    print(f"📧 Email Storage: {email_passed}/{len(email_tests)} tests passed")
+    
     if passed_tests == total_tests:
-        print("🎉 ALL TESTS PASSED - MongoDB email storage implementation working correctly!")
+        print("🎉 ALL TESTS PASSED - Complete admin authentication and email storage system working correctly!")
+    elif admin_passed == len(admin_tests):
+        print("🔐 ADMIN SYSTEM COMPLETE - All admin authentication tests passed!")
+    elif email_passed == len(email_tests):
+        print("📧 EMAIL SYSTEM COMPLETE - All email storage tests passed!")
     elif passed_tests >= total_tests * 0.8:
         print("⚠️ MOSTLY WORKING - Minor issues detected")
     elif passed_tests >= total_tests * 0.5:
         print("⚠️ PARTIAL SUCCESS - Several issues need attention")
     else:
-        print("❌ CRITICAL ISSUES - Major problems with MongoDB email storage")
+        print("❌ CRITICAL ISSUES - Major problems detected")
     
     print(f"\n🕒 Test completed at: {datetime.now().isoformat()}")
     

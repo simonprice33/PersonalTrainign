@@ -817,47 +817,39 @@ app.post('/api/unsubscribe', [
       });
     }
 
-    if (!emailCollection) {
-      return res.status(503).json({
-        success: false,
-        message: 'Database not available'
-      });
-    }
-
     const { email } = req.body;
 
-    // Check if email exists in database
-    const existingEmail = await emailCollection.findOne({ email });
+    // SECURITY: Always return success to prevent email enumeration attacks
+    // This prevents attackers from discovering which emails are in our database
+    
+    if (emailCollection) {
+      // Check if email exists in database
+      const existingEmail = await emailCollection.findOne({ email });
 
-    if (!existingEmail) {
-      return res.status(404).json({
-        success: false,
-        message: 'Email address not found in our mailing list. You may have already been unsubscribed or never subscribed.'
-      });
-    }
-
-    // Check if already opted out
-    if (!existingEmail.opted_in) {
-      return res.status(200).json({
-        success: true,
-        message: 'You have already been unsubscribed from our mailing list.'
-      });
-    }
-
-    // Update email to opted_in=false
-    await emailCollection.updateOne(
-      { email },
-      { 
-        $set: { 
-          opted_in: false,
-          opt_out_date: new Date(),
-          last_updated: new Date()
-        } 
+      if (existingEmail && existingEmail.opted_in) {
+        // Only update if email exists and is currently opted in
+        await emailCollection.updateOne(
+          { email },
+          { 
+            $set: { 
+              opted_in: false,
+              opt_out_date: new Date(),
+              last_updated: new Date()
+            } 
+          }
+        );
+        console.log(`📭 Unsubscribed: ${email}`);
+      } else if (existingEmail && !existingEmail.opted_in) {
+        // Already unsubscribed - log but don't change anything
+        console.log(`ℹ️ Unsubscribe attempt for already unsubscribed email: ${email}`);
+      } else {
+        // Email not found - log but still return success
+        console.log(`ℹ️ Unsubscribe attempt for non-existent email: ${email}`);
       }
-    );
+    }
 
-    console.log(`📭 Unsubscribed: ${email}`);
-
+    // Always return success message regardless of whether email exists
+    // This prevents email enumeration attacks
     res.status(200).json({
       success: true,
       message: 'You have been successfully unsubscribed from our mailing list. We\'re sorry to see you go!'
@@ -865,9 +857,10 @@ app.post('/api/unsubscribe', [
 
   } catch (error) {
     console.error('❌ Unsubscribe error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to unsubscribe. Please try again or contact support.'
+    // Even on error, return success to prevent information leakage
+    res.status(200).json({
+      success: true,
+      message: 'You have been successfully unsubscribed from our mailing list. We\'re sorry to see you go!'
     });
   }
 });

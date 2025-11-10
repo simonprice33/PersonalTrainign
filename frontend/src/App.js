@@ -8,6 +8,7 @@ import About from "./components/About";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import ClientContactForm from "./components/ClientContactForm";
+import Unsubscribe from "./components/Unsubscribe";
 
 // Admin Components
 import AdminLogin from "./components/admin/AdminLogin";
@@ -23,6 +24,9 @@ function App() {
         <Routes>
           {/* Client Contact Form Route - No navigation */}
           <Route path="/client-contact-request" element={<ClientContactForm />} />
+          
+          {/* Unsubscribe Route - No navigation */}
+          <Route path="/unsubscribe" element={<Unsubscribe />} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />

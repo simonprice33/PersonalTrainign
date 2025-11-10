@@ -764,6 +764,107 @@ app.post('/api/tdee-results', [
   }
 });
 
+// Newsletter Subscription endpoint (Footer)
+app.post('/api/newsletter/subscribe', [
+  body('email').isEmail().normalizeEmail().withMessage('Please provide a valid email address')
+], async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address',
+        errors: errors.array()
+      });
+    }
+
+    const { email } = req.body;
+
+    // Save email to database with opted_in=true (newsletter subscription)
+    await saveEmail(email, true, 'newsletter_footer', {
+      subscribed_via: 'footer'
+    });
+
+    console.log(`✅ Newsletter subscription: ${email} (footer)`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Successfully subscribed to fitness tips and updates!'
+    });
+
+  } catch (error) {
+    console.error('❌ Newsletter subscription error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to subscribe. Please try again.'
+    });
+  }
+});
+
+// Unsubscribe endpoint
+app.post('/api/unsubscribe', [
+  body('email').isEmail().normalizeEmail().withMessage('Please provide a valid email address')
+], async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address',
+        errors: errors.array()
+      });
+    }
+
+    const { email } = req.body;
+
+    // SECURITY: Always return success to prevent email enumeration attacks
+    // This prevents attackers from discovering which emails are in our database
+    
+    if (emailCollection) {
+      // Check if email exists in database
+      const existingEmail = await emailCollection.findOne({ email });
+
+      if (existingEmail && existingEmail.opted_in) {
+        // Only update if email exists and is currently opted in
+        await emailCollection.updateOne(
+          { email },
+          { 
+            $set: { 
+              opted_in: false,
+              opt_out_date: new Date(),
+              last_updated: new Date()
+            } 
+          }
+        );
+        console.log(`📭 Unsubscribed: ${email}`);
+      } else if (existingEmail && !existingEmail.opted_in) {
+        // Already unsubscribed - log but don't change anything
+        console.log(`ℹ️ Unsubscribe attempt for already unsubscribed email: ${email}`);
+      } else {
+        // Email not found - log but still return success
+        console.log(`ℹ️ Unsubscribe attempt for non-existent email: ${email}`);
+      }
+    }
+
+    // Always return success message regardless of whether email exists
+    // This prevents email enumeration attacks
+    res.status(200).json({
+      success: true,
+      message: 'You have been successfully unsubscribed from our mailing list. We\'re sorry to see you go!'
+    });
+
+  } catch (error) {
+    console.error('❌ Unsubscribe error:', error);
+    // Even on error, return success to prevent information leakage
+    res.status(200).json({
+      success: true,
+      message: 'You have been successfully unsubscribed from our mailing list. We\'re sorry to see you go!'
+    });
+  }
+});
+
 // ============================================================================
 // ADMIN AUTHENTICATION & MANAGEMENT ENDPOINTS
 // ============================================================================

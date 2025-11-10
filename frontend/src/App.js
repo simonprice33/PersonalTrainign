@@ -25,6 +25,9 @@ function App() {
           {/* Client Contact Form Route - No navigation */}
           <Route path="/client-contact-request" element={<ClientContactForm />} />
           
+          {/* Unsubscribe Route - No navigation */}
+          <Route path="/unsubscribe" element={<Unsubscribe />} />
+          
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />

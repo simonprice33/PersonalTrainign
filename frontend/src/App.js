@@ -16,6 +16,8 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import EmailManagement from "./components/admin/EmailManagement";
 import UserManagement from "./components/admin/UserManagement";
 import ChangePassword from "./components/admin/ChangePassword";
+import ForgotPassword from "./components/admin/ForgotPassword";
+import ResetPassword from "./components/admin/ResetPassword";
 
 function App() {
   return (

@@ -92,6 +92,16 @@ const AdminLogin = () => {
               {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
+
+          {/* Forgot Password Link */}
+          <div className="mt-6 text-center">
+            <Link
+              to="/admin/forgot-password"
+              className="text-cyan-500 hover:text-cyan-400 transition-colors text-sm"
+            >
+              Forgot your password?
+            </Link>
+          </div>
         </div>
 
         {/* Footer */}

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Instagram, Facebook, Linkedin, Send } from 'lucide-react';
-import { contactInfo, subscribeNewsletter } from '../mock/mockData';
+import { contactInfo } from '../mock/mockData';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -13,16 +16,21 @@ const Footer = () => {
     setSubscribeStatus(null);
 
     try {
-      const response = await subscribeNewsletter(email);
-      setSubscribeStatus({
-        type: 'success',
-        message: response.message
+      const response = await axios.post(`${BACKEND_URL}/api/newsletter/subscribe`, {
+        email
       });
-      setEmail('');
+
+      if (response.data.success) {
+        setSubscribeStatus({
+          type: 'success',
+          message: 'Successfully subscribed to fitness tips and updates!'
+        });
+        setEmail('');
+      }
     } catch (error) {
       setSubscribeStatus({
         type: 'error',
-        message: 'Something went wrong. Please try again.'
+        message: error.response?.data?.message || 'Something went wrong. Please try again.'
       });
     } finally {
       setIsSubscribing(false);

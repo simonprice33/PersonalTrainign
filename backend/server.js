@@ -552,10 +552,8 @@ app.post('/api/client-contact', [
     `;
 
     // Save email to database first
-    // Note: joinMailingList is inverted logic (opt-out checkbox)
-    // If checkbox is checked, user does NOT want to join (opted_in = false)
-    // If checkbox is unchecked, user wants to join (opted_in = true)
-    const optedIn = !joinMailingList;
+    // joinMailingList checkbox: checked = user WANTS to join (opted_in = true)
+    const optedIn = joinMailingList || false;
     await saveEmail(email, optedIn, 'client_inquiry', {
       name,
       phone,

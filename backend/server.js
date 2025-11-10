@@ -1126,7 +1126,7 @@ app.post('/api/admin/forgot-password', [
           };
 
           await graphClient
-            .api('/me/sendMail')
+            .api(`/users/${process.env.EMAIL_FROM}/sendMail`)
             .post(emailMessage);
 
           console.log(`📧 Password reset email sent to: ${email}`);

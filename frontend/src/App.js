@@ -32,6 +32,8 @@ function App() {
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/forgot-password" element={<ForgotPassword />} />
+          <Route path="/admin/reset-password" element={<ResetPassword />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/emails" element={<EmailManagement />} />
           <Route path="/admin/users" element={<UserManagement />} />

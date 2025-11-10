@@ -1042,6 +1042,201 @@ app.post('/api/admin/refresh', async (req, res) => {
   }
 });
 
+// Forgot Password - Send reset email
+app.post('/api/admin/forgot-password', [
+  body('email').isEmail().normalizeEmail()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address'
+      });
+    }
+
+    const { email } = req.body;
+
+    // SECURITY: Always return success to prevent email enumeration
+    // Check if admin exists but don't reveal if they don't
+    let resetToken = null;
+    
+    if (adminUsersCollection) {
+      const admin = await adminUsersCollection.findOne({ email });
+      
+      if (admin) {
+        // Generate reset token (expires in 1 hour)
+        resetToken = jwt.sign(
+          { id: admin._id, email: admin.email, type: 'password_reset' },
+          JWT_SECRET,
+          { expiresIn: '1h' }
+        );
+
+        // Create reset link
+        const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/admin/reset-password?token=${resetToken}`;
+
+        // Send email via Microsoft Graph API
+        try {
+          const graphClient = createGraphClient();
+
+          const emailMessage = {
+            message: {
+              subject: 'Password Reset Request - Simon Price PT Admin',
+              body: {
+                contentType: 'HTML',
+                content: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #1a1a2e;">Password Reset Request</h2>
+                    <p>You requested to reset your password for Simon Price PT Admin Dashboard.</p>
+                    <p>Click the button below to reset your password:</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                      <a href="${resetLink}" 
+                         style="background: linear-gradient(135deg, #d3ff62 0%, #a8d946 100%); 
+                                color: #1a1a2e; 
+                                padding: 12px 30px; 
+                                text-decoration: none; 
+                                border-radius: 25px; 
+                                font-weight: bold;
+                                display: inline-block;">
+                        Reset Password
+                      </a>
+                    </div>
+                    <p><strong>This link will expire in 1 hour.</strong></p>
+                    <p>If you didn't request this reset, please ignore this email and your password will remain unchanged.</p>
+                    <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+                    <p style="color: #888; font-size: 12px;">
+                      For security reasons, this link can only be used once. If you need another reset link, please request a new one.
+                    </p>
+                    <p style="color: #888; font-size: 12px;">
+                      Simon Price Personal Training<br>
+                      Bognor Regis, West Sussex, UK
+                    </p>
+                  </div>
+                `
+              },
+              toRecipients: [
+                {
+                  emailAddress: {
+                    address: email
+                  }
+                }
+              ]
+            },
+            saveToSentItems: 'true'
+          };
+
+          await graphClient
+            .api('/me/sendMail')
+            .post(emailMessage);
+
+          console.log(`📧 Password reset email sent to: ${email}`);
+        } catch (emailError) {
+          console.error('❌ Failed to send reset email:', emailError.message);
+          // Don't reveal email sending failed - still return success
+        }
+      } else {
+        console.log(`ℹ️ Password reset requested for non-existent email: ${email}`);
+      }
+    }
+
+    // Always return success for security (don't reveal if email exists)
+    res.status(200).json({
+      success: true,
+      message: 'If an account exists with this email, a password reset link has been sent.'
+    });
+
+  } catch (error) {
+    console.error('❌ Forgot password error:', error);
+    // Always return success even on error for security
+    res.status(200).json({
+      success: true,
+      message: 'If an account exists with this email, a password reset link has been sent.'
+    });
+  }
+});
+
+// Reset Password - Verify token and update password
+app.post('/api/admin/reset-password', [
+  body('token').notEmpty(),
+  body('newPassword').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input',
+        errors: errors.array()
+      });
+    }
+
+    const { token, newPassword } = req.body;
+
+    // Verify token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+      
+      // Check token type
+      if (decoded.type !== 'password_reset') {
+        throw new Error('Invalid token type');
+      }
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired reset token. Please request a new password reset.'
+      });
+    }
+
+    if (!adminUsersCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    // Find admin user
+    const { ObjectId } = require('mongodb');
+    const admin = await adminUsersCollection.findOne({ _id: new ObjectId(decoded.id) });
+
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    await adminUsersCollection.updateOne(
+      { _id: admin._id },
+      { 
+        $set: { 
+          password: hashedPassword, 
+          updated_at: new Date(),
+          password_reset_at: new Date()
+        } 
+      }
+    );
+
+    console.log(`✅ Password reset successful for: ${admin.email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successful! You can now login with your new password.'
+    });
+
+  } catch (error) {
+    console.error('❌ Reset password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to reset password. Please try again.'
+    });
+  }
+});
+
 // Change Password (requires authentication)
 app.post('/api/admin/change-password', authenticateToken, [
   body('currentPassword').notEmpty(),

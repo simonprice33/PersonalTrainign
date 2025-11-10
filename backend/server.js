@@ -802,6 +802,76 @@ app.post('/api/newsletter/subscribe', [
   }
 });
 
+// Unsubscribe endpoint
+app.post('/api/unsubscribe', [
+  body('email').isEmail().normalizeEmail().withMessage('Please provide a valid email address')
+], async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address',
+        errors: errors.array()
+      });
+    }
+
+    if (!emailCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    const { email } = req.body;
+
+    // Check if email exists in database
+    const existingEmail = await emailCollection.findOne({ email });
+
+    if (!existingEmail) {
+      return res.status(404).json({
+        success: false,
+        message: 'Email address not found in our mailing list. You may have already been unsubscribed or never subscribed.'
+      });
+    }
+
+    // Check if already opted out
+    if (!existingEmail.opted_in) {
+      return res.status(200).json({
+        success: true,
+        message: 'You have already been unsubscribed from our mailing list.'
+      });
+    }
+
+    // Update email to opted_in=false
+    await emailCollection.updateOne(
+      { email },
+      { 
+        $set: { 
+          opted_in: false,
+          opt_out_date: new Date(),
+          last_updated: new Date()
+        } 
+      }
+    );
+
+    console.log(`📭 Unsubscribed: ${email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'You have been successfully unsubscribed from our mailing list. We\'re sorry to see you go!'
+    });
+
+  } catch (error) {
+    console.error('❌ Unsubscribe error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to unsubscribe. Please try again or contact support.'
+    });
+  }
+});
+
 // ============================================================================
 // ADMIN AUTHENTICATION & MANAGEMENT ENDPOINTS
 // ============================================================================

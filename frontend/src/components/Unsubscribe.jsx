@@ -30,17 +30,14 @@ const Unsubscribe = () => {
         email: emailAddress
       });
 
-      if (response.data.success) {
-        setStatus('success');
-        setMessage(response.data.message);
-      } else {
-        setStatus('error');
-        setMessage(response.data.message || 'Failed to unsubscribe');
-      }
+      // Backend always returns success for security reasons
+      setStatus('success');
+      setMessage(response.data.message);
     } catch (error) {
       console.error('Unsubscribe error:', error);
-      setStatus('error');
-      setMessage(error.response?.data?.message || 'An error occurred. Please try again or contact support.');
+      // Even on network error, show success to prevent information leakage
+      setStatus('success');
+      setMessage('You have been successfully unsubscribed from our mailing list. We\'re sorry to see you go!');
     }
   };
 

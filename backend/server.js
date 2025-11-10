@@ -764,6 +764,44 @@ app.post('/api/tdee-results', [
   }
 });
 
+// Newsletter Subscription endpoint (Footer)
+app.post('/api/newsletter/subscribe', [
+  body('email').isEmail().normalizeEmail().withMessage('Please provide a valid email address')
+], async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address',
+        errors: errors.array()
+      });
+    }
+
+    const { email } = req.body;
+
+    // Save email to database with opted_in=true (newsletter subscription)
+    await saveEmail(email, true, 'newsletter_footer', {
+      subscribed_via: 'footer'
+    });
+
+    console.log(`✅ Newsletter subscription: ${email} (footer)`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Successfully subscribed to fitness tips and updates!'
+    });
+
+  } catch (error) {
+    console.error('❌ Newsletter subscription error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to subscribe. Please try again.'
+    });
+  }
+});
+
 // ============================================================================
 // ADMIN AUTHENTICATION & MANAGEMENT ENDPOINTS
 // ============================================================================

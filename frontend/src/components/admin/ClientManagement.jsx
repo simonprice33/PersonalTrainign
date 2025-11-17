@@ -333,6 +333,22 @@ const ClientManagement = () => {
                   </select>
                   <p className="text-xs text-gray-500 mt-1">Default: 1st of each month</p>
                 </div>
+
+                <div>
+                  <label className="block text-gray-300 text-sm font-medium mb-2">
+                    Link Expiration (Days) *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    max="30"
+                    value={formData.expirationDays}
+                    onChange={(e) => setFormData({ ...formData, expirationDays: parseInt(e.target.value) })}
+                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500 transition-colors"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Default: 7 days (Max: 30 days)</p>
+                </div>
               </div>
 
               <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">

@@ -32,6 +32,7 @@ MongoClient.connect(mongoUrl, {
     db = client.db(dbName);
     emailCollection = db.collection('mailing_list');
     adminUsersCollection = db.collection('admin_users');
+    clientsCollection = db.collection('clients');
     
     // Create unique index on email field
     emailCollection.createIndex({ email: 1 }, { unique: true })

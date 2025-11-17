@@ -13,12 +13,17 @@ const ClientManagement = () => {
   const [error, setError] = useState('');
   const [paymentLink, setPaymentLink] = useState('');
   
+  const [clients, setClients] = useState([]);
+  const [loadingClients, setLoadingClients] = useState(true);
+  const [resendingEmail, setResendingEmail] = useState(null);
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     telephone: '',
     price: 125,
-    billingDay: 1
+    billingDay: 1,
+    expirationDays: 7
   });
 
   useEffect(() => {

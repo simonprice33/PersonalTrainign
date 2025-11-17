@@ -9,8 +9,16 @@ const { ClientSecretCredential } = require('@azure/identity');
 const { MongoClient } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 require('dotenv').config();
+
+// Initialize Stripe only if key is provided
+let stripe = null;
+if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !== 'YOUR_SECRET_KEY_HERE_FROM_LOCAL_ENV') {
+  stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  console.log('✅ Stripe initialized');
+} else {
+  console.log('⚠️  Stripe key not configured - Stripe features will be disabled');
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;

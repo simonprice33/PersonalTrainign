@@ -1670,7 +1670,7 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
       success: true,
       message: 'Payment link sent successfully',
       paymentLink,
-      expiresIn: '7 days'
+      expiresIn: `${expDays} day${expDays > 1 ? 's' : ''}`
     });
 
   } catch (error) {

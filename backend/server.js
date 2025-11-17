@@ -1627,7 +1627,7 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
                 </ul>
 
                 <p style="color: #888; font-size: 14px; margin-top: 30px;">
-                  This link will expire in 24 hours. If you have any questions, please contact Simon directly.
+                  This link will expire in 7 days. If you have any questions, please contact Simon directly.
                 </p>
 
                 <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">

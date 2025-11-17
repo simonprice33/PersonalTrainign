@@ -95,6 +95,28 @@ const AdminDashboard = () => {
             </div>
           </Link>
 
+          {/* Client Management Card */}
+          <Link
+            to="/admin/clients"
+            className="bg-gray-800 rounded-xl p-8 border border-green-500/20 hover:border-green-500/50 transition-all hover:shadow-lg hover:shadow-green-500/20 group"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors">
+                <CreditCard className="text-green-500" size={32} />
+              </div>
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">Client Management</h2>
+            <p className="text-gray-400 text-sm">
+              Create payment links, manage subscriptions, and view client details.
+            </p>
+            <div className="mt-6 flex items-center text-green-500 text-sm font-medium">
+              Manage Clients
+              <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+
           {/* Change Password Card */}
           <Link
             to="/admin/change-password"

@@ -183,14 +183,100 @@ const ClientManagement = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {!showCreateForm ? (
-          <div className="text-center py-16">
-            <CreditCard size={64} className="text-gray-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">No Payment Links Created Yet</h2>
-            <p className="text-gray-400 mb-6">
-              Click "Create Payment Link" to send a subscription signup link to a new client.
-            </p>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-white">Client List</h2>
+              <button
+                onClick={fetchClients}
+                disabled={loadingClients}
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                title="Refresh"
+              >
+                <RefreshCw size={18} className={`text-gray-400 ${loadingClients ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+
+            {loadingClients ? (
+              <div className="text-center py-16">
+                <RefreshCw size={48} className="text-gray-600 mx-auto mb-4 animate-spin" />
+                <p className="text-gray-400">Loading clients...</p>
+              </div>
+            ) : clients.length === 0 ? (
+              <div className="text-center py-16">
+                <CreditCard size={64} className="text-gray-600 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-white mb-2">No Clients Yet</h2>
+                <p className="text-gray-400 mb-6">
+                  Click "Create Payment Link" to send a subscription signup link to a new client.
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {clients.map((client, index) => (
+                  <div 
+                    key={index}
+                    className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-green-500/30 transition-all"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white mb-2">{client.name}</h3>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-gray-300">
+                            <Mail size={16} className="text-green-400" />
+                            <span className="text-sm">{client.email}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-300">
+                            <DollarSign size={16} className="text-cyan-400" />
+                            <span className="text-sm">£{client.price || 125}/month</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-300">
+                            <Calendar size={16} className="text-purple-400" />
+                            <span className="text-sm">
+                              Billing: {client.billingDay || 1}{(client.billingDay || 1) === 1 ? 'st' : (client.billingDay || 1) === 2 ? 'nd' : (client.billingDay || 1) === 3 ? 'rd' : 'th'} of each month
+                            </span>
+                          </div>
+                          {client.stripe_customer_id && (
+                            <div className="mt-2">
+                              <span className="inline-block px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">
+                                ✓ Subscription Active
+                              </span>
+                            </div>
+                          )}
+                          {!client.stripe_customer_id && (
+                            <div className="mt-2">
+                              <span className="inline-block px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">
+                                ⏳ Pending Setup
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {!client.stripe_customer_id && (
+                        <button
+                          onClick={() => handleResendLink(client.email)}
+                          disabled={resendingEmail === client.email}
+                          className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                        >
+                          {resendingEmail === client.email ? (
+                            <>
+                              <RefreshCw size={16} className="animate-spin" />
+                              Sending...
+                            </>
+                          ) : (
+                            <>
+                              <Send size={16} />
+                              Resend Link
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ) : success ? (
           <div className="bg-gray-800 rounded-xl p-8 border border-green-500/20">

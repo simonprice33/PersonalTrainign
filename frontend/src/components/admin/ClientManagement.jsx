@@ -31,8 +31,32 @@ const ClientManagement = () => {
     const token = localStorage.getItem('adminAccessToken');
     if (!token) {
       navigate('/admin');
+    } else {
+      fetchClients();
     }
   }, [navigate]);
+
+  const fetchClients = async () => {
+    try {
+      const token = localStorage.getItem('adminAccessToken');
+      const response = await axios.get(
+        `${BACKEND_URL}/api/admin/clients`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setClients(response.data.clients);
+      }
+    } catch (err) {
+      console.error('Failed to fetch clients:', err);
+    } finally {
+      setLoadingClients(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

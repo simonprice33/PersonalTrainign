@@ -38,6 +38,7 @@ function App() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/emails" element={<EmailManagement />} />
           <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/admin/clients" element={<ClientManagement />} />
           <Route path="/admin/change-password" element={<ChangePassword />} />
           
           {/* Main Website Route */}

@@ -317,6 +317,7 @@ const ClientManagement = () => {
                 <li>• Client: {formData.name}</li>
                 <li>• Monthly Price: £{formData.price}</li>
                 <li>• Billing Day: {formData.billingDay}{formData.billingDay === 1 ? 'st' : formData.billingDay === 2 ? 'nd' : formData.billingDay === 3 ? 'rd' : 'th'} of each month</li>
+                <li>• Proration: {formData.prorate ? 'Enabled (prorated first charge)' : 'Disabled (full charge immediately)'}</li>
               </ul>
             </div>
 

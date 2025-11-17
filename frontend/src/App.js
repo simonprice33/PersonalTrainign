@@ -18,6 +18,7 @@ import UserManagement from "./components/admin/UserManagement";
 import ChangePassword from "./components/admin/ChangePassword";
 import ForgotPassword from "./components/admin/ForgotPassword";
 import ResetPassword from "./components/admin/ResetPassword";
+import ClientManagement from "./components/admin/ClientManagement";
 
 function App() {
   return (

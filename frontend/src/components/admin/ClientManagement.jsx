@@ -102,8 +102,43 @@ const ClientManagement = () => {
       email: '',
       telephone: '',
       price: 125,
-      billingDay: 1
+      billingDay: 1,
+      expirationDays: 7
     });
+  };
+
+  const handleResendLink = async (clientEmail) => {
+    setResendingEmail(clientEmail);
+    setError('');
+
+    try {
+      const token = localStorage.getItem('adminAccessToken');
+      
+      const response = await axios.post(
+        `${BACKEND_URL}/api/admin/resend-payment-link`,
+        { 
+          email: clientEmail,
+          expirationDays: 7 
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        alert(`Payment link resent successfully to ${clientEmail}!`);
+      }
+    } catch (err) {
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        navigate('/admin');
+      } else {
+        alert(err.response?.data?.message || 'Failed to resend payment link');
+      }
+    } finally {
+      setResendingEmail(null);
+    }
   };
 
   const copyToClipboard = () => {

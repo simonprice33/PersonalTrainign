@@ -104,7 +104,8 @@ const ClientManagement = () => {
       telephone: '',
       price: 125,
       billingDay: 1,
-      expirationDays: 7
+      expirationDays: 7,
+      prorate: true
     });
   };
 

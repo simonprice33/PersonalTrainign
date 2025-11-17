@@ -1742,6 +1742,7 @@ app.post('/api/admin/resend-payment-link', authenticateToken, [
       telephone: client.telephone,
       price: client.price || 125,
       billingDay: client.billingDay || 1,
+      prorate: client.prorate !== undefined ? client.prorate : true,
       type: 'payment_onboarding'
     };
 

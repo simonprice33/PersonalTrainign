@@ -1552,6 +1552,565 @@ app.get('/api/admin/emails/export', authenticateToken, async (req, res) => {
   }
 });
 
+// ============================================================================
+// CLIENT MANAGEMENT & STRIPE SUBSCRIPTION ENDPOINTS
+// ============================================================================
+
+// Create Payment Link (Admin - JWT Protected)
+app.post('/api/admin/create-payment-link', authenticateToken, [
+  body('name').notEmpty(),
+  body('email').isEmail().normalizeEmail(),
+  body('telephone').notEmpty(),
+  body('price').isInt({ min: 1 }).optional(),
+  body('billingDay').isInt({ min: 1, max: 28 }).optional()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input',
+        errors: errors.array()
+      });
+    }
+
+    const { name, email, telephone, price, billingDay } = req.body;
+
+    // Generate payment link token (24 hour expiry)
+    const tokenPayload = {
+      name,
+      email,
+      telephone,
+      price: price || 125,
+      billingDay: billingDay || 1,
+      type: 'payment_onboarding'
+    };
+
+    const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '24h' });
+
+    // Create payment link
+    const paymentLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/client-onboarding?token=${token}`;
+
+    // Send email to client
+    try {
+      const graphClient = createGraphClient();
+
+      const emailMessage = {
+        message: {
+          subject: 'Complete Your Personal Training Registration',
+          body: {
+            contentType: 'HTML',
+            content: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #1a1a2e;">Welcome to Simon Price Personal Training!</h2>
+                <p>Hi ${name},</p>
+                <p>Thank you for choosing Simon Price PT. To complete your registration and set up your monthly subscription, please click the button below:</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${paymentLink}" 
+                     style="background: linear-gradient(135deg, #d3ff62 0%, #a8d946 100%); 
+                            color: #1a1a2e; 
+                            padding: 15px 40px; 
+                            text-decoration: none; 
+                            border-radius: 30px; 
+                            font-weight: bold;
+                            display: inline-block;
+                            font-size: 16px;">
+                    Complete Registration
+                  </a>
+                </div>
+
+                <p><strong>Your Subscription Details:</strong></p>
+                <ul>
+                  <li>Monthly Price: £${price || 125}</li>
+                  <li>Billing Date: ${billingDay || 1}${billingDay === 1 ? 'st' : billingDay === 2 ? 'nd' : billingDay === 3 ? 'rd' : 'th'} of each month</li>
+                </ul>
+
+                <p style="color: #888; font-size: 14px; margin-top: 30px;">
+                  This link will expire in 24 hours. If you have any questions, please contact Simon directly.
+                </p>
+
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+                
+                <p style="color: #888; font-size: 12px;">
+                  Simon Price Personal Training<br>
+                  Bognor Regis, West Sussex, UK<br>
+                  simon.price@simonprice-pt.co.uk
+                </p>
+              </div>
+            `
+          },
+          toRecipients: [
+            {
+              emailAddress: {
+                address: email
+              }
+            }
+          ]
+        },
+        saveToSentItems: 'true'
+      };
+
+      await graphClient
+        .api(`/users/${process.env.EMAIL_FROM}/sendMail`)
+        .post(emailMessage);
+
+      console.log(`📧 Payment link sent to: ${email} (£${price || 125}/month)`);
+    } catch (emailError) {
+      console.error('❌ Failed to send payment link email:', emailError.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send email. Please try again.'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Payment link sent successfully',
+      paymentLink,
+      expiresIn: '24 hours'
+    });
+
+  } catch (error) {
+    console.error('❌ Create payment link error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create payment link'
+    });
+  }
+});
+
+// Validate Payment Token (Client - Public)
+app.post('/api/client/validate-token', [
+  body('token').notEmpty()
+], async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    // Verify token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+      
+      if (decoded.type !== 'payment_onboarding') {
+        throw new Error('Invalid token type');
+      }
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired link. Please request a new payment link.'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        name: decoded.name,
+        email: decoded.email,
+        telephone: decoded.telephone,
+        price: decoded.price,
+        billingDay: decoded.billingDay
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Validate token error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to validate token'
+    });
+  }
+});
+
+// Create Setup Intent (Client - Public)
+app.post('/api/client/create-setup-intent', async (req, res) => {
+  try {
+    const setupIntent = await stripe.setupIntents.create({
+      payment_method_types: ['card'],
+    });
+
+    res.status(200).json({
+      success: true,
+      clientSecret: setupIntent.client_secret
+    });
+
+  } catch (error) {
+    console.error('❌ Create setup intent error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to initialize payment form'
+    });
+  }
+});
+
+// Complete Onboarding (Client - Public)
+app.post('/api/client/complete-onboarding', [
+  body('token').notEmpty(),
+  body('paymentMethodId').notEmpty(),
+  body('dateOfBirth').notEmpty(),
+  body('addressLine1').notEmpty(),
+  body('city').notEmpty(),
+  body('postcode').notEmpty(),
+  body('emergencyContactName').notEmpty(),
+  body('emergencyContactNumber').notEmpty(),
+  body('emergencyContactRelationship').notEmpty()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please fill in all required fields',
+        errors: errors.array()
+      });
+    }
+
+    const {
+      token,
+      paymentMethodId,
+      dateOfBirth,
+      addressLine1,
+      addressLine2,
+      city,
+      postcode,
+      emergencyContactName,
+      emergencyContactNumber,
+      emergencyContactRelationship
+    } = req.body;
+
+    // Verify token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired link'
+      });
+    }
+
+    // Create Stripe customer
+    const customer = await stripe.customers.create({
+      email: decoded.email,
+      name: decoded.name,
+      phone: decoded.telephone,
+      payment_method: paymentMethodId,
+      invoice_settings: {
+        default_payment_method: paymentMethodId,
+      },
+      metadata: {
+        source: 'simonprice_pt_onboarding'
+      }
+    });
+
+    // Calculate billing cycle anchor (next occurrence of billing day)
+    const now = new Date();
+    const currentDay = now.getDate();
+    const billingDay = decoded.billingDay;
+    
+    let billingDate = new Date(now.getFullYear(), now.getMonth(), billingDay);
+    
+    // If billing day has passed this month, set for next month
+    if (currentDay >= billingDay) {
+      billingDate.setMonth(billingDate.getMonth() + 1);
+    }
+    
+    const billingCycleAnchor = Math.floor(billingDate.getTime() / 1000);
+
+    // Create subscription
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [{
+        price_data: {
+          currency: 'gbp',
+          product_data: {
+            name: 'Personal Training Plan',
+            description: 'Monthly personal training subscription'
+          },
+          recurring: {
+            interval: 'month'
+          },
+          unit_amount: decoded.price * 100 // Convert to pence
+        }
+      }],
+      billing_cycle_anchor: billingCycleAnchor,
+      proration_behavior: 'none',
+      metadata: {
+        client_name: decoded.name,
+        billing_day: billingDay
+      }
+    });
+
+    // Save client to database
+    const clientData = {
+      client_id: customer.id,
+      name: decoded.name,
+      email: decoded.email,
+      telephone: decoded.telephone,
+      date_of_birth: new Date(dateOfBirth),
+      address_line_1: addressLine1,
+      address_line_2: addressLine2 || null,
+      city,
+      postcode,
+      emergency_contact_name: emergencyContactName,
+      emergency_contact_number: emergencyContactNumber,
+      emergency_contact_relationship: emergencyContactRelationship,
+      stripe_customer_id: customer.id,
+      stripe_subscription_id: subscription.id,
+      payment_method_id: paymentMethodId,
+      subscription_price: decoded.price,
+      billing_day: billingDay,
+      subscription_status: subscription.status,
+      onboarding_token: token,
+      created_at: new Date(),
+      updated_at: new Date()
+    };
+
+    if (clientsCollection) {
+      await clientsCollection.insertOne(clientData);
+    }
+
+    // Send confirmation emails
+    try {
+      const graphClient = createGraphClient();
+
+      // Email to admin
+      const adminEmail = {
+        message: {
+          subject: `New Client Subscription: ${decoded.name}`,
+          body: {
+            contentType: 'HTML',
+            content: `
+              <div style="font-family: Arial, sans-serif;">
+                <h2>New Client Subscription</h2>
+                <p>A new client has completed their onboarding:</p>
+                <ul>
+                  <li><strong>Name:</strong> ${decoded.name}</li>
+                  <li><strong>Email:</strong> ${decoded.email}</li>
+                  <li><strong>Phone:</strong> ${decoded.telephone}</li>
+                  <li><strong>Monthly Price:</strong> £${decoded.price}</li>
+                  <li><strong>Billing Day:</strong> ${billingDay}${billingDay === 1 ? 'st' : billingDay === 2 ? 'nd' : billingDay === 3 ? 'rd' : 'th'} of each month</li>
+                  <li><strong>Subscription Status:</strong> ${subscription.status}</li>
+                </ul>
+                <p>Login to your admin dashboard to view full details.</p>
+              </div>
+            `
+          },
+          toRecipients: [{
+            emailAddress: { address: process.env.EMAIL_TO }
+          }]
+        }
+      };
+
+      await graphClient.api(`/users/${process.env.EMAIL_FROM}/sendMail`).post(adminEmail);
+
+      // Email to client
+      const clientEmail = {
+        message: {
+          subject: 'Welcome to Simon Price Personal Training!',
+          body: {
+            contentType: 'HTML',
+            content: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #1a1a2e;">Welcome Aboard, ${decoded.name}!</h2>
+                <p>Thank you for subscribing to Simon Price Personal Training. Your subscription is now active!</p>
+                
+                <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                  <h3 style="margin-top: 0;">Subscription Details:</h3>
+                  <ul style="list-style: none; padding: 0;">
+                    <li>💰 <strong>Monthly Price:</strong> £${decoded.price}</li>
+                    <li>📅 <strong>Billing Date:</strong> ${billingDay}${billingDay === 1 ? 'st' : billingDay === 2 ? 'nd' : billingDay === 3 ? 'rd' : 'th'} of each month</li>
+                    <li>✅ <strong>Status:</strong> Active</li>
+                  </ul>
+                </div>
+
+                <p>I'm excited to help you achieve your fitness goals! I'll be in touch shortly to schedule our first session.</p>
+
+                <p style="margin-top: 30px;">
+                  Best regards,<br>
+                  <strong>Simon Price</strong><br>
+                  Personal Trainer<br>
+                  📧 simon.price@simonprice-pt.co.uk<br>
+                  📱 ${decoded.telephone}
+                </p>
+              </div>
+            `
+          },
+          toRecipients: [{
+            emailAddress: { address: decoded.email }
+          }]
+        }
+      };
+
+      await graphClient.api(`/users/${process.env.EMAIL_FROM}/sendMail`).post(clientEmail);
+
+    } catch (emailError) {
+      console.error('❌ Failed to send confirmation emails:', emailError.message);
+    }
+
+    console.log(`✅ New client onboarded: ${decoded.name} (${decoded.email}) - £${decoded.price}/month`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Subscription created successfully!',
+      subscription: {
+        id: subscription.id,
+        status: subscription.status,
+        nextBillingDate: new Date(billingCycleAnchor * 1000).toISOString()
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Complete onboarding error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to complete onboarding'
+    });
+  }
+});
+
+// Get All Clients (Admin - JWT Protected)
+app.get('/api/admin/clients', authenticateToken, async (req, res) => {
+  try {
+    if (!clientsCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    const clients = await clientsCollection.find({}).sort({ created_at: -1 }).toArray();
+
+    res.status(200).json({
+      success: true,
+      count: clients.length,
+      clients
+    });
+
+  } catch (error) {
+    console.error('❌ Get clients error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch clients'
+    });
+  }
+});
+
+// Cancel Subscription (Admin - JWT Protected)
+app.post('/api/admin/client/:id/cancel-subscription', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!clientsCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    const client = await clientsCollection.findOne({ stripe_customer_id: id });
+
+    if (!client) {
+      return res.status(404).json({
+        success: false,
+        message: 'Client not found'
+      });
+    }
+
+    // Cancel subscription in Stripe
+    await stripe.subscriptions.cancel(client.stripe_subscription_id);
+
+    // Update database
+    await clientsCollection.updateOne(
+      { stripe_customer_id: id },
+      { 
+        $set: { 
+          subscription_status: 'canceled',
+          updated_at: new Date()
+        }
+      }
+    );
+
+    console.log(`❌ Subscription canceled for: ${client.name} (${client.email})`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Subscription canceled successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Cancel subscription error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to cancel subscription'
+    });
+  }
+});
+
+// Stripe Webhook Handler
+app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    console.error('❌ Webhook signature verification failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the event
+  try {
+    switch (event.type) {
+      case 'customer.subscription.updated':
+        const subscription = event.data.object;
+        if (clientsCollection) {
+          await clientsCollection.updateOne(
+            { stripe_subscription_id: subscription.id },
+            { $set: { subscription_status: subscription.status, updated_at: new Date() } }
+          );
+        }
+        console.log(`📝 Subscription updated: ${subscription.id} - ${subscription.status}`);
+        break;
+
+      case 'customer.subscription.deleted':
+        const deletedSub = event.data.object;
+        if (clientsCollection) {
+          await clientsCollection.updateOne(
+            { stripe_subscription_id: deletedSub.id },
+            { $set: { subscription_status: 'canceled', updated_at: new Date() } }
+          );
+        }
+        console.log(`❌ Subscription deleted: ${deletedSub.id}`);
+        break;
+
+      case 'invoice.payment_failed':
+        const failedInvoice = event.data.object;
+        console.log(`⚠️ Payment failed for customer: ${failedInvoice.customer}`);
+        // Could send email notification here
+        break;
+
+      case 'invoice.payment_succeeded':
+        const invoice = event.data.object;
+        console.log(`✅ Payment succeeded for customer: ${invoice.customer}`);
+        break;
+
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    res.json({ received: true });
+  } catch (error) {
+    console.error('❌ Webhook handler error:', error);
+    res.status(500).send('Webhook handler failed');
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({

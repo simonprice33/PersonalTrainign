@@ -439,6 +439,25 @@ const ClientManagement = () => {
                 </div>
               </div>
 
+              {/* Proration Toggle */}
+              <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.prorate}
+                    onChange={(e) => setFormData({ ...formData, prorate: e.target.checked })}
+                    className="mt-1 w-5 h-5 bg-gray-800 border-gray-600 rounded focus:ring-green-500 focus:ring-2"
+                  />
+                  <div className="flex-1">
+                    <div className="text-gray-200 font-medium">Enable Proration</div>
+                    <p className="text-xs text-gray-400 mt-1">
+                      When enabled, the first charge will be prorated based on when the client signs up during the billing cycle. 
+                      If disabled, they'll be charged the full monthly amount immediately.
+                    </p>
+                  </div>
+                </label>
+              </div>
+
               <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
                 <p className="text-blue-300 text-sm">
                   <strong>Note:</strong> The client will receive an email with a secure payment link. 

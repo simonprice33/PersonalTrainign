@@ -1784,6 +1784,7 @@ app.post('/api/admin/resend-payment-link', authenticateToken, [
                 <ul>
                   <li>Monthly Price: £${client.price || 125}</li>
                   <li>Billing Date: ${client.billingDay || 1}${(client.billingDay || 1) === 1 ? 'st' : (client.billingDay || 1) === 2 ? 'nd' : (client.billingDay || 1) === 3 ? 'rd' : 'th'} of each month</li>
+                  ${(client.prorate !== false) ? '<li>First charge will be prorated based on your signup date</li>' : '<li>Full monthly charge applies immediately</li>'}
                 </ul>
 
                 <p style="color: #888; font-size: 14px; margin-top: 30px;">

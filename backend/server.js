@@ -1586,7 +1586,7 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
       type: 'payment_onboarding'
     };
 
-    const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '7d' });
 
     // Create payment link
     const paymentLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/client-onboarding?token=${token}`;

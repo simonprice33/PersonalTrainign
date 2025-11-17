@@ -497,7 +497,7 @@ def test_cors_configuration(base_url):
         # Test preflight request
         url = f"{base_url}/api/contact"
         headers = {
-            'Origin': 'https://simonfitcoach.preview.emergentagent.com',
+            'Origin': 'https://simonprice-pt.preview.emergentagent.com',
             'Access-Control-Request-Method': 'POST',
             'Access-Control-Request-Headers': 'Content-Type'
         }

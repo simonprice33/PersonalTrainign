@@ -21,6 +21,7 @@ const dbName = process.env.DB_NAME || 'simonprice_pt_db';
 let db = null;
 let emailCollection = null;
 let adminUsersCollection = null;
+let clientsCollection = null;
 
 // Connect to MongoDB
 MongoClient.connect(mongoUrl, { 

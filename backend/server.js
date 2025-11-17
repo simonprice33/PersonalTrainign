@@ -1682,6 +1682,152 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
   }
 });
 
+// Resend Payment Link (Admin - JWT Protected)
+app.post('/api/admin/resend-payment-link', authenticateToken, [
+  body('email').isEmail().normalizeEmail(),
+  body('expirationDays').isInt({ min: 1, max: 30 }).optional()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input',
+        errors: errors.array()
+      });
+    }
+
+    const { email, expirationDays } = req.body;
+    const expDays = expirationDays || 7;
+
+    // Find client in pending clients collection or use provided data
+    if (!clientsCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    // Find the most recent client record with this email
+    const existingClient = await clientsCollection
+      .find({ email })
+      .sort({ created_at: -1 })
+      .limit(1)
+      .toArray();
+
+    if (!existingClient || existingClient.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Client not found. Please create a new payment link.'
+      });
+    }
+
+    const client = existingClient[0];
+
+    // Generate new payment link token with configurable expiry
+    const tokenPayload = {
+      name: client.name,
+      email: client.email,
+      telephone: client.telephone,
+      price: client.price || 125,
+      billingDay: client.billingDay || 1,
+      type: 'payment_onboarding'
+    };
+
+    const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: `${expDays}d` });
+
+    // Create payment link
+    const paymentLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/client-onboarding?token=${token}`;
+
+    // Send email to client
+    try {
+      const graphClient = createGraphClient();
+
+      const emailMessage = {
+        message: {
+          subject: 'Reminder: Complete Your Personal Training Registration',
+          body: {
+            contentType: 'HTML',
+            content: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #1a1a2e;">Complete Your Registration - Simon Price PT</h2>
+                <p>Hi ${client.name},</p>
+                <p>This is a reminder to complete your registration and set up your monthly subscription for Simon Price Personal Training.</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${paymentLink}" 
+                     style="background: linear-gradient(135deg, #d3ff62 0%, #a8d946 100%); 
+                            color: #1a1a2e; 
+                            padding: 15px 40px; 
+                            text-decoration: none; 
+                            border-radius: 30px; 
+                            font-weight: bold;
+                            display: inline-block;
+                            font-size: 16px;">
+                    Complete Registration
+                  </a>
+                </div>
+
+                <p><strong>Your Subscription Details:</strong></p>
+                <ul>
+                  <li>Monthly Price: £${client.price || 125}</li>
+                  <li>Billing Date: ${client.billingDay || 1}${(client.billingDay || 1) === 1 ? 'st' : (client.billingDay || 1) === 2 ? 'nd' : (client.billingDay || 1) === 3 ? 'rd' : 'th'} of each month</li>
+                </ul>
+
+                <p style="color: #888; font-size: 14px; margin-top: 30px;">
+                  This link will expire in ${expDays} day${expDays > 1 ? 's' : ''}. If you have any questions, please contact Simon directly.
+                </p>
+
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+                
+                <p style="color: #888; font-size: 12px;">
+                  Simon Price Personal Training<br>
+                  Bognor Regis, West Sussex, UK<br>
+                  simon.price@simonprice-pt.co.uk
+                </p>
+              </div>
+            `
+          },
+          toRecipients: [
+            {
+              emailAddress: {
+                address: email
+              }
+            }
+          ]
+        },
+        saveToSentItems: 'true'
+      };
+
+      await graphClient
+        .api(`/users/${process.env.EMAIL_FROM}/sendMail`)
+        .post(emailMessage);
+
+      console.log(`📧 Payment link resent to: ${email} (expires in ${expDays} days)`);
+    } catch (emailError) {
+      console.error('❌ Failed to resend payment link email:', emailError.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send email. Please try again.'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Payment link resent successfully',
+      paymentLink,
+      expiresIn: `${expDays} day${expDays > 1 ? 's' : ''}`
+    });
+
+  } catch (error) {
+    console.error('❌ Resend payment link error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to resend payment link'
+    });
+  }
+});
+
 // Validate Payment Token (Client - Public)
 app.post('/api/client/validate-token', [
   body('token').notEmpty()

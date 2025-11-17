@@ -9,6 +9,7 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import ClientContactForm from "./components/ClientContactForm";
 import Unsubscribe from "./components/Unsubscribe";
+import ClientOnboarding from "./components/ClientOnboarding";
 
 // Admin Components
 import AdminLogin from "./components/admin/AdminLogin";

@@ -220,7 +220,7 @@ const ClientManagement = () => {
                   Copy
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-2">This link expires in 24 hours</p>
+              <p className="text-xs text-gray-500 mt-2">This link expires in {formData.expirationDays} day{formData.expirationDays > 1 ? 's' : ''}</p>
             </div>
 
             <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-6">

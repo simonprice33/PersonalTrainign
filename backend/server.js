@@ -1562,7 +1562,8 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
   body('email').isEmail().normalizeEmail(),
   body('telephone').notEmpty(),
   body('price').isInt({ min: 1 }).optional(),
-  body('billingDay').isInt({ min: 1, max: 28 }).optional()
+  body('billingDay').isInt({ min: 1, max: 28 }).optional(),
+  body('expirationDays').isInt({ min: 1, max: 30 }).optional()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -1574,9 +1575,10 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
       });
     }
 
-    const { name, email, telephone, price, billingDay } = req.body;
+    const { name, email, telephone, price, billingDay, expirationDays } = req.body;
+    const expDays = expirationDays || 7;
 
-    // Generate payment link token (24 hour expiry)
+    // Generate payment link token with configurable expiry
     const tokenPayload = {
       name,
       email,
@@ -1586,7 +1588,7 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
       type: 'payment_onboarding'
     };
 
-    const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: `${expDays}d` });
 
     // Create payment link
     const paymentLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/client-onboarding?token=${token}`;

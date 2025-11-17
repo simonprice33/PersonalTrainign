@@ -1571,7 +1571,8 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
   body('telephone').notEmpty(),
   body('price').isInt({ min: 1 }).optional(),
   body('billingDay').isInt({ min: 1, max: 28 }).optional(),
-  body('expirationDays').isInt({ min: 1, max: 30 }).optional()
+  body('expirationDays').isInt({ min: 1, max: 30 }).optional(),
+  body('prorate').isBoolean().optional()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -1583,7 +1584,7 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
       });
     }
 
-    const { name, email, telephone, price, billingDay, expirationDays } = req.body;
+    const { name, email, telephone, price, billingDay, expirationDays, prorate } = req.body;
     const expDays = expirationDays || 7;
 
     // Generate payment link token with configurable expiry
@@ -1593,6 +1594,7 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
       telephone,
       price: price || 125,
       billingDay: billingDay || 1,
+      prorate: prorate !== undefined ? prorate : true,
       type: 'payment_onboarding'
     };
 

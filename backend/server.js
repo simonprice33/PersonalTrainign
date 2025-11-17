@@ -9,6 +9,7 @@ const { ClientSecretCredential } = require('@azure/identity');
 const { MongoClient } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 require('dotenv').config();
 
 const app = express();

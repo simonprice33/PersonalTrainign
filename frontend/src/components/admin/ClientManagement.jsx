@@ -79,6 +79,7 @@ const ClientManagement = () => {
       if (response.data.success) {
         setSuccess(true);
         setPaymentLink(response.data.paymentLink);
+        fetchClients(); // Refresh client list
       }
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {

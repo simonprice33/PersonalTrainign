@@ -355,7 +355,7 @@ const ClientManagement = () => {
                 <p className="text-blue-300 text-sm">
                   <strong>Note:</strong> The client will receive an email with a secure payment link. 
                   They'll need to complete their details and set up their payment method. 
-                  The link expires in 24 hours.
+                  The link expires in {formData.expirationDays} day{formData.expirationDays > 1 ? 's' : ''}.
                 </p>
               </div>
 

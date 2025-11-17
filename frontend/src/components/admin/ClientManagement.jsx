@@ -236,6 +236,7 @@ const ClientManagement = () => {
                             <Calendar size={16} className="text-purple-400" />
                             <span className="text-sm">
                               Billing: {client.billingDay || 1}{(client.billingDay || 1) === 1 ? 'st' : (client.billingDay || 1) === 2 ? 'nd' : (client.billingDay || 1) === 3 ? 'rd' : 'th'} of each month
+                              {client.prorate !== false && ' • Prorated'}
                             </span>
                           </div>
                           {client.stripe_customer_id && (

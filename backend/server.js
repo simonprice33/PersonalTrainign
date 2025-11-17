@@ -1668,7 +1668,7 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
       success: true,
       message: 'Payment link sent successfully',
       paymentLink,
-      expiresIn: '24 hours'
+      expiresIn: '7 days'
     });
 
   } catch (error) {

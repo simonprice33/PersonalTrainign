@@ -1681,15 +1681,18 @@ def main():
     
     print(f"\n📊 OVERALL RESULTS: {passed_tests}/{total_tests} tests passed")
     
-    # Separate admin and email test results
+    # Separate test results by category
+    stripe_tests = ['create_payment_link', 'validate_token', 'create_setup_intent', 'get_clients', 'resend_payment_link']
     admin_tests = ['admin_setup', 'admin_login', 'token_refresh', 'change_password', 
                    'user_management', 'email_viewing', 'jwt_middleware', 'password_security']
     email_tests = ['mongodb_connection', 'health_check', 'contact_form_storage', 
                    'tdee_calculator_storage', 'client_contact_storage', 'duplicate_handling', 'cors_configuration']
     
+    stripe_passed = sum(results[test] for test in stripe_tests)
     admin_passed = sum(results[test] for test in admin_tests)
     email_passed = sum(results[test] for test in email_tests)
     
+    print(f"💳 Stripe Subscription: {stripe_passed}/{len(stripe_tests)} tests passed")
     print(f"🔐 Admin Authentication: {admin_passed}/{len(admin_tests)} tests passed")
     print(f"📧 Email Storage: {email_passed}/{len(email_tests)} tests passed")
     

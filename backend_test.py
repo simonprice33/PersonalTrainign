@@ -1582,7 +1582,7 @@ def main():
         "cors_configuration": False
     }
     
-    # Run Admin Authentication Tests
+    # Run Admin Authentication Tests first (needed for Stripe tests)
     print("\n" + "🔐" * 40)
     print("ADMIN AUTHENTICATION SYSTEM TESTS")
     print("🔐" * 40)

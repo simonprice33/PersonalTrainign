@@ -273,8 +273,16 @@ const OnboardingForm = () => {
                   required
                   value={formData.dateOfBirth}
                   onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                  placeholder="DD/MM/YYYY"
+                  max={new Date().toISOString().split('T')[0]}
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 [color-scheme:dark]"
+                  style={{
+                    colorScheme: 'dark'
+                  }}
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Click the calendar icon or type manually in DD/MM/YYYY format
+                </p>
               </div>
             </div>
           </div>

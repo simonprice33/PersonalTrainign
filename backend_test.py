@@ -1697,7 +1697,9 @@ def main():
     print(f"📧 Email Storage: {email_passed}/{len(email_tests)} tests passed")
     
     if passed_tests == total_tests:
-        print("🎉 ALL TESTS PASSED - Complete admin authentication and email storage system working correctly!")
+        print("🎉 ALL TESTS PASSED - Complete system working correctly!")
+    elif stripe_passed == len(stripe_tests):
+        print("💳 STRIPE SYSTEM COMPLETE - All subscription tests passed!")
     elif admin_passed == len(admin_tests):
         print("🔐 ADMIN SYSTEM COMPLETE - All admin authentication tests passed!")
     elif email_passed == len(email_tests):

@@ -1646,6 +1646,14 @@ def main():
     print("COMPREHENSIVE TEST SUMMARY")
     print("=" * 80)
     
+    # Stripe Subscription Results
+    print("\n💳 STRIPE SUBSCRIPTION SYSTEM:")
+    print(f"Create Payment Link: {'✅ PASS' if results['create_payment_link'] else '❌ FAIL'}")
+    print(f"Validate Token: {'✅ PASS' if results['validate_token'] else '❌ FAIL'}")
+    print(f"Create Setup Intent: {'✅ PASS' if results['create_setup_intent'] else '❌ FAIL'}")
+    print(f"Get Clients List: {'✅ PASS' if results['get_clients'] else '❌ FAIL'}")
+    print(f"Resend Payment Link: {'✅ PASS' if results['resend_payment_link'] else '❌ FAIL'}")
+    
     # Admin Authentication Results
     print("\n🔐 ADMIN AUTHENTICATION SYSTEM:")
     print(f"Admin Setup Endpoint: {'✅ PASS' if results['admin_setup'] else '❌ FAIL'}")

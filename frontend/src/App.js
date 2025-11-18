@@ -32,6 +32,9 @@ function App() {
           {/* Unsubscribe Route - No navigation */}
           <Route path="/unsubscribe" element={<Unsubscribe />} />
           
+          {/* Client Onboarding Route - No navigation */}
+          <Route path="/client-onboarding" element={<ClientOnboarding />} />
+          
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/forgot-password" element={<ForgotPassword />} />

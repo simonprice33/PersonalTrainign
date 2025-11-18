@@ -1612,6 +1612,14 @@ def main():
     results["jwt_middleware"] = test_jwt_authentication_middleware(backend_url)
     results["password_security"] = test_password_security(mongo_db)
     
+    # Run Stripe Subscription Tests (if we have access token)
+    if login_result and isinstance(login_result, tuple):
+        access_token, _ = login_result
+        stripe_results = test_stripe_subscription_flow(backend_url, access_token)
+        results.update(stripe_results)
+    else:
+        print("⚠️ Skipping Stripe subscription tests due to login failure")
+    
     # Run Email Storage Tests (existing functionality)
     print("\n" + "📧" * 40)
     print("EMAIL STORAGE SYSTEM TESTS")

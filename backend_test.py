@@ -1555,6 +1555,13 @@ def main():
     
     # Test results tracking
     results = {
+        # Stripe Subscription Tests
+        "create_payment_link": False,
+        "validate_token": False,
+        "create_setup_intent": False,
+        "get_clients": False,
+        "resend_payment_link": False,
+        
         # Admin Authentication Tests
         "admin_setup": False,
         "admin_login": False,

@@ -1978,24 +1978,30 @@ app.post('/api/client/complete-onboarding', [
     
     const billingCycleAnchor = Math.floor(billingDate.getTime() / 1000);
 
-    // Create subscription
+    // Create product first
+    const product = await stripe.products.create({
+      name: 'Personal Training Plan',
+      description: 'Monthly personal training subscription'
+    });
+
+    // Create price for the product
+    const price = await stripe.prices.create({
+      product: product.id,
+      currency: 'gbp',
+      unit_amount: decoded.price * 100, // Convert to pence
+      recurring: {
+        interval: 'month'
+      }
+    });
+
+    // Create subscription using the price ID
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{
-        price_data: {
-          currency: 'gbp',
-          product_data: {
-            name: 'Personal Training Plan',
-            description: 'Monthly personal training subscription'
-          },
-          recurring: {
-            interval: 'month'
-          },
-          unit_amount: decoded.price * 100 // Convert to pence
-        }
+        price: price.id
       }],
       billing_cycle_anchor: billingCycleAnchor,
-      proration_behavior: 'none',
+      proration_behavior: decoded.prorate !== false ? 'create_prorations' : 'none',
       metadata: {
         client_name: decoded.name,
         billing_day: billingDay

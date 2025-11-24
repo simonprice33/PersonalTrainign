@@ -6,7 +6,7 @@ import axios from 'axios';
 import { CheckCircle, XCircle, Loader } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || 'pk_live_51RNwW4Ft35iEmKukoRu9Htop0QuI67KphoQeuzslLF4eJylZ7G1QYAuBVUVfN5axxsAFujfpJ7wQfkuiGY03Vrqm00ysoY7dNP');
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const CARD_ELEMENT_OPTIONS = {
   style: {

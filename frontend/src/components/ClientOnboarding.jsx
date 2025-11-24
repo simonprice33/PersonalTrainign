@@ -331,77 +331,23 @@ const OnboardingForm = () => {
                 <label className="block text-gray-300 text-sm font-medium mb-2">
                   Date of Birth *
                 </label>
-                
-                {/* Toggle between calendar and manual input */}
-                <div className="flex gap-2 mb-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowManualInput(false)}
-                    className={`px-3 py-1 text-xs rounded ${!showManualInput ? 'bg-cyan-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-                  >
-                    📅 Calendar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowManualInput(true)}
-                    className={`px-3 py-1 text-xs rounded ${showManualInput ? 'bg-cyan-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-                  >
-                    ⌨️ Type Manually
-                  </button>
-                </div>
-
-                {!showManualInput ? (
-                  <>
-                    <input
-                      type="date"
-                      required
-                      name="dateOfBirth"
-                      id="dateOfBirth"
-                      autoComplete="bday"
-                      data-lpignore="true"
-                      data-form-type="other"
-                      value={formData.dateOfBirth}
-                      onChange={(e) => {
-                        setFormData({ ...formData, dateOfBirth: e.target.value });
-                        setManualDateInput(formatDateForDisplay(e.target.value));
-                      }}
-                      max={new Date().toISOString().split('T')[0]}
-                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 [color-scheme:dark]"
-                      style={{ colorScheme: 'dark' }}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Click the calendar icon to select a date
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <input
-                      type="text"
-                      required
-                      name="dateOfBirthManual"
-                      id="dateOfBirthManual"
-                      autoComplete="bday"
-                      data-lpignore="true"
-                      data-form-type="other"
-                      inputMode="numeric"
-                      value={manualDateInput}
-                      onChange={(e) => handleManualDateChange(e.target.value)}
-                      placeholder="DD/MM/YYYY"
-                      maxLength="10"
-                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Enter date in DD/MM/YYYY format (e.g., 15/03/1990)
-                    </p>
-                  </>
-                )}
-                
-                {/* Display selected date */}
-                {formData.dateOfBirth && (
-                  <p className="text-xs text-green-400 mt-1">
-                    ✓ Selected: {formatDateForDisplay(formData.dateOfBirth)}
-                  </p>
-                )}
+                <input
+                  type="date"
+                  required
+                  name="dateOfBirth"
+                  id="dateOfBirth"
+                  autoComplete="bday"
+                  data-lpignore="true"
+                  data-form-type="other"
+                  value={formData.dateOfBirth}
+                  onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                  max={new Date().toISOString().split('T')[0]}
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                  style={{ colorScheme: 'dark' }}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Select your date of birth
+                </p>
               </div>
             </div>
           </div>

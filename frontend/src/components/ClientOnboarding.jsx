@@ -309,6 +309,23 @@ const OnboardingForm = () => {
     try {
       // Create payment method
       const cardElement = elements.getElement(CardElement);
+      // Build address object - only include postal_code if it exists and is not empty
+      const billingAddress = {
+        line1: formData.addressLine1,
+        city: formData.city,
+        country: formData.country
+      };
+      
+      // Add optional fields only if they exist
+      if (formData.addressLine2) {
+        billingAddress.line2 = formData.addressLine2;
+      }
+      
+      // Only include postal_code if it's not empty (to avoid Stripe validation issues)
+      if (formData.postcode && formData.postcode.trim()) {
+        billingAddress.postal_code = formData.postcode.trim();
+      }
+
       const { error: stripeError, setupIntent } = await stripe.confirmCardSetup(
         clientSecret,
         {
@@ -318,13 +335,7 @@ const OnboardingForm = () => {
               name: prefilledData.name,
               email: prefilledData.email,
               phone: prefilledData.telephone,
-              address: {
-                line1: formData.addressLine1,
-                line2: formData.addressLine2,
-                city: formData.city,
-                postal_code: formData.postcode,
-                country: formData.country
-              }
+              address: billingAddress
             }
           }
         }

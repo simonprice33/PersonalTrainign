@@ -6,7 +6,15 @@ import axios from 'axios';
 import { CheckCircle, XCircle, Loader } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+const STRIPE_KEY = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
+
+// Validate Stripe key exists
+if (!STRIPE_KEY) {
+  console.error('⚠️ STRIPE PUBLISHABLE KEY NOT FOUND IN ENVIRONMENT!');
+  console.error('Please add REACT_APP_STRIPE_PUBLISHABLE_KEY to /app/frontend/.env');
+}
+
+const stripePromise = STRIPE_KEY ? loadStripe(STRIPE_KEY) : null;
 
 const CARD_ELEMENT_OPTIONS = {
   style: {

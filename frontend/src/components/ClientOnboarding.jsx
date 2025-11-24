@@ -473,11 +473,21 @@ const OnboardingForm = () => {
                     autoComplete="postal-code"
                     data-lpignore="true"
                     data-form-type="other"
+                    pattern="^[A-Z]{1,2}[0-9]{1,2}[A-Z]?\s?[0-9][A-Z]{2}$"
+                    minLength="6"
+                    maxLength="8"
                     value={formData.postcode}
-                    onChange={(e) => setFormData({ ...formData, postcode: e.target.value })}
+                    onChange={(e) => {
+                      // Auto-uppercase and format postcode
+                      const value = e.target.value.toUpperCase();
+                      setFormData({ ...formData, postcode: value });
+                    }}
                     className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
                     placeholder="PO21 1AA"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    UK postcode format (e.g., PO21 5EJ, SW1A 1AA)
+                  </p>
                 </div>
               </div>
             </div>

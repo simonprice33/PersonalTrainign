@@ -16,6 +16,9 @@ const ClientManagement = () => {
   const [clients, setClients] = useState([]);
   const [loadingClients, setLoadingClients] = useState(true);
   const [resendingEmail, setResendingEmail] = useState(null);
+  const [editingClient, setEditingClient] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editFormData, setEditFormData] = useState({});
   
   const [formData, setFormData] = useState({
     name: '',

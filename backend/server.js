@@ -1677,6 +1677,54 @@ app.post('/api/admin/create-payment-link', authenticateToken, [
       });
     }
 
+    // Save client to database immediately (in pending state)
+    try {
+      if (clientsCollection) {
+        const now = new Date();
+        const clientData = {
+          name,
+          email,
+          telephone,
+          price: price || 125,
+          billingDay: billingDay || 1,
+          prorate: prorate !== undefined ? prorate : true,
+          status: 'pending', // Mark as pending until onboarding complete
+          onboarding_token: token,
+          token_expires_at: new Date(now.getTime() + (expDays * 24 * 60 * 60 * 1000)),
+          link_created_at: now,
+          link_created_by: req.user.email, // Admin who created the link
+          stripe_customer_id: null,
+          stripe_subscription_id: null,
+          created_at: now,
+          updated_at: now
+        };
+
+        // Check if client already exists (by email)
+        const existingClient = await clientsCollection.findOne({ email });
+        
+        if (existingClient) {
+          // Update existing pending client
+          await clientsCollection.updateOne(
+            { email },
+            { 
+              $set: {
+                ...clientData,
+                updated_at: now
+              }
+            }
+          );
+          console.log(`📝 Updated existing pending client: ${email}`);
+        } else {
+          // Insert new pending client
+          await clientsCollection.insertOne(clientData);
+          console.log(`📝 Saved new pending client: ${email}`);
+        }
+      }
+    } catch (dbError) {
+      console.error('❌ Failed to save client to database:', dbError.message);
+      // Don't fail the request - email was sent successfully
+    }
+
     res.status(200).json({
       success: true,
       message: 'Payment link sent successfully',

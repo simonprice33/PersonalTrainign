@@ -309,21 +309,13 @@ const OnboardingForm = () => {
     try {
       // Create payment method
       const cardElement = elements.getElement(CardElement);
-      // Build address object - only include postal_code if it exists and is not empty
-      const billingAddress = {
-        line1: formData.addressLine1,
-        city: formData.city,
-        country: formData.country
-      };
+      // Clean and format postcode properly for Stripe
+      let cleanedPostcode = formData.postcode.trim().toUpperCase();
       
-      // Add optional fields only if they exist
-      if (formData.addressLine2) {
-        billingAddress.line2 = formData.addressLine2;
-      }
-      
-      // Only include postal_code if it's not empty (to avoid Stripe validation issues)
-      if (formData.postcode && formData.postcode.trim()) {
-        billingAddress.postal_code = formData.postcode.trim();
+      // For UK postcodes, ensure proper spacing (remove all spaces then add one before last 3 chars)
+      if (formData.country === 'GB' && cleanedPostcode.length >= 5) {
+        cleanedPostcode = cleanedPostcode.replace(/\s+/g, ''); // Remove all spaces
+        cleanedPostcode = cleanedPostcode.slice(0, -3) + ' ' + cleanedPostcode.slice(-3); // Add space before last 3
       }
 
       const { error: stripeError, setupIntent } = await stripe.confirmCardSetup(
@@ -335,7 +327,13 @@ const OnboardingForm = () => {
               name: prefilledData.name,
               email: prefilledData.email,
               phone: prefilledData.telephone,
-              address: billingAddress
+              address: {
+                line1: formData.addressLine1,
+                line2: formData.addressLine2 || undefined,
+                city: formData.city,
+                postal_code: cleanedPostcode,
+                country: formData.country
+              }
             }
           }
         }
@@ -565,11 +563,10 @@ const OnboardingForm = () => {
 
                 <div>
                   <label className="block text-gray-300 text-sm font-medium mb-2">
-                    Postcode / Zip Code *
+                    Postcode / Zip Code
                   </label>
                   <input
                     type="text"
-                    required
                     name="postcode"
                     autoComplete="postal-code"
                     data-lpignore="true"
@@ -577,8 +574,11 @@ const OnboardingForm = () => {
                     value={formData.postcode}
                     onChange={(e) => setFormData({ ...formData, postcode: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
-                    placeholder="Enter your postcode or zip code"
+                    placeholder="Optional - Enter your postcode or zip code"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Optional - Can be left blank if validation issues occur
+                  </p>
                 </div>
               </div>
 

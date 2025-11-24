@@ -17,6 +17,7 @@ if (!STRIPE_KEY) {
 const stripePromise = STRIPE_KEY ? loadStripe(STRIPE_KEY) : null;
 
 const CARD_ELEMENT_OPTIONS = {
+  hidePostalCode: true, // DISABLE the built-in ZIP field
   style: {
     base: {
       color: '#ffffff',

@@ -473,17 +473,25 @@ const OnboardingForm = () => {
                     autoComplete="postal-code"
                     data-lpignore="true"
                     data-form-type="other"
-                    pattern="^[A-Z]{1,2}[0-9]{1,2}[A-Z]?\s?[0-9][A-Z]{2}$"
-                    minLength="6"
+                    minLength="5"
                     maxLength="8"
                     value={formData.postcode}
                     onChange={(e) => {
-                      // Auto-uppercase and format postcode
+                      // Auto-uppercase postcode
                       const value = e.target.value.toUpperCase();
                       setFormData({ ...formData, postcode: value });
                     }}
+                    onBlur={(e) => {
+                      // Ensure there's a space if missing (e.g., PO215EJ -> PO21 5EJ)
+                      let value = e.target.value.trim().toUpperCase();
+                      // Add space before last 3 characters if missing
+                      if (value.length >= 5 && value.indexOf(' ') === -1) {
+                        value = value.slice(0, -3) + ' ' + value.slice(-3);
+                        setFormData({ ...formData, postcode: value });
+                      }
+                    }}
                     className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
-                    placeholder="PO21 1AA"
+                    placeholder="PO21 5EJ"
                   />
                   <p className="text-xs text-gray-500 mt-1">
                     UK postcode format (e.g., PO21 5EJ, SW1A 1AA)

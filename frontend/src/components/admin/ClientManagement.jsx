@@ -151,6 +151,66 @@ const ClientManagement = () => {
     alert('Payment link copied to clipboard!');
   };
 
+  const handleEditClient = (client) => {
+    setEditingClient(client);
+    setEditFormData({
+      name: client.name || '',
+      telephone: client.telephone || '',
+      price: client.price || 125,
+      billingDay: client.billingDay || 1,
+      prorate: client.prorate !== undefined ? client.prorate : true,
+      addressLine1: client.address_line_1 || '',
+      addressLine2: client.address_line_2 || '',
+      city: client.city || '',
+      postcode: client.postcode || '',
+      country: client.country || 'GB',
+      emergencyContactName: client.emergency_contact_name || '',
+      emergencyContactNumber: client.emergency_contact_number || '',
+      emergencyContactRelationship: client.emergency_contact_relationship || ''
+    });
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      const token = localStorage.getItem('adminAccessToken');
+      
+      const response = await axios.put(
+        `${BACKEND_URL}/api/admin/clients/${editingClient.email}`,
+        editFormData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        alert('Client updated successfully!');
+        setShowEditModal(false);
+        setEditingClient(null);
+        fetchClients(); // Refresh the list
+      }
+    } catch (err) {
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        navigate('/admin');
+      } else {
+        setError(err.response?.data?.message || 'Failed to update client');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setShowEditModal(false);
+    setEditingClient(null);
+    setEditFormData({});
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       {/* Header */}

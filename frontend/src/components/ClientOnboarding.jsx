@@ -319,26 +319,47 @@ const OnboardingForm = () => {
         cleanedPostcode = cleanedPostcode.slice(0, -3) + ' ' + cleanedPostcode.slice(-3); // Add space before last 3
       }
 
+      // Build billing details object
+      const billingDetails = {
+        name: prefilledData.name,
+        email: prefilledData.email,
+        phone: prefilledData.telephone,
+        address: {
+          line1: formData.addressLine1,
+          line2: formData.addressLine2 || undefined,
+          city: formData.city,
+          postal_code: cleanedPostcode,
+          country: formData.country
+        }
+      };
+
+      // LOG what we're sending to Stripe
+      console.log('🔵 SUBMITTING TO STRIPE:', {
+        clientSecret: clientSecret ? 'EXISTS' : 'MISSING',
+        billingDetails: billingDetails,
+        formData: {
+          original_postcode: formData.postcode,
+          cleaned_postcode: cleanedPostcode,
+          country: formData.country
+        }
+      });
+
       const { error: stripeError, setupIntent } = await stripe.confirmCardSetup(
         clientSecret,
         {
           payment_method: {
             card: cardElement,
-            billing_details: {
-              name: prefilledData.name,
-              email: prefilledData.email,
-              phone: prefilledData.telephone,
-              address: {
-                line1: formData.addressLine1,
-                line2: formData.addressLine2 || undefined,
-                city: formData.city,
-                postal_code: cleanedPostcode,
-                country: formData.country
-              }
-            }
+            billing_details: billingDetails
           }
         }
       );
+
+      // LOG the result
+      if (stripeError) {
+        console.error('❌ STRIPE ERROR:', stripeError);
+      } else {
+        console.log('✅ STRIPE SUCCESS:', setupIntent);
+      }
 
       if (stripeError) {
         setError(stripeError.message);

@@ -2262,6 +2262,172 @@ app.get('/api/admin/clients', authenticateToken, async (req, res) => {
   }
 });
 
+// Update Client (Admin - JWT Protected)
+app.put('/api/admin/clients/:email', authenticateToken, [
+  body('name').optional().notEmpty(),
+  body('telephone').optional().notEmpty(),
+  body('price').optional().isInt({ min: 1 }),
+  body('billingDay').optional().isInt({ min: 1, max: 28 }),
+  body('prorate').optional().isBoolean(),
+  body('addressLine1').optional(),
+  body('addressLine2').optional(),
+  body('city').optional(),
+  body('postcode').optional(),
+  body('country').optional(),
+  body('emergencyContactName').optional(),
+  body('emergencyContactNumber').optional(),
+  body('emergencyContactRelationship').optional()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input',
+        errors: errors.array()
+      });
+    }
+
+    const { email } = req.params;
+    const updateData = req.body;
+
+    if (!clientsCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    // Find the client
+    const client = await clientsCollection.findOne({ email });
+
+    if (!client) {
+      return res.status(404).json({
+        success: false,
+        message: 'Client not found'
+      });
+    }
+
+    // Build update object
+    const updates = {
+      updated_at: new Date(),
+      updated_by: req.user.email
+    };
+
+    // Add fields that are being updated
+    if (updateData.name) updates.name = updateData.name;
+    if (updateData.telephone) updates.telephone = updateData.telephone;
+    if (updateData.addressLine1) updates.address_line_1 = updateData.addressLine1;
+    if (updateData.addressLine2 !== undefined) updates.address_line_2 = updateData.addressLine2;
+    if (updateData.city) updates.city = updateData.city;
+    if (updateData.postcode) updates.postcode = updateData.postcode;
+    if (updateData.country) updates.country = updateData.country;
+    if (updateData.emergencyContactName) updates.emergency_contact_name = updateData.emergencyContactName;
+    if (updateData.emergencyContactNumber) updates.emergency_contact_number = updateData.emergencyContactNumber;
+    if (updateData.emergencyContactRelationship) updates.emergency_contact_relationship = updateData.emergencyContactRelationship;
+    if (updateData.prorate !== undefined) updates.prorate = updateData.prorate;
+
+    // Handle price update (requires Stripe update if subscription exists)
+    if (updateData.price && client.stripe_subscription_id && stripe) {
+      try {
+        const newPriceAmount = updateData.price * 100;
+        
+        // Find or create product
+        let product;
+        const products = await stripe.products.search({
+          query: "active:'true' AND name:'Personal Training Plan'",
+          limit: 1
+        });
+
+        if (products.data.length > 0) {
+          product = products.data[0];
+        } else {
+          product = await stripe.products.create({
+            name: 'Personal Training Plan',
+            description: 'Monthly personal training subscription'
+          });
+        }
+
+        // Find or create price
+        const prices = await stripe.prices.list({
+          product: product.id,
+          active: true,
+          currency: 'gbp',
+          type: 'recurring',
+          limit: 100
+        });
+
+        let price = prices.data.find(p => 
+          p.unit_amount === newPriceAmount && 
+          p.recurring?.interval === 'month'
+        );
+
+        if (!price) {
+          price = await stripe.prices.create({
+            product: product.id,
+            currency: 'gbp',
+            unit_amount: newPriceAmount,
+            recurring: { interval: 'month' }
+          });
+        }
+
+        // Update subscription with new price
+        const subscription = await stripe.subscriptions.retrieve(client.stripe_subscription_id);
+        await stripe.subscriptions.update(client.stripe_subscription_id, {
+          items: [{
+            id: subscription.items.data[0].id,
+            price: price.id
+          }],
+          proration_behavior: 'create_prorations'
+        });
+
+        updates.price = updateData.price;
+        updates.subscription_price = updateData.price;
+        console.log(`✅ Updated subscription price for ${email}: £${updateData.price}/month`);
+      } catch (stripeError) {
+        console.error('❌ Stripe price update error:', stripeError.message);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to update subscription price in Stripe'
+        });
+      }
+    } else if (updateData.price) {
+      updates.price = updateData.price;
+    }
+
+    // Handle billing day update
+    if (updateData.billingDay) {
+      updates.billingDay = updateData.billingDay;
+      // Note: Stripe billing anchor can't be changed after subscription is created
+      // This will only affect display/tracking, not actual Stripe billing
+    }
+
+    // Update in database
+    await clientsCollection.updateOne(
+      { email },
+      { $set: updates }
+    );
+
+    // Fetch updated client
+    const updatedClient = await clientsCollection.findOne({ email });
+
+    console.log(`✅ Updated client: ${email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Client updated successfully',
+      client: updatedClient
+    });
+
+  } catch (error) {
+    console.error('❌ Update client error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to update client'
+    });
+  }
+});
+
 // Cancel Subscription (Admin - JWT Protected)
 app.post('/api/admin/client/:id/cancel-subscription', authenticateToken, async (req, res) => {
   try {

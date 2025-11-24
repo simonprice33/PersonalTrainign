@@ -51,69 +51,6 @@ const OnboardingForm = () => {
     emergencyContactRelationship: ''
   });
 
-  const [manualDateInput, setManualDateInput] = useState('');
-  const [showManualInput, setShowManualInput] = useState(false);
-
-  // Convert DD/MM/YYYY to YYYY-MM-DD for date input
-  const formatDateForInput = (ddmmyyyy) => {
-    if (!ddmmyyyy) return '';
-    const parts = ddmmyyyy.split('/');
-    if (parts.length === 3) {
-      return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-    }
-    return ddmmyyyy;
-  };
-
-  // Convert YYYY-MM-DD to DD/MM/YYYY for display
-  const formatDateForDisplay = (yyyymmdd) => {
-    if (!yyyymmdd) return '';
-    const parts = yyyymmdd.split('-');
-    if (parts.length === 3) {
-      return `${parts[2]}/${parts[1]}/${parts[0]}`;
-    }
-    return yyyymmdd;
-  };
-
- 
-
-  // Handle manual date input with DD/MM/YYYY format
-  const handleManualDateChange = (value) => {
-    // Remove non-numeric characters except /
-    let cleaned = value.replace(/[^\d/]/g, '');
-    
-    // Auto-add slashes
-    if (cleaned.length >= 2 && cleaned.indexOf('/') === -1) {
-      cleaned = cleaned.slice(0, 2) + '/' + cleaned.slice(2);
-    }
-    if (cleaned.length >= 5 && cleaned.split('/').length === 2) {
-      const parts = cleaned.split('/');
-      cleaned = parts[0] + '/' + parts[1].slice(0, 2) + '/' + parts[1].slice(2);
-    }
-    
-    // Limit length
-    if (cleaned.length > 10) {
-      cleaned = cleaned.slice(0, 10);
-    }
-    
-    setManualDateInput(cleaned);
-    
-    // If complete date (DD/MM/YYYY), validate and convert
-    if (cleaned.length === 10) {
-      const parts = cleaned.split('/');
-      if (parts.length === 3) {
-        const day = parseInt(parts[0]);
-        const month = parseInt(parts[1]);
-        const year = parseInt(parts[2]);
-        
-        // Basic validation
-        if (day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 1900 && year <= new Date().getFullYear()) {
-          const isoDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-          setFormData({ ...formData, dateOfBirth: isoDate });
-        }
-      }
-    }
-  };
-
   useEffect(() => {
     const tokenParam = searchParams.get('token');
     if (!tokenParam) {

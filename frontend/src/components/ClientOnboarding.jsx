@@ -494,6 +494,10 @@ const OnboardingForm = () => {
                 <input
                   type="text"
                   required
+                  name="emergencyContactName"
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-form-type="other"
                   value={formData.emergencyContactName}
                   onChange={(e) => setFormData({ ...formData, emergencyContactName: e.target.value })}
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
@@ -509,6 +513,10 @@ const OnboardingForm = () => {
                   <input
                     type="tel"
                     required
+                    name="emergencyContactNumber"
+                    autoComplete="tel"
+                    data-lpignore="true"
+                    data-form-type="other"
                     value={formData.emergencyContactNumber}
                     onChange={(e) => setFormData({ ...formData, emergencyContactNumber: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
@@ -523,6 +531,10 @@ const OnboardingForm = () => {
                   <input
                     type="text"
                     required
+                    name="emergencyContactRelationship"
+                    autoComplete="off"
+                    data-lpignore="true"
+                    data-form-type="other"
                     value={formData.emergencyContactRelationship}
                     onChange={(e) => setFormData({ ...formData, emergencyContactRelationship: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"

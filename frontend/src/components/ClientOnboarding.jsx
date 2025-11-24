@@ -75,6 +75,26 @@ const OnboardingForm = () => {
     return yyyymmdd;
   };
 
+  // Validate UK postcode format
+  const validatePostcode = (postcode) => {
+    // UK postcode regex - more lenient
+    const ukPostcodeRegex = /^[A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2}$/i;
+    return ukPostcodeRegex.test(postcode.trim());
+  };
+
+  // Format UK postcode properly
+  const formatPostcode = (postcode) => {
+    // Remove all spaces and convert to uppercase
+    let cleaned = postcode.replace(/\s/g, '').toUpperCase();
+    
+    // Add space before last 3 characters
+    if (cleaned.length >= 5) {
+      cleaned = cleaned.slice(0, -3) + ' ' + cleaned.slice(-3);
+    }
+    
+    return cleaned;
+  };
+
   // Handle manual date input with DD/MM/YYYY format
   const handleManualDateChange = (value) => {
     // Remove non-numeric characters except /

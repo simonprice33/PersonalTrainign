@@ -569,6 +569,169 @@ const ClientManagement = () => {
             </form>
           </div>
         )}
+
+        {/* Edit Client Modal */}
+        {showEditModal && editingClient && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-gray-800 rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">Edit Client</h2>
+                <button
+                  onClick={handleCancelEdit}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              {error && (
+                <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
+                  {error}
+                </div>
+              )}
+
+              <div className="space-y-6">
+                {/* Basic Info */}
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-3">Basic Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-300 text-sm mb-2">Name</label>
+                      <input
+                        type="text"
+                        value={editFormData.name}
+                        onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 text-sm mb-2">Telephone</label>
+                      <input
+                        type="tel"
+                        value={editFormData.telephone}
+                        onChange={(e) => setEditFormData({ ...editFormData, telephone: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Subscription Details */}
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-3">Subscription</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-300 text-sm mb-2">Monthly Price (£)</label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={editFormData.price}
+                        onChange={(e) => setEditFormData({ ...editFormData, price: parseInt(e.target.value) })}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 text-sm mb-2">Billing Day</label>
+                      <select
+                        value={editFormData.billingDay}
+                        onChange={(e) => setEditFormData({ ...editFormData, billingDay: parseInt(e.target.value) })}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                      >
+                        {Array.from({ length: 28 }, (_, i) => i + 1).map(day => (
+                          <option key={day} value={day}>
+                            {day}{day === 1 ? 'st' : day === 2 ? 'nd' : day === 3 ? 'rd' : 'th'}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Address */}
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-3">Address</h3>
+                  <div className="space-y-4">
+                    <input
+                      type="text"
+                      placeholder="Address Line 1"
+                      value={editFormData.addressLine1}
+                      onChange={(e) => setEditFormData({ ...editFormData, addressLine1: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Address Line 2 (Optional)"
+                      value={editFormData.addressLine2}
+                      onChange={(e) => setEditFormData({ ...editFormData, addressLine2: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        placeholder="City"
+                        value={editFormData.city}
+                        onChange={(e) => setEditFormData({ ...editFormData, city: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Postcode"
+                        value={editFormData.postcode}
+                        onChange={(e) => setEditFormData({ ...editFormData, postcode: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Emergency Contact */}
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-3">Emergency Contact</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Name"
+                      value={editFormData.emergencyContactName}
+                      onChange={(e) => setEditFormData({ ...editFormData, emergencyContactName: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                    />
+                    <input
+                      type="tel"
+                      placeholder="Phone"
+                      value={editFormData.emergencyContactNumber}
+                      onChange={(e) => setEditFormData({ ...editFormData, emergencyContactNumber: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Relationship"
+                    value={editFormData.emergencyContactRelationship}
+                    onChange={(e) => setEditFormData({ ...editFormData, emergencyContactRelationship: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white mt-4"
+                  />
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-4 pt-4">
+                  <button
+                    onClick={handleSaveEdit}
+                    disabled={loading}
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-colors disabled:opacity-50"
+                  >
+                    {loading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button
+                    onClick={handleCancelEdit}
+                    className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg font-semibold transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

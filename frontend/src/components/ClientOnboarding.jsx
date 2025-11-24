@@ -353,6 +353,11 @@ const OnboardingForm = () => {
                     <input
                       type="date"
                       required
+                      name="dateOfBirth"
+                      id="dateOfBirth"
+                      autoComplete="bday"
+                      data-lpignore="true"
+                      data-form-type="other"
                       value={formData.dateOfBirth}
                       onChange={(e) => {
                         setFormData({ ...formData, dateOfBirth: e.target.value });
@@ -371,6 +376,12 @@ const OnboardingForm = () => {
                     <input
                       type="text"
                       required
+                      name="dateOfBirthManual"
+                      id="dateOfBirthManual"
+                      autoComplete="bday"
+                      data-lpignore="true"
+                      data-form-type="other"
+                      inputMode="numeric"
                       value={manualDateInput}
                       onChange={(e) => handleManualDateChange(e.target.value)}
                       placeholder="DD/MM/YYYY"

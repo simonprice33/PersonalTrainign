@@ -693,6 +693,26 @@ const OnboardingForm = () => {
 };
 
 const ClientOnboarding = () => {
+  // Show error if Stripe key is missing
+  if (!stripePromise) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-gray-800 rounded-2xl p-8 border border-red-500/20">
+          <div className="text-center">
+            <XCircle size={64} className="text-red-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-4">Configuration Error</h2>
+            <p className="text-gray-300 mb-6">
+              Stripe payment system is not configured. Please contact support.
+            </p>
+            <p className="text-gray-500 text-xs">
+              Error: REACT_APP_STRIPE_PUBLISHABLE_KEY is missing
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Elements stripe={stripePromise}>
       <OnboardingForm />

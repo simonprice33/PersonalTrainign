@@ -319,25 +319,37 @@ const ClientManagement = () => {
                         </div>
                       </div>
                       
-                      {!client.stripe_customer_id && (
-                        <button
-                          onClick={() => handleResendLink(client.email)}
-                          disabled={resendingEmail === client.email}
-                          className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                        >
-                          {resendingEmail === client.email ? (
-                            <>
-                              <RefreshCw size={16} className="animate-spin" />
-                              Sending...
-                            </>
-                          ) : (
-                            <>
-                              <Send size={16} />
-                              Resend Link
-                            </>
-                          )}
-                        </button>
-                      )}
+                      <div className="flex gap-2">
+                        {!client.stripe_customer_id && (
+                          <button
+                            onClick={() => handleResendLink(client.email)}
+                            disabled={resendingEmail === client.email}
+                            className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                          >
+                            {resendingEmail === client.email ? (
+                              <>
+                                <RefreshCw size={16} className="animate-spin" />
+                                Sending...
+                              </>
+                            ) : (
+                              <>
+                                <Send size={16} />
+                                Resend Link
+                              </>
+                            )}
+                          </button>
+                        )}
+                        
+                        {client.stripe_customer_id && (
+                          <button
+                            onClick={() => handleEditClient(client)}
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm"
+                          >
+                            <Edit size={16} />
+                            Edit
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}

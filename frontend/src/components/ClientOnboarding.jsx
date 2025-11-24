@@ -563,10 +563,11 @@ const OnboardingForm = () => {
 
                 <div>
                   <label className="block text-gray-300 text-sm font-medium mb-2">
-                    Postcode / Zip Code
+                    Postcode / Zip Code *
                   </label>
                   <input
                     type="text"
+                    required
                     name="postcode"
                     autoComplete="postal-code"
                     data-lpignore="true"
@@ -574,11 +575,8 @@ const OnboardingForm = () => {
                     value={formData.postcode}
                     onChange={(e) => setFormData({ ...formData, postcode: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
-                    placeholder="Optional - Enter your postcode or zip code"
+                    placeholder="Enter your postcode or zip code"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Optional - Can be left blank if validation issues occur
-                  </p>
                 </div>
               </div>
 

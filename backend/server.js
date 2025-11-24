@@ -2090,33 +2090,50 @@ app.post('/api/client/complete-onboarding', [
       }
     });
 
-    // Save client to database
-    const clientData = {
+    // Update client in database (should already exist from create-payment-link)
+    const clientUpdateData = {
       client_id: customer.id,
-      name: decoded.name,
-      email: decoded.email,
-      telephone: decoded.telephone,
       date_of_birth: new Date(dateOfBirth),
       address_line_1: addressLine1,
       address_line_2: addressLine2 || null,
       city,
       postcode,
+      country: req.body.country || 'GB',
       emergency_contact_name: emergencyContactName,
       emergency_contact_number: emergencyContactNumber,
       emergency_contact_relationship: emergencyContactRelationship,
       stripe_customer_id: customer.id,
       stripe_subscription_id: subscription.id,
       payment_method_id: paymentMethodId,
-      subscription_price: decoded.price,
-      billing_day: billingDay,
       subscription_status: subscription.status,
-      onboarding_token: token,
-      created_at: new Date(),
+      status: 'active', // Update from pending to active
+      onboarding_completed_at: new Date(),
       updated_at: new Date()
     };
 
     if (clientsCollection) {
-      await clientsCollection.insertOne(clientData);
+      // Try to update existing pending record
+      const result = await clientsCollection.updateOne(
+        { email: decoded.email },
+        { $set: clientUpdateData }
+      );
+
+      // If no existing record (shouldn't happen, but handle it), insert new one
+      if (result.matchedCount === 0) {
+        console.log('⚠️ No pending client found, creating new record');
+        await clientsCollection.insertOne({
+          name: decoded.name,
+          email: decoded.email,
+          telephone: decoded.telephone,
+          price: decoded.price,
+          billingDay: billingDay,
+          prorate: decoded.prorate,
+          ...clientUpdateData,
+          created_at: new Date()
+        });
+      } else {
+        console.log(`✅ Updated client record from pending to active: ${decoded.email}`);
+      }
     }
 
     // Send confirmation emails

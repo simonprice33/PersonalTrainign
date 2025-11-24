@@ -53,6 +53,7 @@ const OnboardingForm = () => {
 
   const [manualDateInput, setManualDateInput] = useState('');
   const [showManualInput, setShowManualInput] = useState(false);
+  const [postcodeError, setPostcodeError] = useState('');
 
   // Convert DD/MM/YYYY to YYYY-MM-DD for date input
   const formatDateForInput = (ddmmyyyy) => {

@@ -1978,21 +1978,55 @@ app.post('/api/client/complete-onboarding', [
     
     const billingCycleAnchor = Math.floor(billingDate.getTime() / 1000);
 
-    // Create product first
-    const product = await stripe.products.create({
-      name: 'Personal Training Plan',
-      description: 'Monthly personal training subscription'
+    // Find or create product
+    let product;
+    const products = await stripe.products.search({
+      query: "active:'true' AND name:'Personal Training Plan'",
+      limit: 1
     });
 
-    // Create price for the product
-    const price = await stripe.prices.create({
+    if (products.data.length > 0) {
+      product = products.data[0];
+      console.log(`✅ Using existing product: ${product.id}`);
+    } else {
+      product = await stripe.products.create({
+        name: 'Personal Training Plan',
+        description: 'Monthly personal training subscription'
+      });
+      console.log(`✅ Created new product: ${product.id}`);
+    }
+
+    // Find or create price for this specific amount
+    const priceAmount = decoded.price * 100; // Convert to pence
+    let price;
+    
+    const prices = await stripe.prices.list({
       product: product.id,
+      active: true,
       currency: 'gbp',
-      unit_amount: decoded.price * 100, // Convert to pence
-      recurring: {
-        interval: 'month'
-      }
+      type: 'recurring',
+      limit: 100
     });
+
+    // Find matching price
+    price = prices.data.find(p => 
+      p.unit_amount === priceAmount && 
+      p.recurring?.interval === 'month'
+    );
+
+    if (price) {
+      console.log(`✅ Using existing price: ${price.id} (£${decoded.price}/month)`);
+    } else {
+      price = await stripe.prices.create({
+        product: product.id,
+        currency: 'gbp',
+        unit_amount: priceAmount,
+        recurring: {
+          interval: 'month'
+        }
+      });
+      console.log(`✅ Created new price: ${price.id} (£${decoded.price}/month)`);
+    }
 
     // Create subscription using the price ID
     const subscription = await stripe.subscriptions.create({

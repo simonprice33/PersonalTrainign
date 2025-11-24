@@ -117,8 +117,7 @@ const OnboardingForm = () => {
                 line1: formData.addressLine1,
                 line2: formData.addressLine2,
                 city: formData.city,
-                postal_code: formData.postcode,
-                country: 'GB'
+                postal_code: formData.postcode
               }
             }
           }

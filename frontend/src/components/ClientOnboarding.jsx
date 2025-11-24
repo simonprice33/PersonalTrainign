@@ -415,6 +415,10 @@ const OnboardingForm = () => {
                 <input
                   type="text"
                   required
+                  name="addressLine1"
+                  autoComplete="address-line1"
+                  data-lpignore="true"
+                  data-form-type="other"
                   value={formData.addressLine1}
                   onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
@@ -428,6 +432,10 @@ const OnboardingForm = () => {
                 </label>
                 <input
                   type="text"
+                  name="addressLine2"
+                  autoComplete="address-line2"
+                  data-lpignore="true"
+                  data-form-type="other"
                   value={formData.addressLine2}
                   onChange={(e) => setFormData({ ...formData, addressLine2: e.target.value })}
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
@@ -443,6 +451,10 @@ const OnboardingForm = () => {
                   <input
                     type="text"
                     required
+                    name="city"
+                    autoComplete="address-level2"
+                    data-lpignore="true"
+                    data-form-type="other"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
@@ -457,6 +469,10 @@ const OnboardingForm = () => {
                   <input
                     type="text"
                     required
+                    name="postcode"
+                    autoComplete="postal-code"
+                    data-lpignore="true"
+                    data-form-type="other"
                     value={formData.postcode}
                     onChange={(e) => setFormData({ ...formData, postcode: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"

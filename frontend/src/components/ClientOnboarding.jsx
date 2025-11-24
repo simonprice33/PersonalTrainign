@@ -561,6 +561,28 @@ const OnboardingForm = () => {
                   />
                 </div>
               </div>
+
+              <div>
+                <label className="block text-gray-300 text-sm font-medium mb-2">
+                  Country *
+                </label>
+                <select
+                  required
+                  name="country"
+                  autoComplete="country"
+                  data-lpignore="true"
+                  data-form-type="other"
+                  value={formData.country}
+                  onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                >
+                  {countries.map(country => (
+                    <option key={country.code} value={country.code}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 

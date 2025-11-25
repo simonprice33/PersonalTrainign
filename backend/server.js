@@ -2449,25 +2449,31 @@ app.post('/api/admin/client/:id/cancel-subscription', authenticateToken, async (
       });
     }
 
-    // Cancel subscription in Stripe
-    await stripe.subscriptions.cancel(client.stripe_subscription_id);
+    // Cancel subscription in Stripe at end of billing period
+    const updatedSubscription = await stripe.subscriptions.update(
+      client.stripe_subscription_id,
+      { cancel_at_period_end: true }
+    );
 
     // Update database
     await clientsCollection.updateOne(
       { stripe_customer_id: id },
       { 
         $set: { 
-          subscription_status: 'canceled',
+          subscription_status: 'canceling',
+          cancel_at_period_end: true,
+          subscription_ends_at: new Date(updatedSubscription.current_period_end * 1000),
           updated_at: new Date()
         }
       }
     );
 
-    console.log(`❌ Subscription canceled for: ${client.name} (${client.email})`);
+    console.log(`❌ Subscription set to cancel at period end for: ${client.name} (${client.email})`);
 
     res.status(200).json({
       success: true,
-      message: 'Subscription canceled successfully'
+      message: 'Subscription will be canceled at the end of the current billing period',
+      endsAt: new Date(updatedSubscription.current_period_end * 1000)
     });
 
   } catch (error) {

@@ -81,6 +81,13 @@ const Header = () => {
             >
               Get Started
             </button>
+            <button 
+              onClick={() => navigate('/client-login')}
+              className="flex items-center gap-2 text-white hover:bg-white hover:bg-opacity-10 px-4 py-2 rounded-full transition-all duration-200 ml-2"
+            >
+              <User size={18} />
+              Client Login
+            </button>
           </nav>
 
           {/* Mobile Menu Button */}

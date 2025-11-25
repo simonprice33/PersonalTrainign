@@ -30,6 +30,7 @@ let db = null;
 let emailCollection = null;
 let adminUsersCollection = null;
 let clientsCollection = null;
+let clientUsersCollection = null;
 
 // Connect to MongoDB
 MongoClient.connect(mongoUrl, { 

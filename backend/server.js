@@ -2524,6 +2524,320 @@ app.post('/api/admin/client/:id/cancel-subscription', authenticateToken, async (
   }
 });
 
+// ============================================================================
+// CLIENT AUTHENTICATION & PORTAL ENDPOINTS
+// ============================================================================
+
+// Create Client Password (Client - Public with Token)
+app.post('/api/client/create-password', [
+  body('token').notEmpty(),
+  body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input',
+        errors: errors.array()
+      });
+    }
+
+    const { token, password } = req.body;
+
+    // Verify token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired link'
+      });
+    }
+
+    if (decoded.type !== 'client_password_setup') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid token type'
+      });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Save to client_users collection
+    if (clientUsersCollection) {
+      await clientUsersCollection.updateOne(
+        { email: decoded.email },
+        {
+          $set: {
+            password: hashedPassword,
+            password_set_at: new Date(),
+            updated_at: new Date()
+          }
+        },
+        { upsert: true }
+      );
+    }
+
+    console.log(`✅ Client password created: ${decoded.email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Password created successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Create client password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create password'
+    });
+  }
+});
+
+// Client Login
+app.post('/api/client/login', [
+  body('email').isEmail().normalizeEmail(),
+  body('password').notEmpty()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input',
+        errors: errors.array()
+      });
+    }
+
+    const { email, password } = req.body;
+
+    if (!clientUsersCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Service unavailable'
+      });
+    }
+
+    // Find client user
+    const clientUser = await clientUsersCollection.findOne({ email });
+
+    if (!clientUser || !clientUser.password) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
+    }
+
+    // Verify password
+    const isValid = await bcrypt.compare(password, clientUser.password);
+
+    if (!isValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
+    }
+
+    // Get client details
+    const client = await clientsCollection.findOne({ email });
+
+    // Generate tokens
+    const accessToken = jwt.sign(
+      { email, type: 'client' },
+      JWT_SECRET,
+      { expiresIn: JWT_ACCESS_EXPIRY }
+    );
+
+    const refreshToken = jwt.sign(
+      { email, type: 'client' },
+      JWT_SECRET,
+      { expiresIn: JWT_REFRESH_EXPIRY }
+    );
+
+    console.log(`✅ Client login successful: ${email}`);
+
+    res.status(200).json({
+      success: true,
+      accessToken,
+      refreshToken,
+      client: {
+        name: client?.name,
+        email: client?.email,
+        telephone: client?.telephone,
+        subscriptionStatus: client?.subscription_status
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Client login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Login failed'
+    });
+  }
+});
+
+// Client Forgot Password
+app.post('/api/client/forgot-password', [
+  body('email').isEmail().normalizeEmail()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email'
+      });
+    }
+
+    const { email } = req.body;
+
+    // Check if client exists
+    const client = await clientsCollection.findOne({ email });
+
+    if (!client) {
+      // Don't reveal if email exists
+      return res.status(200).json({
+        success: true,
+        message: 'If an account exists, a password reset link has been sent'
+      });
+    }
+
+    // Generate reset token (24 hour expiry)
+    const resetToken = jwt.sign(
+      { email, type: 'client_password_reset' },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    const resetLink = `${process.env.FRONTEND_URL}/client-reset-password/${resetToken}`;
+
+    // Send email
+    try {
+      const graphClient = createGraphClient();
+
+      const emailMessage = {
+        message: {
+          subject: 'Reset Your Password - Simon Price PT',
+          body: {
+            contentType: 'HTML',
+            content: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2>Password Reset Request</h2>
+                <p>Hi ${client.name},</p>
+                <p>We received a request to reset your password. Click the button below to create a new password:</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${resetLink}" 
+                     style="background: linear-gradient(135deg, #d3ff62 0%, #a8d946 100%); 
+                            color: #1a1a2e; 
+                            padding: 15px 40px; 
+                            text-decoration: none; 
+                            border-radius: 30px; 
+                            font-weight: bold;
+                            display: inline-block;">
+                    Reset Password
+                  </a>
+                </div>
+
+                <p style="color: #888; font-size: 14px;">This link will expire in 24 hours.</p>
+                <p style="color: #888; font-size: 14px;">If you didn't request this, please ignore this email.</p>
+              </div>
+            `
+          },
+          toRecipients: [{ emailAddress: { address: email } }]
+        }
+      };
+
+      await graphClient.api(`/users/${process.env.EMAIL_FROM}/sendMail`).post(emailMessage);
+      console.log(`📧 Password reset link sent to: ${email}`);
+    } catch (emailError) {
+      console.error('❌ Failed to send password reset email:', emailError.message);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'If an account exists, a password reset link has been sent'
+    });
+
+  } catch (error) {
+    console.error('❌ Client forgot password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to process request'
+    });
+  }
+});
+
+// Client Reset Password
+app.post('/api/client/reset-password', [
+  body('token').notEmpty(),
+  body('password').isLength({ min: 8 })
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input',
+        errors: errors.array()
+      });
+    }
+
+    const { token, password } = req.body;
+
+    // Verify token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired reset link'
+      });
+    }
+
+    if (decoded.type !== 'client_password_reset') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid token type'
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update password
+    await clientUsersCollection.updateOne(
+      { email: decoded.email },
+      {
+        $set: {
+          password: hashedPassword,
+          updated_at: new Date()
+        }
+      },
+      { upsert: true }
+    );
+
+    console.log(`✅ Client password reset: ${decoded.email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Client reset password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to reset password'
+    });
+  }
+});
+
 // Stripe Webhook Handler
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];

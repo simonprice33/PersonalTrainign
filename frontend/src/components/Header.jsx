@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Menu, X, Phone, Mail } from 'lucide-react';
+import { Menu, X, Phone, Mail, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import TDEECalculator from './TDEECalculator';
 
 const Header = () => {

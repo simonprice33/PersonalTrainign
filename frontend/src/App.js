@@ -42,6 +42,13 @@ function App() {
           {/* Client Onboarding Route - No navigation */}
           <Route path="/client-onboarding" element={<ClientOnboarding />} />
           
+          {/* Client Portal Routes */}
+          <Route path="/client-login" element={<ClientLogin />} />
+          <Route path="/client-forgot-password" element={<ClientForgotPassword />} />
+          <Route path="/client-create-password/:token" element={<ClientCreatePassword />} />
+          <Route path="/client-reset-password/:token" element={<ClientResetPassword />} />
+          <Route path="/client-portal" element={<ClientPortal />} />
+          
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/forgot-password" element={<ForgotPassword />} />

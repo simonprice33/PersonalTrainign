@@ -2212,6 +2212,60 @@ app.post('/api/client/complete-onboarding', [
 
       await graphClient.api(`/users/${process.env.EMAIL_FROM}/sendMail`).post(clientEmail);
 
+      // Send password creation email
+      const passwordToken = jwt.sign(
+        { email: decoded.email, type: 'client_password_setup' },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      const passwordSetupLink = `${process.env.FRONTEND_URL}/client-create-password/${passwordToken}`;
+
+      const passwordEmail = {
+        message: {
+          subject: 'Set Up Your Client Portal Access - Simon Price PT',
+          body: {
+            contentType: 'HTML',
+            content: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2>Set Up Your Client Portal</h2>
+                <p>Hi ${decoded.name},</p>
+                <p>Welcome! You now have access to your personal client portal where you can manage your subscription, update your information, and more.</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${passwordSetupLink}" 
+                     style="background: linear-gradient(135deg, #d3ff62 0%, #a8d946 100%); 
+                            color: #1a1a2e; 
+                            padding: 15px 40px; 
+                            text-decoration: none; 
+                            border-radius: 30px; 
+                            font-weight: bold;
+                            display: inline-block;">
+                    Create Your Password
+                  </a>
+                </div>
+
+                <p><strong>What you can do in the portal:</strong></p>
+                <ul>
+                  <li>View your subscription details</li>
+                  <li>Update payment method</li>
+                  <li>Update your address</li>
+                  <li>Manage your account</li>
+                </ul>
+
+                <p style="color: #888; font-size: 14px; margin-top: 30px;">This link will expire in 7 days.</p>
+              </div>
+            `
+          },
+          toRecipients: [{
+            emailAddress: { address: decoded.email }
+          }]
+        }
+      };
+
+      await graphClient.api(`/users/${process.env.EMAIL_FROM}/sendMail`).post(passwordEmail);
+      console.log(`📧 Password setup link sent to: ${decoded.email}`);
+
     } catch (emailError) {
       console.error('❌ Failed to send confirmation emails:', emailError.message);
     }

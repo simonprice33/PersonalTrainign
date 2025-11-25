@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import TDEECalculator from './TDEECalculator';
 
 const Header = () => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTDEEOpen, setIsTDEEOpen] = useState(false);
 

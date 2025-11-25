@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CreditCard, Plus, X, Send, CheckCircle, RefreshCw, Mail, Calendar, DollarSign, Edit } from 'lucide-react';
+import { ArrowLeft, CreditCard, Plus, X, Send, CheckCircle, RefreshCw, Mail, Calendar, DollarSign, Edit, ExternalLink, XCircle } from 'lucide-react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';

@@ -2428,6 +2428,45 @@ app.put('/api/admin/clients/:email', authenticateToken, [
   }
 });
 
+// Create Stripe Customer Portal Session (Admin or Client - JWT Protected)
+app.post('/api/create-portal-session', authenticateToken, async (req, res) => {
+  try {
+    const { customerId } = req.body;
+
+    if (!customerId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Customer ID required'
+      });
+    }
+
+    if (!stripe) {
+      return res.status(503).json({
+        success: false,
+        message: 'Stripe not configured'
+      });
+    }
+
+    // Create portal session
+    const session = await stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: `${process.env.FRONTEND_URL}/admin/clients`
+    });
+
+    res.status(200).json({
+      success: true,
+      url: session.url
+    });
+
+  } catch (error) {
+    console.error('❌ Create portal session error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create portal session'
+    });
+  }
+});
+
 // Cancel Subscription (Admin - JWT Protected)
 app.post('/api/admin/client/:id/cancel-subscription', authenticateToken, async (req, res) => {
   try {

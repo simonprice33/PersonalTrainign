@@ -211,6 +211,53 @@ const ClientManagement = () => {
     setEditFormData({});
   };
 
+  const handleManageBilling = async (customerId) => {
+    try {
+      const token = localStorage.getItem('adminAccessToken');
+      const response = await axios.post(
+        `${BACKEND_URL}/api/create-portal-session`,
+        { customerId },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        window.open(response.data.url, '_blank');
+      }
+    } catch (err) {
+      alert('Failed to open billing portal');
+    }
+  };
+
+  const handleCancelSubscription = async (customerId, clientName) => {
+    if (!window.confirm(`Cancel subscription for ${clientName}? They will retain access until the end of their billing period.`)) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('adminAccessToken');
+      const response = await axios.post(
+        `${BACKEND_URL}/api/admin/client/${customerId}/cancel-subscription`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        alert(`Subscription canceled. Access until: ${new Date(response.data.endsAt).toLocaleDateString()}`);
+        fetchClients();
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to cancel subscription');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       {/* Header */}

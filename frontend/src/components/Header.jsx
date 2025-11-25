@@ -135,6 +135,13 @@ const Header = () => {
               >
                 Get Started
               </button>
+              <button 
+                onClick={() => navigate('/client-login')}
+                className="flex items-center gap-2 text-white py-2 hover:bg-white hover:bg-opacity-10 px-4 rounded-full transition-all duration-200 mt-2"
+              >
+                <User size={18} />
+                Client Login
+              </button>
             </div>
           </div>
         )}

@@ -388,13 +388,31 @@ const ClientManagement = () => {
                         )}
                         
                         {client.stripe_customer_id && (
-                          <button
-                            onClick={() => handleEditClient(client)}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm"
-                          >
-                            <Edit size={16} />
-                            Edit
-                          </button>
+                          <>
+                            <button
+                              onClick={() => handleEditClient(client)}
+                              className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm"
+                            >
+                              <Edit size={16} />
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleManageBilling(client.stripe_customer_id)}
+                              className="flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors text-sm"
+                            >
+                              <ExternalLink size={16} />
+                              Billing
+                            </button>
+                            {client.subscription_status === 'active' && !client.cancel_at_period_end && (
+                              <button
+                                onClick={() => handleCancelSubscription(client.stripe_customer_id, client.name)}
+                                className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-sm"
+                              >
+                                <XCircle size={16} />
+                                Cancel
+                              </button>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>

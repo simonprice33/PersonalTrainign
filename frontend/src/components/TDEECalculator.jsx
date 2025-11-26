@@ -91,15 +91,15 @@ const TDEECalculator = ({ isOpen, onClose }) => {
     let fatsMultiplier = 0.8;
 
     if (goal === 'lose') {
-      // Cutting - lose 1lb a week
+      // Cutting - lose 1lb a week (lower carbs and fats for deficit)
       proteinMultiplier = 2;
       carbsMultiplier = 2.2;
       fatsMultiplier = 0.6;
     } else if (goal === 'gain') {
-      // Bulking - gain 1lb a week
+      // Bulking - gain 1lb a week (higher carbs and fats for surplus)
       proteinMultiplier = 2;
-      carbsMultiplier = 1.5;
-      fatsMultiplier = 0.4;
+      carbsMultiplier = 3.5;
+      fatsMultiplier = 1.0;
     }
     // Maintain uses default values set above
 

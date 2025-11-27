@@ -10,6 +10,7 @@ const ClientUserManagement = () => {
   const [clientUsers, setClientUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [updatingEmail, setUpdatingEmail] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('adminAccessToken');

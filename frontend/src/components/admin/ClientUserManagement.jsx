@@ -197,12 +197,16 @@ const ClientUserManagement = () => {
                         <select
                           value={user.status || 'pending'}
                           onChange={(e) => updateStatus(user.email, e.target.value)}
-                          className="px-3 py-1 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-cyan-500"
+                          className="px-4 py-2 bg-gray-900 border-2 border-gray-700 rounded-lg text-white text-sm font-medium cursor-pointer hover:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all duration-200 appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27rgb(156, 163, 175)%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.2em] bg-[right_0.5rem_center] bg-no-repeat pr-10 min-w-[140px]"
+                          style={{
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none'
+                          }}
                         >
-                          <option value="pending">Pending</option>
-                          <option value="active">Active</option>
-                          <option value="suspended">Suspended</option>
-                          <option value="cancelled">Cancelled</option>
+                          <option value="pending" className="bg-gray-800 text-yellow-400">⏳ Pending</option>
+                          <option value="active" className="bg-gray-800 text-green-400">✓ Active</option>
+                          <option value="suspended" className="bg-gray-800 text-orange-400">⊗ Suspended</option>
+                          <option value="cancelled" className="bg-gray-800 text-red-400">✗ Cancelled</option>
                         </select>
                       </td>
                     </tr>

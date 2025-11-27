@@ -53,14 +53,18 @@ const ClientUserManagement = () => {
     }
   };
 
-  const updateStatus = async (email, newStatus, currentStatus) => {
-    // Confirm status change
-    if (!confirm(`Change status from "${currentStatus}" to "${newStatus}" for ${email}?`)) {
-      // Refresh to reset dropdown to current value
-      fetchClientUsers();
-      return;
-    }
+  const handleStatusChangeRequest = (email, newStatus, currentStatus) => {
+    // Store the pending change and show modal
+    setPendingStatusChange({ email, newStatus, currentStatus });
+    setShowConfirmModal(true);
+  };
 
+  const handleConfirmStatusChange = async () => {
+    if (!pendingStatusChange) return;
+
+    const { email, newStatus } = pendingStatusChange;
+    
+    setShowConfirmModal(false);
     setUpdatingEmail(email);
     setError('');
     
@@ -94,7 +98,15 @@ const ClientUserManagement = () => {
       fetchClientUsers();
     } finally {
       setUpdatingEmail(null);
+      setPendingStatusChange(null);
     }
+  };
+
+  const handleCancelStatusChange = () => {
+    setShowConfirmModal(false);
+    setPendingStatusChange(null);
+    // Refresh to reset dropdown to current value
+    fetchClientUsers();
   };
 
   const getStatusBadge = (status) => {

@@ -2728,10 +2728,14 @@ app.put('/api/admin/client-users/:email/status', authenticateToken, [
     }
 
     console.log(`✅ Client user status updated: ${email} -> ${status}`);
+    if (stripe && client.stripe_subscription_id) {
+      console.log(`✅ Stripe subscription ${client.stripe_subscription_id} updated accordingly`);
+    }
 
     res.status(200).json({
       success: true,
-      message: 'Status updated successfully'
+      message: 'Status updated successfully',
+      stripeUpdated: !!(stripe && client.stripe_subscription_id)
     });
 
   } catch (error) {

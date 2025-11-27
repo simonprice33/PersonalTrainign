@@ -390,9 +390,7 @@ const ClientManagement = () => {
                           </div>
                           {client.stripe_customer_id && (
                             <div className="mt-2">
-                              <span className="inline-block px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">
-                                ✓ Subscription Active
-                              </span>
+                              {getStatusBadge(client.status, client.subscription_status)}
                             </div>
                           )}
                           {!client.stripe_customer_id && (

@@ -2683,6 +2683,338 @@ app.put('/api/admin/client-users/:email/status', authenticateToken, [
 });
 
 // ============================================================================
+// ADMIN - IMPORT CUSTOMERS FROM STRIPE
+// ============================================================================
+
+// Fetch Customer Data from Stripe (Admin - JWT Protected)
+app.post('/api/admin/import-customers/fetch', authenticateToken, [
+  body('customerIds').isArray({ min: 1 }).withMessage('Customer IDs must be a non-empty array')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input',
+        errors: errors.array()
+      });
+    }
+
+    if (!stripe) {
+      return res.status(503).json({
+        success: false,
+        message: 'Stripe not configured'
+      });
+    }
+
+    const { customerIds } = req.body;
+    const customerData = [];
+    const errors = [];
+
+    for (const customerId of customerIds) {
+      try {
+        // Fetch customer from Stripe
+        const customer = await stripe.customers.retrieve(customerId);
+        
+        if (customer.deleted) {
+          errors.push({
+            customerId,
+            error: 'Customer has been deleted in Stripe'
+          });
+          continue;
+        }
+
+        // Check if customer already exists in database
+        const existingClient = await clientsCollection.findOne({ stripe_customer_id: customerId });
+        
+        if (existingClient) {
+          errors.push({
+            customerId,
+            email: customer.email,
+            error: 'Customer already exists in database'
+          });
+          continue;
+        }
+
+        // Fetch subscriptions for this customer
+        const subscriptions = await stripe.subscriptions.list({
+          customer: customerId,
+          limit: 1
+        });
+
+        let status = 'pending';
+        let subscription = null;
+        let hasPaymentMethod = false;
+
+        if (subscriptions.data.length > 0) {
+          subscription = subscriptions.data[0];
+          
+          // Check if subscription has a payment method
+          hasPaymentMethod = !!subscription.default_payment_method;
+          
+          // Determine status based on subscription and payment method
+          if (subscription.status === 'canceled' || subscription.cancel_at_period_end) {
+            status = 'cancelled';
+          } else if (subscription.status === 'active' && hasPaymentMethod) {
+            status = 'active';
+          } else {
+            status = 'pending';
+          }
+        }
+
+        // Prepare customer data
+        customerData.push({
+          stripe_customer_id: customerId,
+          name: customer.name || '',
+          email: customer.email || '',
+          telephone: customer.phone || '',
+          address: {
+            line1: customer.address?.line1 || '',
+            line2: customer.address?.line2 || '',
+            city: customer.address?.city || '',
+            postcode: customer.address?.postal_code || '',
+            country: customer.address?.country || ''
+          },
+          status,
+          hasPaymentMethod,
+          stripe_subscription_id: subscription?.id || null,
+          subscription_status: subscription?.status || null,
+          current_period_end: subscription?.current_period_end ? new Date(subscription.current_period_end * 1000) : null
+        });
+
+      } catch (error) {
+        console.error(`❌ Error fetching customer ${customerId}:`, error.message);
+        errors.push({
+          customerId,
+          error: error.message
+        });
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      customers: customerData,
+      errors: errors.length > 0 ? errors : null
+    });
+
+  } catch (error) {
+    console.error('❌ Fetch customers error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch customer data'
+    });
+  }
+});
+
+// Save Imported Customers (Admin - JWT Protected)
+app.post('/api/admin/import-customers/save', authenticateToken, [
+  body('customers').isArray({ min: 1 }).withMessage('Customers must be a non-empty array')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input',
+        errors: errors.array()
+      });
+    }
+
+    if (!clientsCollection || !clientUsersCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    const { customers } = req.body;
+    const savedCustomers = [];
+    const saveErrors = [];
+
+    for (const customer of customers) {
+      try {
+        // Check again if customer exists (in case of concurrent requests)
+        const existingClient = await clientsCollection.findOne({ 
+          $or: [
+            { stripe_customer_id: customer.stripe_customer_id },
+            { email: customer.email }
+          ]
+        });
+        
+        if (existingClient) {
+          saveErrors.push({
+            email: customer.email,
+            error: 'Customer already exists'
+          });
+          continue;
+        }
+
+        // Prepare client document
+        const clientDocument = {
+          stripe_customer_id: customer.stripe_customer_id,
+          name: customer.name,
+          email: customer.email,
+          telephone: customer.telephone || '',
+          address: customer.address,
+          status: customer.status,
+          stripe_subscription_id: customer.stripe_subscription_id,
+          subscription_status: customer.subscription_status,
+          current_period_end: customer.current_period_end,
+          created_at: new Date(),
+          updated_at: new Date(),
+          created_by: req.user.email,
+          imported: true
+        };
+
+        // Save to clients collection
+        await clientsCollection.insertOne(clientDocument);
+
+        // Create client user account
+        const clientUser = {
+          email: customer.email,
+          password: null, // Password will be set when they create it
+          status: customer.status,
+          created_at: new Date()
+        };
+
+        await clientUsersCollection.insertOne(clientUser);
+
+        // Send appropriate emails
+        const graphClient = createGraphClient();
+
+        // 1. Send password creation email
+        const passwordToken = jwt.sign(
+          { email: customer.email, type: 'client_password_setup' },
+          JWT_SECRET,
+          { expiresIn: '7d' }
+        );
+
+        const passwordSetupLink = `${process.env.FRONTEND_URL}/client-create-password/${passwordToken}`;
+
+        const passwordEmail = {
+          message: {
+            subject: 'Set Up Your Client Portal Access - Simon Price PT',
+            body: {
+              contentType: 'HTML',
+              content: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h2>Set Up Your Client Portal</h2>
+                  <p>Hi ${customer.name},</p>
+                  <p>Welcome! You now have access to your personal client portal where you can manage your subscription, update your information, and more.</p>
+                  
+                  <div style="text-align: center; margin: 30px 0;">
+                    <a href="${passwordSetupLink}" 
+                       style="background: linear-gradient(135deg, #d3ff62 0%, #a8d946 100%); 
+                              color: #1a1a2e; 
+                              padding: 15px 40px; 
+                              text-decoration: none; 
+                              border-radius: 30px; 
+                              font-weight: bold;
+                              display: inline-block;">
+                      Create Your Password
+                    </a>
+                  </div>
+
+                  <p><strong>What you can do in the portal:</strong></p>
+                  <ul>
+                    <li>View your subscription details</li>
+                    <li>Update payment method</li>
+                    <li>Update your address</li>
+                    <li>Manage your account</li>
+                  </ul>
+
+                  <p style="color: #888; font-size: 14px; margin-top: 30px;">This link will expire in 7 days.</p>
+                </div>
+              `
+            },
+            toRecipients: [{
+              emailAddress: { address: customer.email }
+            }]
+          }
+        };
+
+        await graphClient.api(`/users/${process.env.EMAIL_FROM}/sendMail`).post(passwordEmail);
+        console.log(`📧 Password setup email sent to: ${customer.email}`);
+
+        // 2. If status is pending (no payment method), send card details request email
+        if (customer.status === 'pending' && !customer.hasPaymentMethod) {
+          const cardDetailsEmail = {
+            message: {
+              subject: 'Payment Details Required - Simon Price PT',
+              body: {
+                contentType: 'HTML',
+                content: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2>Payment Details Required</h2>
+                    <p>Hi ${customer.name},</p>
+                    <p>To complete your subscription setup, we need you to add your payment details.</p>
+                    
+                    <p>Once you've created your password and logged into your client portal, you'll be able to add your payment method securely through our payment provider, Stripe.</p>
+                    
+                    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                      <p style="margin: 0;"><strong>Next Steps:</strong></p>
+                      <ol style="margin: 10px 0; padding-left: 20px;">
+                        <li>Create your password using the link in the previous email</li>
+                        <li>Log in to your client portal</li>
+                        <li>Navigate to "Manage Billing" to add your payment method</li>
+                      </ol>
+                    </div>
+
+                    <p>If you have any questions or need assistance, please don't hesitate to contact me.</p>
+                    
+                    <p style="margin-top: 30px;">
+                      Best regards,<br>
+                      <strong>Simon Price</strong><br>
+                      Personal Trainer<br>
+                      📧 simon.price@simonprice-pt.co.uk
+                    </p>
+                  </div>
+                `
+              },
+              toRecipients: [{
+                emailAddress: { address: customer.email }
+              }]
+            }
+          };
+
+          await graphClient.api(`/users/${process.env.EMAIL_FROM}/sendMail`).post(cardDetailsEmail);
+          console.log(`📧 Card details request email sent to: ${customer.email}`);
+        }
+
+        savedCustomers.push({
+          email: customer.email,
+          name: customer.name,
+          status: customer.status
+        });
+
+        console.log(`✅ Imported customer: ${customer.name} (${customer.email}) - Status: ${customer.status}`);
+
+      } catch (error) {
+        console.error(`❌ Error saving customer ${customer.email}:`, error.message);
+        saveErrors.push({
+          email: customer.email,
+          error: error.message
+        });
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Successfully imported ${savedCustomers.length} customer(s)`,
+      customers: savedCustomers,
+      errors: saveErrors.length > 0 ? saveErrors : null
+    });
+
+  } catch (error) {
+    console.error('❌ Save customers error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to save customers'
+    });
+  }
+});
+
+// ============================================================================
 // CLIENT AUTHENTICATION & PORTAL ENDPOINTS
 // ============================================================================
 

@@ -197,7 +197,7 @@ const ClientUserManagement = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-700">
                   {clientUsers.map((user, index) => (
-                    <tr key={index} className="hover:bg-gray-750 transition-colors">
+                    <tr key={`${user.email}-${user.status}-${index}`} className="hover:bg-gray-750 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <Mail size={16} className="text-gray-400" />

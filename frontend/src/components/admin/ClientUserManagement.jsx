@@ -50,7 +50,17 @@ const ClientUserManagement = () => {
     }
   };
 
-  const updateStatus = async (email, newStatus) => {
+  const updateStatus = async (email, newStatus, currentStatus) => {
+    // Confirm status change
+    if (!confirm(`Change status from "${currentStatus}" to "${newStatus}" for ${email}?`)) {
+      // Refresh to reset dropdown to current value
+      fetchClientUsers();
+      return;
+    }
+
+    setUpdatingEmail(email);
+    setError('');
+    
     try {
       const token = localStorage.getItem('adminAccessToken');
       const response = await axios.put(
@@ -64,12 +74,12 @@ const ClientUserManagement = () => {
       );
 
       if (response.data.success) {
-        // Show success message briefly
-        setError('');
-        fetchClientUsers();
+        // Refresh to show updated data
+        await fetchClientUsers();
       } else {
         // Show backend error message
         setError(response.data.message || 'Failed to update status');
+        fetchClientUsers();
       }
     } catch (err) {
       // Show detailed error message
@@ -79,6 +89,8 @@ const ClientUserManagement = () => {
       
       // Refresh to show correct current state
       fetchClientUsers();
+    } finally {
+      setUpdatingEmail(null);
     }
   };
 

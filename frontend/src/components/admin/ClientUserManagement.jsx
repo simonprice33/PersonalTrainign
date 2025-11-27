@@ -110,6 +110,40 @@ const ClientUserManagement = () => {
     fetchClientUsers();
   };
 
+  const handleResendPasswordEmail = async (email, clientName) => {
+    if (!confirm(`Resend password setup email to ${clientName} (${email})?`)) {
+      return;
+    }
+
+    setResendingEmail(email);
+    setError('');
+
+    try {
+      const token = localStorage.getItem('adminAccessToken');
+      const response = await axios.post(
+        `${BACKEND_URL}/api/admin/client-users/${email}/resend-password-email`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        alert(`Password setup email sent successfully to ${email}`);
+      } else {
+        setError(response.data.message || 'Failed to send password email');
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to send password email';
+      setError(`Error sending email to ${email}: ${errorMessage}`);
+      console.error('Resend email error:', err);
+    } finally {
+      setResendingEmail(null);
+    }
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case 'active':

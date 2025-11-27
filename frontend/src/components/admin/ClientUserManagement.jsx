@@ -296,4 +296,30 @@ const ClientUserManagement = () => {
                   <div className="bg-gray-900 rounded-lg p-3 text-center">
                     {getStatusBadge(pendingStatusChange.newStatus)}
                   </div>
-                </div
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleCancelStatusChange}
+                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors border border-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmStatusChange}
+                className="px-4 py-2 bg-gradient-to-r from-[#d3ff62] to-[#a8d946] text-[#1a1a2e] rounded-lg font-semibold hover:shadow-lg hover:shadow-[#d3ff62]/20 transition-all"
+              >
+                Confirm Change
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ClientUserManagement;

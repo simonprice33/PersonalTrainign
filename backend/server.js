@@ -3516,6 +3516,64 @@ app.post('/api/client/reset-password', [
   }
 });
 
+// Client Payment Management - Generate Stripe Customer Portal URL (Client - JWT Protected)
+app.post('/api/client/manage-billing', authenticateClientToken, async (req, res) => {
+  try {
+    if (!stripe) {
+      return res.status(503).json({
+        success: false,
+        message: 'Stripe not configured'
+      });
+    }
+
+    if (!clientsCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    const clientEmail = req.user.email;
+
+    // Get client's Stripe customer ID
+    const client = await clientsCollection.findOne({ email: clientEmail });
+    
+    if (!client) {
+      return res.status(404).json({
+        success: false,
+        message: 'Client not found'
+      });
+    }
+
+    if (!client.stripe_customer_id) {
+      return res.status(400).json({
+        success: false,
+        message: 'No Stripe customer associated with this account'
+      });
+    }
+
+    // Create Stripe Customer Portal session
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: client.stripe_customer_id,
+      return_url: `${process.env.FRONTEND_URL}/client-portal`,
+    });
+
+    console.log(`🔗 Created billing portal session for: ${clientEmail}`);
+
+    res.status(200).json({
+      success: true,
+      portal_url: portalSession.url
+    });
+
+  } catch (error) {
+    console.error('❌ Client billing portal error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create billing portal session'
+    });
+  }
+});
+
 // Stripe Webhook Handler
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];

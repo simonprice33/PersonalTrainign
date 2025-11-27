@@ -37,7 +37,8 @@ const ClientUserManagement = () => {
       );
 
       if (response.data.success) {
-        setClientUsers(response.data.clientUsers);
+        // Force a new array reference to trigger re-render
+        setClientUsers([...response.data.clientUsers]);
       }
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {

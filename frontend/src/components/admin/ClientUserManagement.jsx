@@ -388,6 +388,61 @@ const ClientUserManagement = () => {
           </div>
         </div>
       )}
+
+      {/* Resend Email Confirmation Modal */}
+      {showResendModal && pendingResendEmail && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-md w-full mx-4 shadow-2xl">
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <Mail className="text-blue-400" size={24} />
+              Resend Password Email
+            </h3>
+            
+            <div className="mb-6">
+              <p className="text-gray-300 mb-4">
+                Send a password setup reminder email to:
+              </p>
+              
+              <div className="bg-gray-900 rounded-lg p-4 mb-4">
+                <div className="mb-2">
+                  <p className="text-sm text-gray-400">Client Name</p>
+                  <p className="text-white font-medium">{pendingResendEmail.clientName}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Email Address</p>
+                  <p className="text-white font-medium">{pendingResendEmail.email}</p>
+                </div>
+              </div>
+
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+                <p className="text-blue-400 text-sm flex items-start gap-2">
+                  <Mail size={16} className="mt-0.5" />
+                  <span>
+                    This will send a new 7-day password setup link. The client can use this to create their portal password and access their account.
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleCancelResendEmail}
+                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors border border-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmResendEmail}
+                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all flex items-center gap-2"
+              >
+                <Mail size={16} />
+                Send Email
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

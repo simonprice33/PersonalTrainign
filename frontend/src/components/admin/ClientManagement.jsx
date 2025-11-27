@@ -58,6 +58,8 @@ const ClientManagement = () => {
         );
     }
   };
+
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     telephone: '',

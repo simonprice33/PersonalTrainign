@@ -89,18 +89,20 @@ const ClientPortal = () => {
     try {
       const token = localStorage.getItem('clientAccessToken');
       const response = await axios.post(
-        `${BACKEND_URL}/api/create-portal-session`,
-        { customerId: clientData.stripe_customer_id },
+        `${BACKEND_URL}/api/client/manage-billing`,
+        {},
         {
           headers: { 'Authorization': `Bearer ${token}` }
         }
       );
 
       if (response.data.success) {
-        window.location.href = response.data.url;
+        // Open Stripe Customer Portal in a new tab
+        window.open(response.data.portal_url, '_blank');
       }
     } catch (err) {
-      alert('Failed to open billing portal');
+      setError(err.response?.data?.message || 'Failed to open billing portal');
+      console.error('Billing portal error:', err);
     }
   };
 

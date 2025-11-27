@@ -319,10 +319,15 @@ const ClientPortal = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
                     onClick={handleManageBilling}
-                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white py-4 rounded-lg font-semibold transition-all"
+                    className="flex flex-col items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white py-4 rounded-lg font-semibold transition-all"
                   >
-                    <CreditCard size={20} />
-                    Manage Payment Method
+                    <div className="flex items-center gap-2">
+                      <CreditCard size={20} />
+                      <span>Manage Payment Method</span>
+                    </div>
+                    <span className="text-xs text-cyan-100 font-normal">
+                      Update card details, view invoices & billing history
+                    </span>
                   </button>
                   
                   {clientData?.subscription_status === 'active' && !clientData?.cancel_at_period_end && (

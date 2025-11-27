@@ -301,7 +301,7 @@ const ClientUserManagement = () => {
                           
                           {(!user.password || user.status === 'pending') && (
                             <button
-                              onClick={() => handleResendPasswordEmail(user.email, user.name || user.email)}
+                              onClick={() => handleResendPasswordEmailRequest(user.email, user.name || user.email)}
                               disabled={resendingEmail === user.email}
                               className="p-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Resend Password Setup Email"

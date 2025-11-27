@@ -3437,8 +3437,86 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 
       case 'invoice.payment_failed':
         const failedInvoice = event.data.object;
-        console.log(`⚠️ Payment failed for customer: ${failedInvoice.customer}`);
-        // Could send email notification here
+        const customerId = failedInvoice.customer;
+        const subscriptionId = failedInvoice.subscription;
+        const attemptCount = failedInvoice.attempt_count;
+        
+        console.log(`⚠️ Payment failed for customer: ${customerId}, attempt: ${attemptCount}`);
+        
+        if (clientsCollection && clientUsersCollection) {
+          // Find the client by Stripe customer ID
+          const client = await clientsCollection.findOne({ 
+            stripe_customer_id: customerId 
+          });
+          
+          if (client) {
+            console.log(`📋 Client found: ${client.email} (${client.name})`);
+            
+            // Update failed payment count
+            await clientsCollection.updateOne(
+              { stripe_customer_id: customerId },
+              { 
+                $set: { 
+                  last_payment_failed: new Date(),
+                  payment_failure_count: attemptCount,
+                  updated_at: new Date()
+                }
+              }
+            );
+            
+            // After 3 failed attempts, suspend the client
+            if (attemptCount >= 3) {
+              console.log(`🛑 Suspending client after ${attemptCount} failed attempts: ${client.email}`);
+              
+              // Update client status to suspended
+              await clientsCollection.updateOne(
+                { stripe_customer_id: customerId },
+                { 
+                  $set: { 
+                    status: 'suspended',
+                    subscription_status: 'suspended',
+                    suspended_reason: 'payment_failure',
+                    suspended_at: new Date(),
+                    updated_at: new Date()
+                  }
+                }
+              );
+              
+              // Update client user status
+              await clientUsersCollection.updateOne(
+                { email: client.email },
+                { 
+                  $set: { 
+                    status: 'suspended',
+                    updated_at: new Date()
+                  }
+                }
+              );
+              
+              // Pause the Stripe subscription
+              if (stripe && subscriptionId) {
+                try {
+                  await stripe.subscriptions.update(subscriptionId, {
+                    pause_collection: { behavior: 'void' }
+                  });
+                  console.log(`⏸️ Stripe subscription paused: ${subscriptionId}`);
+                } catch (stripeError) {
+                  console.error('❌ Failed to pause Stripe subscription:', stripeError.message);
+                }
+              }
+              
+              console.log(`✅ Client ${client.email} suspended due to payment failures`);
+              
+              // TODO: Send suspension email notification
+              // You could add email notification logic here
+              
+            } else {
+              console.log(`⚠️ Payment failure ${attemptCount}/3 for ${client.email} - will retry`);
+            }
+          } else {
+            console.log(`❌ No client found for Stripe customer: ${customerId}`);
+          }
+        }
         break;
 
       case 'invoice.payment_succeeded':

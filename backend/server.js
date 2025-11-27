@@ -2640,7 +2640,7 @@ app.put('/api/admin/client-users/:email/status', authenticateToken, [
     const { email } = req.params;
     const { status } = req.body;
 
-    if (!clientsCollection) {
+    if (!clientsCollection || !clientUsersCollection) {
       return res.status(503).json({
         success: false,
         message: 'Database not available'
@@ -2648,7 +2648,7 @@ app.put('/api/admin/client-users/:email/status', authenticateToken, [
     }
 
     // Update status in clients collection
-    const result = await clientsCollection.updateOne(
+    const clientResult = await clientsCollection.updateOne(
       { email },
       { 
         $set: { 
@@ -2659,7 +2659,18 @@ app.put('/api/admin/client-users/:email/status', authenticateToken, [
       }
     );
 
-    if (result.matchedCount === 0) {
+    // Also update status in client_users collection
+    const clientUserResult = await clientUsersCollection.updateOne(
+      { email },
+      { 
+        $set: { 
+          status,
+          updated_at: new Date()
+        }
+      }
+    );
+
+    if (clientResult.matchedCount === 0 && clientUserResult.matchedCount === 0) {
       return res.status(404).json({
         success: false,
         message: 'Client not found'

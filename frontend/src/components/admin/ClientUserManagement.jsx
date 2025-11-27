@@ -112,11 +112,17 @@ const ClientUserManagement = () => {
     fetchClientUsers();
   };
 
-  const handleResendPasswordEmail = async (email, clientName) => {
-    if (!confirm(`Resend password setup email to ${clientName} (${email})?`)) {
-      return;
-    }
+  const handleResendPasswordEmailRequest = (email, clientName) => {
+    setPendingResendEmail({ email, clientName });
+    setShowResendModal(true);
+  };
 
+  const handleConfirmResendEmail = async () => {
+    if (!pendingResendEmail) return;
+
+    const { email, clientName } = pendingResendEmail;
+    
+    setShowResendModal(false);
     setResendingEmail(email);
     setError('');
 
@@ -143,7 +149,13 @@ const ClientUserManagement = () => {
       console.error('Resend email error:', err);
     } finally {
       setResendingEmail(null);
+      setPendingResendEmail(null);
     }
+  };
+
+  const handleCancelResendEmail = () => {
+    setShowResendModal(false);
+    setPendingResendEmail(null);
   };
 
   const getStatusBadge = (status) => {

@@ -260,8 +260,40 @@ const ClientUserManagement = () => {
           </div>
         )}
       </div>
-    </div>
-  );
-};
 
-export default ClientUserManagement;
+      {/* Confirmation Modal */}
+      {showConfirmModal && pendingStatusChange && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-md w-full mx-4 shadow-2xl">
+            <h3 className="text-xl font-bold text-white mb-4">Confirm Status Change</h3>
+            
+            <div className="mb-6">
+              <p className="text-gray-300 mb-4">
+                Are you sure you want to change the status for:
+              </p>
+              
+              <div className="bg-gray-900 rounded-lg p-4 mb-4">
+                <p className="text-sm text-gray-400 mb-1">Email</p>
+                <p className="text-white font-medium">{pendingStatusChange.email}</p>
+              </div>
+
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <div className="flex-1">
+                  <p className="text-sm text-gray-400 mb-2">Current Status</p>
+                  <div className="bg-gray-900 rounded-lg p-3 text-center">
+                    {getStatusBadge(pendingStatusChange.currentStatus)}
+                  </div>
+                </div>
+                
+                <div className="text-gray-500">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </div>
+                
+                <div className="flex-1">
+                  <p className="text-sm text-gray-400 mb-2">New Status</p>
+                  <div className="bg-gray-900 rounded-lg p-3 text-center">
+                    {getStatusBadge(pendingStatusChange.newStatus)}
+                  </div>
+                </div

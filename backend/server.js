@@ -3521,7 +3521,70 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 
       case 'invoice.payment_succeeded':
         const invoice = event.data.object;
-        console.log(`✅ Payment succeeded for customer: ${invoice.customer}`);
+        const paidCustomerId = invoice.customer;
+        const paidSubscriptionId = invoice.subscription;
+        
+        console.log(`✅ Payment succeeded for customer: ${paidCustomerId}`);
+        
+        if (clientsCollection && clientUsersCollection) {
+          // Find the client by Stripe customer ID
+          const paidClient = await clientsCollection.findOne({ 
+            stripe_customer_id: paidCustomerId 
+          });
+          
+          if (paidClient) {
+            console.log(`📋 Payment successful for: ${paidClient.email} (${paidClient.name})`);
+            
+            // Reset payment failure count and reactivate if suspended due to payment failure
+            const updateData = {
+              last_payment_succeeded: new Date(),
+              payment_failure_count: 0,
+              updated_at: new Date()
+            };
+            
+            // If client was suspended due to payment failure, reactivate them
+            if (paidClient.status === 'suspended' && paidClient.suspended_reason === 'payment_failure') {
+              console.log(`🔄 Reactivating client after successful payment: ${paidClient.email}`);
+              
+              updateData.status = 'active';
+              updateData.subscription_status = 'active';
+              updateData.suspended_reason = null;
+              updateData.suspended_at = null;
+              updateData.reactivated_at = new Date();
+              
+              // Update client user status to active
+              await clientUsersCollection.updateOne(
+                { email: paidClient.email },
+                { 
+                  $set: { 
+                    status: 'active',
+                    updated_at: new Date()
+                  }
+                }
+              );
+              
+              // Resume the Stripe subscription if it was paused
+              if (stripe && paidSubscriptionId) {
+                try {
+                  await stripe.subscriptions.update(paidSubscriptionId, {
+                    pause_collection: null
+                  });
+                  console.log(`▶️ Stripe subscription resumed: ${paidSubscriptionId}`);
+                } catch (stripeError) {
+                  console.error('❌ Failed to resume Stripe subscription:', stripeError.message);
+                }
+              }
+              
+              console.log(`✅ Client ${paidClient.email} reactivated after successful payment`);
+            }
+            
+            // Update client record
+            await clientsCollection.updateOne(
+              { stripe_customer_id: paidCustomerId },
+              { $set: updateData }
+            );
+          }
+        }
         break;
 
       default:

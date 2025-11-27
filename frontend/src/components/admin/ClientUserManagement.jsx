@@ -63,10 +63,21 @@ const ClientUserManagement = () => {
       );
 
       if (response.data.success) {
+        // Show success message briefly
+        setError('');
         fetchClientUsers();
+      } else {
+        // Show backend error message
+        setError(response.data.message || 'Failed to update status');
       }
     } catch (err) {
-      alert('Failed to update status');
+      // Show detailed error message
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to update status';
+      setError(`Error updating status for ${email}: ${errorMessage}`);
+      console.error('Status update error:', err);
+      
+      // Refresh to show correct current state
+      fetchClientUsers();
     }
   };
 

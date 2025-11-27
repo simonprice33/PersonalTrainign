@@ -139,6 +139,28 @@ const AdminDashboard = () => {
             </div>
           </Link>
 
+          {/* Import Customers Card */}
+          <Link
+            to="/admin/import-customers"
+            className="bg-gray-800 rounded-xl p-8 border border-yellow-500/20 hover:border-yellow-500/50 transition-all hover:shadow-lg hover:shadow-yellow-500/20 group"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-colors">
+                <Upload className="text-yellow-500" size={32} />
+              </div>
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">Import Customers</h2>
+            <p className="text-gray-400 text-sm">
+              Import existing Stripe customers and create client portal accounts.
+            </p>
+            <div className="mt-6 flex items-center text-yellow-500 text-sm font-medium">
+              Import from Stripe
+              <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+
           {/* Change Password Card */}
           <Link
             to="/admin/change-password"

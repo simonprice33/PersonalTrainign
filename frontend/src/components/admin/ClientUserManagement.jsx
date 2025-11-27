@@ -11,6 +11,8 @@ const ClientUserManagement = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updatingEmail, setUpdatingEmail] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('adminAccessToken');

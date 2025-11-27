@@ -188,6 +188,39 @@ function authenticateToken(req, res, next) {
   });
 }
 
+// Client JWT Authentication Middleware
+function authenticateClientToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: 'Access token required'
+    });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({
+        success: false,
+        message: 'Invalid or expired token'
+      });
+    }
+    
+    // Ensure this is a client token (not admin)
+    if (user.type !== 'client') {
+      return res.status(403).json({
+        success: false,
+        message: 'Invalid token type - client access required'
+      });
+    }
+    
+    req.user = user;
+    next();
+  });
+}
+
 // Security middleware
 app.use(helmet({
   crossOriginEmbedderPolicy: false

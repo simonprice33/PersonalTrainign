@@ -20,7 +20,44 @@ const ClientManagement = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editFormData, setEditFormData] = useState({});
   
-  const [formData, setFormData] = useState({
+  // Helper function to get status badge
+  const getStatusBadge = (status, subscriptionStatus) => {
+    const effectiveStatus = status || subscriptionStatus || 'pending';
+    
+    switch (effectiveStatus) {
+      case 'active':
+        return (
+          <span className="inline-block px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">
+            ✓ Subscription Active
+          </span>
+        );
+      case 'suspended':
+        return (
+          <span className="inline-block px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-medium">
+            ⊗ Subscription Suspended
+          </span>
+        );
+      case 'cancelled':
+      case 'canceled':
+        return (
+          <span className="inline-block px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-medium">
+            ✗ Subscription Cancelled
+          </span>
+        );
+      case 'pending':
+        return (
+          <span className="inline-block px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">
+            ⏳ Subscription Pending
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-block px-3 py-1 bg-gray-500/20 text-gray-400 rounded-full text-xs font-medium">
+            ? Unknown Status
+          </span>
+        );
+    }
+  };
     name: '',
     email: '',
     telephone: '',

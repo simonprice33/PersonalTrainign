@@ -2647,12 +2647,62 @@ app.put('/api/admin/client-users/:email/status', authenticateToken, [
       });
     }
 
+    // Get client data first to access Stripe subscription details
+    const client = await clientsCollection.findOne({ email });
+    if (!client) {
+      return res.status(404).json({
+        success: false,
+        message: 'Client not found'
+      });
+    }
+
+    const currentStatus = client.status;
+    console.log(`🔄 Changing status for ${email}: ${currentStatus} → ${status}`);
+
+    // Update Stripe subscription if status change requires it
+    if (stripe && client.stripe_subscription_id && currentStatus !== status) {
+      try {
+        switch (status) {
+          case 'cancelled':
+            console.log(`🛑 Cancelling Stripe subscription: ${client.stripe_subscription_id}`);
+            await stripe.subscriptions.cancel(client.stripe_subscription_id);
+            console.log(`✅ Stripe subscription cancelled`);
+            break;
+
+          case 'suspended':
+            console.log(`⏸️ Pausing Stripe subscription: ${client.stripe_subscription_id}`);
+            await stripe.subscriptions.update(client.stripe_subscription_id, {
+              pause_collection: { behavior: 'void' }
+            });
+            console.log(`✅ Stripe subscription paused`);
+            break;
+
+          case 'active':
+            if (currentStatus === 'suspended') {
+              console.log(`▶️ Resuming Stripe subscription: ${client.stripe_subscription_id}`);
+              await stripe.subscriptions.update(client.stripe_subscription_id, {
+                pause_collection: null
+              });
+              console.log(`✅ Stripe subscription resumed`);
+            }
+            break;
+        }
+      } catch (stripeError) {
+        console.error('❌ Stripe update error:', stripeError.message);
+        return res.status(500).json({
+          success: false,
+          message: `Failed to update Stripe subscription: ${stripeError.message}`
+        });
+      }
+    }
+
     // Update status in clients collection
     const clientResult = await clientsCollection.updateOne(
       { email },
       { 
         $set: { 
           status,
+          subscription_status: status, // Also update subscription_status for consistency
           updated_at: new Date(),
           updated_by: req.user.email
         }

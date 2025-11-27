@@ -95,6 +95,28 @@ const AdminDashboard = () => {
             </div>
           </Link>
 
+          {/* Client Users Management Card */}
+          <Link
+            to="/admin/client-users"
+            className="bg-gray-800 rounded-xl p-8 border border-blue-500/20 hover:border-blue-500/50 transition-all hover:shadow-lg hover:shadow-blue-500/20 group"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
+                <Users className="text-blue-500" size={32} />
+              </div>
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">Client Users</h2>
+            <p className="text-gray-400 text-sm">
+              Manage client login accounts and user status (pending, active, suspended, cancelled).
+            </p>
+            <div className="mt-6 flex items-center text-blue-500 text-sm font-medium">
+              Manage Client Users
+              <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+
           {/* Client Management Card */}
           <Link
             to="/admin/clients"

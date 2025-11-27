@@ -235,7 +235,7 @@ const ClientUserManagement = () => {
                       <td className="px-6 py-4">
                         <select
                           value={user.status || 'pending'}
-                          onChange={(e) => updateStatus(user.email, e.target.value, user.status)}
+                          onChange={(e) => handleStatusChangeRequest(user.email, e.target.value, user.status)}
                           disabled={updatingEmail === user.email}
                           className="px-4 py-2 bg-gray-900 border-2 border-gray-700 rounded-lg text-white text-sm font-medium cursor-pointer hover:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all duration-200 appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27rgb(156, 163, 175)%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.2em] bg-[right_0.5rem_center] bg-no-repeat pr-10 min-w-[140px] disabled:opacity-50 disabled:cursor-not-allowed"
                           style={{

@@ -2581,6 +2581,108 @@ app.post('/api/admin/client/:id/cancel-subscription', authenticateToken, async (
 });
 
 // ============================================================================
+// ADMIN - CLIENT USER MANAGEMENT
+// ============================================================================
+
+// Get All Client Users (Admin - JWT Protected)
+app.get('/api/admin/client-users', authenticateToken, async (req, res) => {
+  try {
+    if (!clientUsersCollection || !clientsCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    // Get all client users with their status from clients collection
+    const clientUsers = await clientUsersCollection.find({}).toArray();
+    
+    // Merge with client data to get status
+    const enrichedUsers = await Promise.all(
+      clientUsers.map(async (user) => {
+        const client = await clientsCollection.findOne({ email: user.email });
+        return {
+          ...user,
+          status: client?.status || 'pending',
+          created_at: user.created_at || client?.created_at
+        };
+      })
+    );
+
+    res.status(200).json({
+      success: true,
+      clientUsers: enrichedUsers
+    });
+
+  } catch (error) {
+    console.error('❌ Get client users error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch client users'
+    });
+  }
+});
+
+// Update Client User Status (Admin - JWT Protected)
+app.put('/api/admin/client-users/:email/status', authenticateToken, [
+  body('status').isIn(['pending', 'active', 'suspended', 'cancelled'])
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status',
+        errors: errors.array()
+      });
+    }
+
+    const { email } = req.params;
+    const { status } = req.body;
+
+    if (!clientsCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    // Update status in clients collection
+    const result = await clientsCollection.updateOne(
+      { email },
+      { 
+        $set: { 
+          status,
+          updated_at: new Date(),
+          updated_by: req.user.email
+        }
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Client not found'
+      });
+    }
+
+    console.log(`✅ Client user status updated: ${email} -> ${status}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Status updated successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Update client user status error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update status'
+    });
+  }
+});
+
+// ============================================================================
 // CLIENT AUTHENTICATION & PORTAL ENDPOINTS
 // ============================================================================
 

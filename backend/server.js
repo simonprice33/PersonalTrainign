@@ -3079,6 +3079,129 @@ app.post('/api/admin/import-customers/save', authenticateToken, [
   }
 });
 
+// Resend Password Creation Email (Admin - JWT Protected)
+app.post('/api/admin/client-users/:email/resend-password-email', authenticateToken, async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    if (!clientUsersCollection || !clientsCollection) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database not available'
+      });
+    }
+
+    // Check if client user exists
+    const clientUser = await clientUsersCollection.findOne({ email });
+    const client = await clientsCollection.findOne({ email });
+
+    if (!clientUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'Client user not found'
+      });
+    }
+
+    // Check if password is already set
+    if (clientUser.password && clientUser.password !== null && clientUser.status === 'active') {
+      return res.status(400).json({
+        success: false,
+        message: 'Client has already created their password'
+      });
+    }
+
+    // Generate new password setup token
+    const passwordToken = jwt.sign(
+      { email, type: 'client_password_setup' },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    const passwordSetupLink = `${process.env.FRONTEND_URL}/client-create-password/${passwordToken}`;
+
+    // Send password creation email
+    const graphClient = createGraphClient();
+    
+    const passwordEmail = {
+      message: {
+        subject: 'Password Setup Reminder - Simon Price PT',
+        body: {
+          contentType: 'HTML',
+          content: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2>Password Setup Reminder</h2>
+              <p>Hi ${client?.name || 'there'},</p>
+              <p>This is a reminder to set up your password for your Simon Price PT client portal.</p>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${passwordSetupLink}" 
+                   style="background: linear-gradient(135deg, #d3ff62 0%, #a8d946 100%); 
+                          color: #1a1a2e; 
+                          padding: 15px 40px; 
+                          text-decoration: none; 
+                          border-radius: 30px; 
+                          font-weight: bold;
+                          display: inline-block;">
+                  Create Your Password
+                </a>
+              </div>
+
+              <p><strong>What you can do once logged in:</strong></p>
+              <ul>
+                <li>View your subscription details</li>
+                <li>Update payment method</li>
+                <li>Update your address</li>
+                <li>Manage your account</li>
+              </ul>
+
+              <p style="color: #888; font-size: 14px; margin-top: 30px;">
+                This link will expire in 7 days. If you need help, please contact us.
+              </p>
+              
+              <p style="margin-top: 30px;">
+                Best regards,<br>
+                <strong>Simon Price</strong><br>
+                Personal Trainer<br>
+                📧 simon.price@simonprice-pt.co.uk
+              </p>
+            </div>
+          `
+        },
+        toRecipients: [{
+          emailAddress: { address: email }
+        }]
+      }
+    };
+
+    await graphClient.api(`/users/${process.env.EMAIL_FROM}/sendMail`).post(passwordEmail);
+    
+    // Update last email sent timestamp
+    await clientUsersCollection.updateOne(
+      { email },
+      { 
+        $set: { 
+          last_password_email_sent: new Date(),
+          updated_at: new Date()
+        }
+      }
+    );
+
+    console.log(`📧 Password setup email resent to: ${email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Password setup email sent successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Resend password email error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send password email'
+    });
+  }
+});
+
 // ============================================================================
 // CLIENT AUTHENTICATION & PORTAL ENDPOINTS
 // ============================================================================

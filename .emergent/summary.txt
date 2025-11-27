@@ -1,62 +1,167 @@
-<analysis>
-The AI engineer's work involved developing a React frontend and Node.js/Express backend for Simon Price PT. The trajectory began with design iterations (dark theme, logo, content updates). Key technical challenges included resolving local development environment issues, implementing email sending via Microsoft Graph API (after switching from SMTP due to Outlook issues), and integrating Google reCAPTCHA v2. Extensive debugging was required for reCAPTCHA, revealing domain mismatches and caching issues in the preview environment, leading to its temporary disablement. Subsequently, a TDEE Calculator modal was developed, undergoing several rounds of UI/UX refinement, and finally stabilized using React Portals to resolve display issues. A standalone client contact form was also created, encountering significant CORS configuration problems and environment variable mismatches between local development and preview deployment. The AI engineer consistently adapted to user feedback and external system constraints, addressing multiple bugs related to environment variables, UI rendering, and network requests.
-</analysis>
+<analysis>**original_problem_statement:**
+The initial request was to complete the Stripe client onboarding and payment system. This evolved to include several enhancements and bug fixes based on user feedback. The core requirements are:
 
-<product_requirements>
-The goal is to build a conversion-optimized landing page for Simon Price PT to generate leads, featuring services, a contact form, and later a TDEE calculator and a client contact form. The initial design required a sleek dark theme with a cyan/teal color scheme and content tailored for a new personal trainer. The contact form needed to send emails via Microsoft Graph API and implement reCAPTCHA for spam. Deployment on an Nginx server was specified, requiring a combined configuration for existing sites. The TDEE calculator required comprehensive input options (weight/height units, activity, goals, optional body fat), outputting BMR, TDEE, goal calories, macros, with an email option and mailing list opt-in. A standalone client contact form was needed for Instagram, capturing name, email, phone, best call time, with a thank you page and an opt-out for a mailing list.
-</product_requirements>
+**PRODUCT REQUIREMENTS:**
+1.  **Client Onboarding & Payments (Phase 4):**
+    *   Admin can generate a secure, expiring onboarding link for a new client.
+    *   The link expiration should be configurable by the admin (default 7 days).
+    *   Admins should be able to resend the link.
+    *   A proration option should be available.
+    *   The client onboarding form must include a calendar/date-picker for DOB, a country dropdown, and pass validation for international postcodes.
+    *   Stripe integration must handle subscription creation correctly, reusing existing products/prices to avoid duplicates.
+    *   Client data must be saved to the database immediately upon link creation, not just after payment.
+2.  **Client Self-Service Portal:**
+    *   A client login page accessible from the main website header.
+    *   Clients are created with a 'pending' status and receive an email to create their password upon onboarding.
+    *   A forgot password flow for clients.
+    *   Once logged in, clients can view a dashboard to:
+        *   Manage their address and payment cards (via Stripe Customer Portal).
+        *   Change their password.
+        *   Cancel their subscription (terminates at the end of the billing period).
+3.  **Admin Enhancements:**
+    *   Admins can edit client details.
+    *   A new Client Users management screen to view client login accounts and their status (pending, active, suspended, cancelled).
+4.  **Bug Fixes:**
+    *   The TDEE calculator was providing incorrect calorie counts for weight gain vs. loss.
+    *   Email links for password creation were generated with an  URL due to a missing environment variable.
 
-<key_technical_concepts>
-- **Frontend**: React.js, Shadcn UI, Tailwind CSS, , , , .
-- **Backend**: Node.js, Express.js, , , , .
-- **Email Integration**: Microsoft Graph API for secure email sending.
-- **Security**: Google reCAPTCHA v2 (checkbox), CORS, rate limiting.
-- **Deployment**: Nginx configuration.
-- **Tools**: npm, yarn, git, supervisor.
-</key_technical_concepts>
+**User's preferred language**: English
 
-<code_architecture>
-The application is structured into a  (React) and  (Node.js/Express) directory.
+**what currently exists?**
+The application is a full-stack React (frontend) and Node.js/Express (backend) project. It features a complete admin panel for managing email subscribers and clients. The client onboarding flow with Stripe is mostly implemented. A new, comprehensive client self-service portal has been scaffolded with backend endpoints and frontend components for login, password management, and a client dashboard. The backend has been updated to save client information immediately upon link creation and to manage client user accounts with a status system.
+
+**Last working item**:
+- **Last item agent was working on:** The agent addressed two main user-reported issues:
+    1.  Email links for client password creation were malformed (e.g., ).
+    2.  A new Client Users management page was needed for admins to see client login accounts and their statuses, as they were not appearing in the existing User Management section.
+- **Status:** USER VERIFICATION PENDING
+- **Agent Testing Done:** N
+- **Which testing method agent to use?** Both. The backend endpoints for client user management () and the frontend UI at  need to be tested. The email link generation also needs verification.
+- **User Testing Done:** N
+
+**All Pending/In progress Issue list**:
+- **Issue 1 (P0):**  URL in client password creation email link on user's local machine.
+- **Issue 2 (P1):** User's local Windows environment setup.
+
+**Issues Detail:**
+- **Issue 1:  URL in client password creation email link.**
+    - **Attempted fixes:** The agent identified the cause as a missing  variable in the user's local  file. The agent provided instructions to the user on how to add  to their local file.
+    - **Next debug checklist:**
+        - Ask the user to confirm they have added the  variable to their local  file.
+        - Ask the user to restart their local backend server.
+        - Generate a new client payment link and check the password creation link sent via email.
+    - **Why fix this issue and what will be achieved with the fix?** This is critical for the client self-service portal. Without a valid link, new clients cannot create their passwords and access their accounts.
+    - **Status:** USER VERIFICATION PENDING
+    - **Is recurring issue?** Y (Environment configuration issues have occurred multiple times).
+    - **Should Test frontend/backend/both after fix?** Backend (to confirm link generation) and manual check of the email content.
+    - **Blocked on other issue:** None.
+- **Issue 2: User's local Windows environment setup.**
+    - **Attempted fixes:** The user reported  commands failed. The agent correctly identified that  is a Linux tool and provided three detailed alternative setup options for Windows: WSL2, native MongoDB for Windows, or Docker.
+    - **Next debug checklist:** Await user's decision on which setup option they prefer to proceed with.
+    - **Why fix this issue and what will be achieved with the fix?** To enable the user to run and test the full application stack on their local Windows machine.
+    - **Status:** BLOCKED (awaiting user decision).
+    - **Is recurring issue?** N
+    - **Should Test frontend/backend/both after fix?** Both.
+    - **Blocked on other issue:** None.
+
+**In progress Task List**:
+- **Task 1: Finalize and Test the Client Self-Service Portal.**
+    - **Where to resume:** The backend logic and frontend components have been created. The next step is a full end-to-end test of the entire client lifecycle.
+    - **What will be achieved with this?** A fully functional client portal that allows clients to log in, create/reset passwords, manage their billing, and cancel their subscriptions, fulfilling a major user requirement.
+    - **Status:** IN PROGRESS
+    - **Should Test frontend/backend/both after fix?** Both.
+    - **Blocked on something:**  must be resolved for the password creation flow to be testable.
+
+**Upcoming and Future Tasks**
+- **Upcoming Tasks:**
+    - **P0:** Implement logic for changing client user status to  upon successful onboarding, and  when a subscription is cancelled. The  status logic also needs implementation if required. (Files: )
+- **Future Tasks:**
+    - **P1:** Add cancellation policy/terms. The user mentioned Cancellation terms will come later. This will involve displaying a policy before a client confirms cancellation. (Files: )
+
+**Completed work in this session**
+- **Client Management Features:**
+    - Configurable expiration time for onboarding links.
+    - Resend Link functionality for admins.
+    - Proration option for new subscriptions.
+    - Client data is now saved immediately when an admin creates a payment link.
+    - Admins can now edit existing client details.
+- **Client Onboarding Form Fixes:**
+    - Fixed an issue where the LastPass password manager interfered with the Date of Birth input.
+    - Fixed Stripe postcode validation by adding a country dropdown and removing the hardcoded 'GB' country code.
+    - Removed the built-in ZIP code field from the Stripe Card Element.
+- **Stripe Integration & Backend Fixes:**
+    - Corrected hardcoded Stripe live keys and misconfigured environment variables in the frontend.
+    - Fixed a Stripe API breaking change by updating the subscription creation logic to handle products and prices correctly.
+    - Made Stripe product/price creation idempotent (it now reuses existing products/prices).
+- **Bug Fixes:**
+    - Fixed a logical bug in the TDEE calculator's macro calculation.
+- **New Features (Scaffolded):**
+    - Created a full backend authentication system for clients (login, password create/reset).
+    - Created a new Client Users management page for admins to view client login accounts and statuses.
+    - Created all required frontend components for the client self-service portal (Login, Forgot Password, Reset Password, Create Password, and Client Portal Dashboard).
+    - Added a Client Login button to the main website header.
+
+**Code Architecture**
 
 
+**Key Technical Concepts**
+- **Frontend:** React, React Router, Axios, Stripe.js/React-Stripe.js
+- **Backend:** Node.js, Express.js, MongoDB, JWT, Bcrypt.js, Stripe Node.js SDK
+- **Authentication:** Two separate JWT systems: one for Admins () and one for Clients ().
+- **Database:** MongoDB with collections for ,  (admins),  (subscription data), and  (client login credentials).
+- **Payments:** Stripe (Elements for frontend, SDK for backend) for subscriptions and customer portal management.
 
--   ****: Central routing for the React application, includes Header and Footer.
-    -   **Changes**: Added routes for  to render  without  and .
--   ****: Navigation bar for the main site.
-    -   **Changes**: Added TDEE Calculator link (initially with icon, then removed) between Services and About sections.
--   ****: Main contact form.
-    -   **Changes**: Fixed  to , used , integrated reCAPTCHA v2 (then commented out).
--   ****: About section with content.
-    -   **Changes**: Photo added to a small circular frame. newly certified changed to certified. Floating icons removed.
--   ****: Hero section of the landing page.
-    -   **Changes**: Replaced placeholder with user's photo in a large circular element, removed floating star and trophy icons.
--   ****: New component for the TDEE calculator modal.
-    -   **Changes**: Initial implementation, multiple UI refinements for layout, text size, vertical centering, background opacity. Finally, implemented using  for robust display and stacking context management. Updated TDEE/macro calculation logic to user-provided formulas.
--   ****: New component for the Instagram client contact form.
-    -   **Changes**: Implemented form fields (name, email, phone, best time to call), mailing list opt-out, thank you message, and a fixed logo path. No navigation bar.
--   **, , **: Environment variables for frontend.
-    -   **Changes**:  updated. Crucial debugging involved fixing  in  to  for preview.
--   ****: Node.js/Express backend server.
-    -   **Changes**: Implemented  endpoint (with reCAPTCHA verification, then commented out). Added  for TDEE email. Added  for the new form. Extensive work on CORS configuration, initially using , then debugging its incorrect interpretation, leading to a recommendation for explicit origin listing. Microsoft Graph API authentication setup for email sending.
--   ****: Backend environment variables.
-    -   **Changes**:  updated.  management was crucial for correct frontend environment variable loading. Graph API credentials.
--   ****: New Nginx configuration file.
-    -   **Changes**: Created for Simon Price PT, then combined with the user's existing  configuration for multi-site hosting.
--   ****: New documentation for Nginx setup.
-    -   **Changes**: Created, then updated to reflect the combined Nginx configuration.
-</code_architecture>
+**key DB schema**
+- ****: 
+- **** (New): 
 
-<pending_tasks>
-- Update the backend CORS configuration in  to explicitly list allowed origins, instead of using a wildcard, for enhanced security and functionality.
-- Resolve the reCAPTCHA domain configuration issue in Google's admin panel if future re-integration is desired.
-- The user needs to manually update their local  files with correct Microsoft Graph API credentials and reCAPTCHA keys.
-- User needs to perform  and restart services locally after CORS fix.
-</pending_tasks>
+**changes in tech stack**
+None.
 
-<current_work>
-The AI engineer is currently debugging a persistent CORS issue affecting the client contact form, causing Failed to fetch errors. The backend logs indicate Not allowed by CORS even though  was set in . The root cause identified is that the backend's CORS logic  treats  as a literal string rather than a wildcard. This means requests from  (frontend) are not matched by  in the  array. The AI engineer has identified three options to resolve this: remove  to use defaults, explicitly list origins in , or modify the code to treat  as a wildcard. The current recommendation is to use **Option 2: explicitly list origins** for better security and flexibility. The AI is about to implement this solution by updating the user's  file.
-</current_work>
+**All files**
+- **Created:**
+    - : New admin page to manage client login accounts.
+    - All files in : The new client self-service portal UI.
+- **Updated:**
+    - : Major updates to add client auth endpoints, Stripe Customer Portal, improved subscription logic, and pre-saving client data.
+    - : Added UI for editing clients, managing billing, and cancelling subscriptions.
+    - : Numerous fixes for validation, country selection, and Stripe Element configuration.
+    - : Added routes for all new client-facing pages and the new admin page.
+    - : Added the Client Login button.
+    - : Fixed a calculation bug.
+    -  & : Instructions provided to user for updates, especially regarding Stripe keys and .
 
-<optional_next_step>
-Update the  file to explicitly list allowed CORS origins: .
-</optional_next_step>
+**Critical Info for New Agent**
+- The user is developing on a local Windows machine, which has caused environment-specific problems (e.g.,  commands failing, different  needs). Be mindful that the user's local environment differs from the cloud environment.
+- The most critical and recurring point of failure has been the correct configuration of  files, both on the backend and frontend. Specifically, ensure the user understands the difference between  and  Stripe keys, and that React variables require the  prefix. The  in  is essential for email links to work correctly.
+- There are now **two distinct user systems**: Admins (in the  collection) and Clients (in the  collection). They have separate login endpoints and JWT handling.
+
+**documents created in this job**
+- 
+- 
+
+**Last 5 User Messages and any pending user messages**
+1.  **User reported local DB issues on Windows.** Agent provided comprehensive setup options (WSL2, native MongoDB, Docker).
+2.  **User confirmed service name invalid on Windows.** Agent explained  is Linux-only, reinforcing the need for a different local setup.
+3.  **User reported new clients don't show in user management and password links are broken ().** Agent began implementing a new Client User management screen and identified the missing  as the cause of the broken links.
+4.  **User asked if  changes are needed.** Agent provided a detailed breakdown of required  values for both cloud and local setups.
+5.  **User shared their local  files.** Agent analyzed them and provided specific instructions for correction, highlighting the missing  in the backend file.
+
+**Project Health Check:**
+- **Broken:**
+    - Client password creation flow is broken on the user's local machine due to the  link issue. This is awaiting user action to fix their  file.
+- **Mocked:**
+    - All Stripe payment and subscription functionalities are non-operational until the user provides valid API keys in the backend and frontend  files.
+
+**Testing status**
+- **Testing agent used after significant changes:** NO
+- **Troubleshoot agent used after agent stuck in loop:** NO
+- **Test files created:** None
+- **Known regressions:** None
+
+**Credentials to test flow:**
+An admin user is created automatically on server startup. Credentials can be found in the backend logs or by inspecting the MongoDB  collection. No default client users exist.
+
+**What agent forgot to execute**
+- The agent has not yet fully implemented the status transition logic for client users (e.g., from  to  after payment, or to ). This is a key part of the user's request for a status system.
+- While the client portal pages have been created, the internal API calls and state management within  are likely scaffolded and require a full implementation and testing pass.</analysis>

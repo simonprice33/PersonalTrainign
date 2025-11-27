@@ -2784,7 +2784,7 @@ app.post('/api/admin/import-customers/fetch', authenticateToken, [
 
       } catch (error) {
         console.error(`❌ Error fetching customer ${customerId}:`, error.message);
-        errors.push({
+        fetchErrors.push({
           customerId,
           error: error.message
         });
@@ -2794,7 +2794,7 @@ app.post('/api/admin/import-customers/fetch', authenticateToken, [
     res.status(200).json({
       success: true,
       customers: customerData,
-      errors: errors.length > 0 ? errors : null
+      errors: fetchErrors.length > 0 ? fetchErrors : null
     });
 
   } catch (error) {

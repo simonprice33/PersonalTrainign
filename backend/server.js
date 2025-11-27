@@ -2709,7 +2709,7 @@ app.post('/api/admin/import-customers/fetch', authenticateToken, [
 
     const { customerIds } = req.body;
     const customerData = [];
-    const errors = [];
+    const fetchErrors = [];
 
     for (const customerId of customerIds) {
       try {
@@ -2717,7 +2717,7 @@ app.post('/api/admin/import-customers/fetch', authenticateToken, [
         const customer = await stripe.customers.retrieve(customerId);
         
         if (customer.deleted) {
-          errors.push({
+          fetchErrors.push({
             customerId,
             error: 'Customer has been deleted in Stripe'
           });
@@ -2728,7 +2728,7 @@ app.post('/api/admin/import-customers/fetch', authenticateToken, [
         const existingClient = await clientsCollection.findOne({ stripe_customer_id: customerId });
         
         if (existingClient) {
-          errors.push({
+          fetchErrors.push({
             customerId,
             email: customer.email,
             error: 'Customer already exists in database'

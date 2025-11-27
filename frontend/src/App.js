@@ -60,6 +60,7 @@ function App() {
           <Route path="/admin/users" element={<UserManagement />} />
           <Route path="/admin/clients" element={<ClientManagement />} />
           <Route path="/admin/client-users" element={<ClientUserManagement />} />
+          <Route path="/admin/import-customers" element={<ImportCustomers />} />
           <Route path="/admin/change-password" element={<ChangePassword />} />
           
           {/* Main Website Route */}

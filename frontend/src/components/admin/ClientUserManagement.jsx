@@ -141,7 +141,8 @@ const ClientUserManagement = () => {
       );
 
       if (response.data.success) {
-        alert(`Password setup email sent successfully to ${email}`);
+        setSuccessMessage(`Password setup email sent successfully to ${email}`);
+        setShowSuccessModal(true);
       } else {
         setError(response.data.message || 'Failed to send password email');
       }

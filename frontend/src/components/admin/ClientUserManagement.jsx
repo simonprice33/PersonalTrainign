@@ -446,6 +446,46 @@ const ClientUserManagement = () => {
           </div>
         </div>
       )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-md w-full mx-4 shadow-2xl">
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <CheckCircle className="text-green-400" size={24} />
+              Email Sent Successfully
+            </h3>
+            
+            <div className="mb-6">
+              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                <p className="text-green-400 text-sm flex items-start gap-2">
+                  <CheckCircle size={16} className="mt-0.5" />
+                  <span>{successMessage}</span>
+                </p>
+              </div>
+              
+              <div className="mt-4 bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+                <p className="text-blue-400 text-sm flex items-start gap-2">
+                  <Mail size={16} className="mt-0.5" />
+                  <span>
+                    The client will receive a password setup link that expires in 7 days. They can use this link to create their portal password and access their account.
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowSuccessModal(false)}
+                className="px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-semibold transition-all"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

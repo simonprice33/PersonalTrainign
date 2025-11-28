@@ -4046,11 +4046,38 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
+  console.log('='.repeat(60));
   console.log(`🚀 Simon Price PT Backend running on port ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
-  console.log(`📧 Graph API configured for: ${process.env.EMAIL_TO}`);
-  console.log(`🔗 CORS allowed origins: ${allowedOrigins.join(', ')}`);
-  console.log(`📨 Tenant: ${process.env.TENANT_ID}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📧 Email configured: ${process.env.EMAIL_FROM}`);
+  console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL}`);
+  console.log(`🔗 CORS origins: ${allowedOrigins.join(', ')}`);
+  
+  // Database status
+  if (db) {
+    console.log(`💾 Database: Connected to ${process.env.DB_NAME}`);
+  } else {
+    console.log(`💾 Database: Not connected`);
+  }
+  
+  // Stripe status
+  if (stripe) {
+    const isTest = process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_');
+    console.log(`💳 Stripe: Configured (${isTest ? 'Test' : 'Live'} mode)`);
+  } else {
+    console.log(`💳 Stripe: Not configured`);
+  }
+  
+  // Microsoft Graph status
+  if (process.env.TENANT_ID && process.env.CLIENT_ID && process.env.CLIENT_SECRET) {
+    console.log(`📨 Microsoft Graph: Configured (Tenant: ${process.env.TENANT_ID})`);
+  } else {
+    console.log(`📨 Microsoft Graph: Not configured`);
+  }
+  
+  console.log('='.repeat(60));
+  console.log('✅ Server is ready to accept requests');
+  console.log('');
 });
 
 module.exports = app;

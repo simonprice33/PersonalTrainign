@@ -11,6 +11,221 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+// ============================================================================
+// ENVIRONMENT VALIDATION
+// ============================================================================
+
+function validateEnvironment() {
+  console.log('🔍 Validating environment variables...\n');
+  
+  const errors = [];
+  const warnings = [];
+  
+  // Required Environment Variables
+  const required = {
+    // Database
+    'MONGO_URL': {
+      value: process.env.MONGO_URL,
+      description: 'MongoDB connection string',
+      validator: (val) => val && val.startsWith('mongodb://')
+    },
+    'DB_NAME': {
+      value: process.env.DB_NAME,
+      description: 'MongoDB database name',
+      validator: (val) => val && val.length > 0
+    },
+    
+    // JWT Configuration
+    'JWT_SECRET': {
+      value: process.env.JWT_SECRET,
+      description: 'JWT signing secret key',
+      validator: (val) => val && val.length >= 32
+    },
+    'JWT_ACCESS_EXPIRY': {
+      value: process.env.JWT_ACCESS_EXPIRY,
+      description: 'JWT access token expiry time',
+      validator: (val) => val && /^\d+[mhd]$/.test(val)
+    },
+    'JWT_REFRESH_EXPIRY': {
+      value: process.env.JWT_REFRESH_EXPIRY,
+      description: 'JWT refresh token expiry time',
+      validator: (val) => val && /^\d+[mhd]$/.test(val)
+    },
+    
+    // Microsoft Graph API
+    'TENANT_ID': {
+      value: process.env.TENANT_ID,
+      description: 'Microsoft Azure tenant ID',
+      validator: (val) => val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val)
+    },
+    'CLIENT_ID': {
+      value: process.env.CLIENT_ID,
+      description: 'Microsoft Graph API client ID',
+      validator: (val) => val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val)
+    },
+    'CLIENT_SECRET': {
+      value: process.env.CLIENT_SECRET,
+      description: 'Microsoft Graph API client secret',
+      validator: (val) => val && val.length > 10
+    },
+    'EMAIL_FROM': {
+      value: process.env.EMAIL_FROM,
+      description: 'Email address to send from',
+      validator: (val) => val && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
+    },
+    
+    // Frontend Configuration
+    'FRONTEND_URL': {
+      value: process.env.FRONTEND_URL,
+      description: 'Frontend URL for email links',
+      validator: (val) => val && (val.startsWith('http://') || val.startsWith('https://'))
+    },
+    
+    // CORS Configuration
+    'CORS_ORIGINS': {
+      value: process.env.CORS_ORIGINS,
+      description: 'Allowed CORS origins',
+      validator: (val) => val && val.length > 0
+    }
+  };
+  
+  // Optional but Recommended Variables
+  const optional = {
+    // Stripe Configuration
+    'STRIPE_SECRET_KEY': {
+      value: process.env.STRIPE_SECRET_KEY,
+      description: 'Stripe secret key for payments',
+      validator: (val) => !val || (val.startsWith('sk_test_') || val.startsWith('sk_live_'))
+    },
+    'STRIPE_PUBLISHABLE_KEY': {
+      value: process.env.STRIPE_PUBLISHABLE_KEY,
+      description: 'Stripe publishable key',
+      validator: (val) => !val || (val.startsWith('pk_test_') || val.startsWith('pk_live_'))
+    },
+    'STRIPE_WEBHOOK_SECRET': {
+      value: process.env.STRIPE_WEBHOOK_SECRET,
+      description: 'Stripe webhook endpoint secret',
+      validator: (val) => !val || val.startsWith('whsec_')
+    },
+    
+    // Rate Limiting
+    'RATE_LIMIT_WINDOW_MS': {
+      value: process.env.RATE_LIMIT_WINDOW_MS,
+      description: 'Rate limiting window in milliseconds',
+      validator: (val) => !val || (!isNaN(val) && parseInt(val) > 0)
+    },
+    'RATE_LIMIT_MAX_REQUESTS': {
+      value: process.env.RATE_LIMIT_MAX_REQUESTS,
+      description: 'Maximum requests per rate limit window',
+      validator: (val) => !val || (!isNaN(val) && parseInt(val) > 0)
+    },
+    
+    // reCAPTCHA
+    'RECAPTCHA_SECRET_KEY': {
+      value: process.env.RECAPTCHA_SECRET_KEY,
+      description: 'Google reCAPTCHA secret key',
+      validator: (val) => !val || val.length > 10
+    },
+    
+    // Additional Email
+    'EMAIL_TO': {
+      value: process.env.EMAIL_TO,
+      description: 'Default email recipient',
+      validator: (val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
+    }
+  };
+  
+  // Validate Required Variables
+  console.log('📋 Required Environment Variables:');
+  Object.entries(required).forEach(([key, config]) => {
+    const { value, description, validator } = config;
+    
+    if (!value) {
+      errors.push(`❌ ${key}: Missing (${description})`);
+      console.log(`   ❌ ${key}: MISSING`);
+    } else if (validator && !validator(value)) {
+      errors.push(`❌ ${key}: Invalid format (${description})`);
+      console.log(`   ❌ ${key}: INVALID FORMAT`);
+    } else {
+      console.log(`   ✅ ${key}: OK`);
+    }
+  });
+  
+  console.log('\n📋 Optional Environment Variables:');
+  Object.entries(optional).forEach(([key, config]) => {
+    const { value, description, validator } = config;
+    
+    if (!value) {
+      warnings.push(`⚠️  ${key}: Not set (${description})`);
+      console.log(`   ⚠️  ${key}: NOT SET`);
+    } else if (validator && !validator(value)) {
+      warnings.push(`⚠️  ${key}: Invalid format (${description})`);
+      console.log(`   ⚠️  ${key}: INVALID FORMAT`);
+    } else {
+      console.log(`   ✅ ${key}: OK`);
+    }
+  });
+  
+  // Environment Consistency Checks
+  console.log('\n🔍 Environment Consistency Checks:');
+  
+  // Check NODE_ENV
+  const nodeEnv = process.env.NODE_ENV || 'development';
+  console.log(`   📍 NODE_ENV: ${nodeEnv}`);
+  
+  // Check Stripe key consistency
+  const stripeSecret = process.env.STRIPE_SECRET_KEY;
+  const stripePublic = process.env.STRIPE_PUBLISHABLE_KEY;
+  if (stripeSecret && stripePublic) {
+    const secretIsTest = stripeSecret.startsWith('sk_test_');
+    const publicIsTest = stripePublic.startsWith('pk_test_');
+    
+    if (secretIsTest !== publicIsTest) {
+      warnings.push('⚠️  Stripe key mismatch: Secret and publishable keys are not both test or both live');
+      console.log('   ⚠️  STRIPE: Key type mismatch (test vs live)');
+    } else {
+      console.log(`   ✅ STRIPE: Keys are consistent (${secretIsTest ? 'test' : 'live'} mode)`);
+    }
+  }
+  
+  // Check CORS origins include frontend URL
+  const corsOrigins = process.env.CORS_ORIGINS;
+  const frontendUrl = process.env.FRONTEND_URL;
+  if (corsOrigins && frontendUrl && !corsOrigins.includes(frontendUrl)) {
+    warnings.push('⚠️  FRONTEND_URL not included in CORS_ORIGINS');
+    console.log('   ⚠️  CORS: Frontend URL not in allowed origins');
+  } else if (corsOrigins && frontendUrl) {
+    console.log('   ✅ CORS: Frontend URL is allowed');
+  }
+  
+  // Final Results
+  console.log('\n' + '='.repeat(60));
+  
+  if (errors.length > 0) {
+    console.log('❌ ENVIRONMENT VALIDATION FAILED\n');
+    console.log('Critical issues found:');
+    errors.forEach(error => console.log(`   ${error}`));
+    console.log('\n💡 Please fix the above issues before starting the server.');
+    console.log('   Check your .env file and ensure all required variables are set.\n');
+    process.exit(1);
+  }
+  
+  if (warnings.length > 0) {
+    console.log('⚠️  ENVIRONMENT VALIDATION PASSED WITH WARNINGS\n');
+    console.log('Optional configurations:');
+    warnings.forEach(warning => console.log(`   ${warning}`));
+    console.log('\n💡 These are optional but recommended for full functionality.\n');
+  } else {
+    console.log('✅ ENVIRONMENT VALIDATION PASSED\n');
+    console.log('All environment variables are properly configured.\n');
+  }
+  
+  console.log('🚀 Starting server...\n');
+}
+
+// Run environment validation
+validateEnvironment();
+
 // Initialize Stripe only if key is provided
 let stripe = null;
 if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !== 'YOUR_SECRET_KEY_HERE_FROM_LOCAL_ENV') {

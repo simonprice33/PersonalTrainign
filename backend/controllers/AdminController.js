@@ -18,7 +18,7 @@ class AdminController {
     
     // Initialize services
     this.clientService = new ClientService(collections, stripe, stripeConfig);
-    this.emailService = new EmailService(emailConfig, config);
+    this.emailService = new EmailService(emailConfig);
     this.stripeService = new StripeService(stripe, stripeConfig);
     this.authService = new AuthService(authMiddleware, collections);
   }

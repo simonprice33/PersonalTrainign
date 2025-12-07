@@ -3,7 +3,7 @@
  * Implements Single Responsibility Principle - handles only email configuration
  */
 
-const { Client } = require('@azure/msal-node');
+const { ConfidentialClientApplication } = require('@azure/msal-node');
 
 class EmailConfig {
   constructor(config) {
@@ -23,8 +23,8 @@ class EmailConfig {
     }
 
     try {
-      // Create MSAL client app
-      this.clientApp = new Client({
+      // Create MSAL confidential client app
+      this.clientApp = new ConfidentialClientApplication({
         auth: {
           clientId: this.emailConfig.clientId,
           clientSecret: this.emailConfig.clientSecret,

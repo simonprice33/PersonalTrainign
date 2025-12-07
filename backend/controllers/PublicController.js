@@ -18,6 +18,8 @@ class PublicController {
   async healthCheck(req, res) {
     res.json({
       success: true,
+      status: 'OK',
+      service: 'Simon Price PT Backend',
       message: 'Server is running',
       timestamp: new Date().toISOString()
     });

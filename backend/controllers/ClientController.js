@@ -1,0 +1,426 @@
+/**
+ * Client Controller - Handles client-facing endpoints
+ * Authentication and onboarding flows
+ */
+
+const { validationResult } = require('express-validator');
+const AuthService = require('../services/AuthService');
+const EmailService = require('../services/EmailService');
+const StripeService = require('../services/StripeService');
+
+class ClientController {
+  constructor(collections, stripe, stripeConfig, emailConfig, authMiddleware, config) {
+    this.collections = collections;
+    this.stripe = stripe;
+    this.config = config;
+
+    // Initialize services
+    this.authService = new AuthService(authMiddleware, collections);
+    this.emailService = new EmailService(emailConfig, config);
+    this.stripeService = new StripeService(stripe, stripeConfig);
+  }
+
+  /**
+   * Validate client onboarding token
+   */
+  async validateToken(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Token is required',
+          errors: errors.array()
+        });
+      }
+
+      const { token } = req.body;
+
+      try {
+        const decoded = this.authService.verifyToken(token);
+
+        if (decoded.type !== 'client_onboarding') {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid token type'
+          });
+        }
+
+        res.status(200).json({
+          success: true,
+          email: decoded.email
+        });
+
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid or expired token'
+        });
+      }
+
+    } catch (error) {
+      console.error('❌ Validate token error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Token validation failed'
+      });
+    }
+  }
+
+  /**
+   * Create Stripe SetupIntent for payment method
+   */
+  async createSetupIntent(req, res) {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email is required'
+        });
+      }
+
+      const client = await this.collections.clients.findOne({ email }, { _id: 0 });
+      if (!client) {
+        return res.status(404).json({
+          success: false,
+          message: 'Client not found'
+        });
+      }
+
+      const setupIntent = await this.stripe.setupIntents.create({
+        customer: client.customer_id,
+        payment_method_types: ['card']
+      });
+
+      res.status(200).json({
+        success: true,
+        clientSecret: setupIntent.client_secret
+      });
+
+    } catch (error) {
+      console.error('❌ Create setup intent error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to create setup intent'
+      });
+    }
+  }
+
+  /**
+   * Complete client onboarding after payment setup
+   */
+  async completeOnboarding(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid input',
+          errors: errors.array()
+        });
+      }
+
+      const { email, setupIntentId } = req.body;
+
+      const client = await this.collections.clients.findOne({ email }, { _id: 0 });
+      if (!client) {
+        return res.status(404).json({
+          success: false,
+          message: 'Client not found'
+        });
+      }
+
+      // Verify setup intent
+      const setupIntent = await this.stripe.setupIntents.retrieve(setupIntentId);
+
+      if (setupIntent.status !== 'succeeded') {
+        return res.status(400).json({
+          success: false,
+          message: 'Payment method setup not completed'
+        });
+      }
+
+      // Attach payment method to customer
+      const paymentMethodId = setupIntent.payment_method;
+      await this.stripe.paymentMethods.attach(paymentMethodId, {
+        customer: client.customer_id
+      });
+
+      // Set as default payment method
+      await this.stripe.customers.update(client.customer_id, {
+        invoice_settings: {
+          default_payment_method: paymentMethodId
+        }
+      });
+
+      // Create subscription
+      const subscription = await this.stripe.subscriptions.create({
+        customer: client.customer_id,
+        items: [
+          {
+            price: process.env.STRIPE_PRICE_ID
+          }
+        ],
+        payment_behavior: 'default_incomplete',
+        payment_settings: {
+          payment_method_types: ['card'],
+          save_default_payment_method: 'on_subscription'
+        },
+        expand: ['latest_invoice.payment_intent']
+      });
+
+      // Update client status
+      await this.collections.clients.updateOne(
+        { email },
+        {
+          $set: {
+            status: 'active',
+            subscription_status: subscription.status,
+            subscription_id: subscription.id,
+            onboarded_at: new Date(),
+            updated_at: new Date()
+          }
+        }
+      );
+
+      // Create client user if doesn't exist
+      const existingUser = await this.collections.clientUsers.findOne({ email });
+      if (!existingUser) {
+        await this.collections.clientUsers.insertOne({
+          email,
+          password: null,
+          status: 'active',
+          created_at: new Date()
+        });
+      } else {
+        await this.collections.clientUsers.updateOne(
+          { email },
+          { $set: { status: 'active', updated_at: new Date() } }
+        );
+      }
+
+      // Send password creation email
+      const passwordToken = this.authService.generatePasswordSetupToken(email, 'client_password_setup');
+      const passwordLink = `${this.config.frontendUrl}/client/create-password?token=${passwordToken}`;
+
+      await this.emailService.sendPasswordSetupEmail(email, passwordLink);
+
+      console.log(`✅ Client onboarding completed: ${email}`);
+
+      res.status(200).json({
+        success: true,
+        message: 'Onboarding completed successfully! Check your email to set up your password.',
+        subscriptionStatus: subscription.status
+      });
+
+    } catch (error) {
+      console.error('❌ Complete onboarding error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to complete onboarding'
+      });
+    }
+  }
+
+  /**
+   * Create client password (first-time setup)
+   */
+  async createPassword(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid input',
+          errors: errors.array()
+        });
+      }
+
+      const { token, password } = req.body;
+
+      const email = await this.authService.createClientPassword(token, password);
+
+      console.log(`✅ Client password created: ${email}`);
+
+      res.status(200).json({
+        success: true,
+        message: 'Password created successfully! You can now login.'
+      });
+
+    } catch (error) {
+      console.error('❌ Create password error:', error);
+      res.status(400).json({
+        success: false,
+        message: error.message || 'Failed to create password'
+      });
+    }
+  }
+
+  /**
+   * Client login
+   */
+  async login(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid credentials',
+          errors: errors.array()
+        });
+      }
+
+      const { email, password } = req.body;
+      const result = await this.authService.authenticateClient(email, password);
+
+      res.status(200).json({
+        success: true,
+        message: 'Login successful',
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        user: result.user
+      });
+
+    } catch (error) {
+      console.error('❌ Client login error:', error);
+      res.status(401).json({
+        success: false,
+        message: error.message || 'Login failed'
+      });
+    }
+  }
+
+  /**
+   * Forgot password - Send reset email
+   */
+  async forgotPassword(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please provide a valid email address'
+        });
+      }
+
+      const { email } = req.body;
+      const clientUser = await this.collections.clientUsers.findOne({ email }, { _id: 0 });
+
+      if (clientUser && clientUser.password) {
+        const resetToken = this.authService.generatePasswordResetToken(email, 'client_password_reset');
+        const resetLink = `${this.config.frontendUrl}/client/reset-password?token=${resetToken}`;
+
+        await this.emailService.sendPasswordResetEmail(email, resetLink, 'client');
+        console.log(`📧 Password reset email sent to client: ${email}`);
+      } else {
+        console.log(`ℹ️ Password reset requested for client without password or non-existent: ${email}`);
+      }
+
+      // Always return success for security
+      res.status(200).json({
+        success: true,
+        message: 'If an account exists with this email, a password reset link has been sent.'
+      });
+
+    } catch (error) {
+      console.error('❌ Forgot password error:', error);
+      res.status(200).json({
+        success: true,
+        message: 'If an account exists with this email, a password reset link has been sent.'
+      });
+    }
+  }
+
+  /**
+   * Reset password using token
+   */
+  async resetPassword(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid input',
+          errors: errors.array()
+        });
+      }
+
+      const { token, newPassword } = req.body;
+
+      // Verify token
+      let decoded;
+      try {
+        decoded = this.authService.verifyToken(token);
+        if (decoded.type !== 'client_password_reset') {
+          throw new Error('Invalid token type');
+        }
+      } catch (err) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid or expired reset token. Please request a new password reset.'
+        });
+      }
+
+      await this.authService.resetClientPassword(decoded.email, newPassword, null);
+
+      console.log(`✅ Client password reset successful for: ${decoded.email}`);
+
+      res.status(200).json({
+        success: true,
+        message: 'Password reset successful! You can now login with your new password.'
+      });
+
+    } catch (error) {
+      console.error('❌ Reset password error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to reset password. Please try again.'
+      });
+    }
+  }
+
+  /**
+   * Manage billing - Create Customer Portal session
+   */
+  async manageBilling(req, res) {
+    try {
+      const userEmail = req.user.email;
+
+      const client = await this.collections.clients.findOne({ email: userEmail }, { _id: 0 });
+      if (!client) {
+        return res.status(404).json({
+          success: false,
+          message: 'Client not found'
+        });
+      }
+
+      if (!client.customer_id) {
+        return res.status(400).json({
+          success: false,
+          message: 'No billing account found'
+        });
+      }
+
+      const session = await this.stripe.billingPortal.sessions.create({
+        customer: client.customer_id,
+        return_url: `${this.config.frontendUrl}/client/portal`
+      });
+
+      res.status(200).json({
+        success: true,
+        url: session.url
+      });
+
+    } catch (error) {
+      console.error('❌ Manage billing error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to access billing portal'
+      });
+    }
+  }
+}
+
+module.exports = ClientController;

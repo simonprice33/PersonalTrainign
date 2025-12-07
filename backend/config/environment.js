@@ -88,6 +88,26 @@ class EnvironmentConfig {
    */
   _validateOptional() {
     const optional = {
+      'TENANT_ID': {
+        value: process.env.TENANT_ID,
+        description: 'Microsoft Azure tenant ID (for email)',
+        validator: (val) => !val || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val)
+      },
+      'CLIENT_ID': {
+        value: process.env.CLIENT_ID,
+        description: 'Microsoft Graph API client ID (for email)',
+        validator: (val) => !val || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val)
+      },
+      'CLIENT_SECRET': {
+        value: process.env.CLIENT_SECRET,
+        description: 'Microsoft Graph API client secret (for email)',
+        validator: (val) => !val || val.length > 10
+      },
+      'EMAIL_FROM': {
+        value: process.env.EMAIL_FROM,
+        description: 'Email address to send from',
+        validator: (val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
+      },
       'STRIPE_SECRET_KEY': {
         value: process.env.STRIPE_SECRET_KEY,
         description: 'Stripe secret key for payments',

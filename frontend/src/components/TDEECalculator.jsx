@@ -85,29 +85,31 @@ const TDEECalculator = ({ isOpen, onClose }) => {
   };
 
   // Calculate macros using Simon Price PT method
-  const calculateMacros = (calories, weightKg, goal) => {
-    let proteinMultiplier = 2;
-    let carbsMultiplier = 3;
-    let fatsMultiplier = 0.8;
+  const calculateMacros = (goalCalories, weightKg, goal) => {
+    // Set protein based on body weight (consistent across all goals)
+    const proteinGrams = Math.round(weightKg * 2); // 2g per kg
+    const proteinCalories = proteinGrams * 4;
 
+    // Set fat percentage based on goal
+    let fatPercentage = 0.25; // 25% for maintain
     if (goal === 'lose') {
-      // Cutting - lose 1lb a week (lower carbs and fats for deficit)
-      proteinMultiplier = 2;
-      carbsMultiplier = 2.2;
-      fatsMultiplier = 0.6;
+      fatPercentage = 0.25; // 25% for cutting
     } else if (goal === 'gain') {
-      // Bulking - gain 1lb a week (higher carbs and fats for surplus)
-      proteinMultiplier = 2;
-      carbsMultiplier = 3.5;
-      fatsMultiplier = 1.0;
+      fatPercentage = 0.30; // 30% for bulking
     }
-    // Maintain uses default values set above
 
-    const protein = Math.round(weightKg * proteinMultiplier);
-    const carbs = Math.round(weightKg * carbsMultiplier);
-    const fat = Math.round(weightKg * fatsMultiplier);
+    const fatCalories = goalCalories * fatPercentage;
+    const fatGrams = Math.round(fatCalories / 9);
 
-    return { protein, carbs, fat };
+    // Remaining calories go to carbs
+    const carbCalories = goalCalories - proteinCalories - fatCalories;
+    const carbGrams = Math.round(carbCalories / 4);
+
+    return { 
+      protein: proteinGrams, 
+      carbs: carbGrams, 
+      fat: fatGrams 
+    };
   };
 
   const handleCalculate = () => {

@@ -128,10 +128,8 @@ const TDEECalculator = ({ isOpen, onClose }) => {
     }
 
     const tdee = calculateTDEE(bmr, formData.activityLevel);
-    const macros = calculateMacros(tdee, weightKg, formData.goal);
-    
-    // Calculate goal calories from macros (protein & carbs = 4 cal/g, fat = 9 cal/g)
-    const goalCalories = (macros.protein * 4) + (macros.carbs * 4) + (macros.fat * 9);
+    const goalCalories = calculateGoalCalories(tdee, formData.goal);
+    const macros = calculateMacros(goalCalories, weightKg, formData.goal);
 
     setResults({
       bmr: Math.round(bmr),

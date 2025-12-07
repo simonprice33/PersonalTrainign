@@ -327,13 +327,18 @@ class AdminController {
         last_login: null
       };
 
-      await this.collections.users.insertOne(newUser);
+      const result = await this.collections.users.insertOne(newUser);
       console.log(`✅ New admin user created: ${email}`);
 
       res.status(201).json({
         success: true,
         message: 'User created successfully',
-        user: { email, name, role: role || 'admin' }
+        user: { 
+          _id: result.insertedId,
+          email, 
+          name, 
+          role: role || 'admin' 
+        }
       });
 
     } catch (error) {

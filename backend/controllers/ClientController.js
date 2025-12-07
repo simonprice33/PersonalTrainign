@@ -16,7 +16,7 @@ class ClientController {
 
     // Initialize services
     this.authService = new AuthService(authMiddleware, collections);
-    this.emailService = new EmailService(emailConfig, config);
+    this.emailService = new EmailService(emailConfig);
     this.stripeService = new StripeService(stripe, stripeConfig);
   }
 

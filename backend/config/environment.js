@@ -54,26 +54,6 @@ class EnvironmentConfig {
         description: 'JWT refresh token expiry time',
         validator: (val) => val && /^\d+[mhd]$/.test(val)
       },
-      'TENANT_ID': {
-        value: process.env.TENANT_ID,
-        description: 'Microsoft Azure tenant ID',
-        validator: (val) => val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val)
-      },
-      'CLIENT_ID': {
-        value: process.env.CLIENT_ID,
-        description: 'Microsoft Graph API client ID',
-        validator: (val) => val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val)
-      },
-      'CLIENT_SECRET': {
-        value: process.env.CLIENT_SECRET,
-        description: 'Microsoft Graph API client secret',
-        validator: (val) => val && val.length > 10
-      },
-      'EMAIL_FROM': {
-        value: process.env.EMAIL_FROM,
-        description: 'Email address to send from',
-        validator: (val) => val && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
-      },
       'FRONTEND_URL': {
         value: process.env.FRONTEND_URL,
         description: 'Frontend URL for email links',

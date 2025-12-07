@@ -105,6 +105,114 @@
 user_problem_statement: "Implement secure admin authentication system with JWT (20-minute access tokens + refresh tokens), user management, password reset functionality, MongoDB email storage for all forms with opt-in/opt-out tracking, and React admin dashboard with email/user management interfaces."
 
 backend:
+  - task: "SOLID Refactored Health Check Endpoint"
+    implemented: true
+    working: false
+    file: "/app/backend/controllers/PublicController.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "GET /api/health endpoint response format changed during SOLID refactoring. Now returns {success: true, message: 'Server is running', timestamp: '...'} instead of expected {status: 'OK', service: '...', timestamp: '...'}. This breaks API contract compatibility."
+
+  - task: "SOLID Refactored Contact Form Endpoint"
+    implemented: true
+    working: false
+    file: "/app/backend/controllers/PublicController.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "POST /api/contact endpoint functionality changed during SOLID refactoring. No longer saves emails to mailing_list collection for opt-in tracking. Now saves to contacts collection only. Email storage functionality for marketing purposes has been lost."
+
+  - task: "SOLID Refactored Newsletter Subscription"
+    implemented: true
+    working: true
+    file: "/app/backend/controllers/PublicController.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "POST /api/newsletter/subscribe endpoint working correctly after SOLID refactoring. Saves to mailingList collection with proper opt-in tracking. Returns 201 status with success message."
+
+  - task: "SOLID Refactored TDEE Results Endpoint"
+    implemented: true
+    working: false
+    file: "/app/backend/controllers/PublicController.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "POST /api/tdee-results endpoint validation changed during SOLID refactoring. Now requires name, tdee, goalCalories as top-level fields instead of nested structure. API contract breaking change that affects frontend integration."
+
+  - task: "SOLID Refactored Admin Authentication"
+    implemented: true
+    working: true
+    file: "/app/backend/controllers/AdminController.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Admin authentication endpoints working correctly after SOLID refactoring. Login, refresh, forgot password, and change password all functional. JWT tokens generated properly with 20-minute expiry. Password hashing with bcrypt working."
+
+  - task: "SOLID Refactored Admin Client Management"
+    implemented: true
+    working: false
+    file: "/app/backend/controllers/AdminController.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "Admin client management endpoints response format changed during SOLID refactoring. GET /api/admin/clients and GET /api/admin/client-users missing 'count' field in responses. This breaks frontend expectations and API contracts."
+
+  - task: "SOLID Refactored Admin User Management"
+    implemented: true
+    working: false
+    file: "/app/backend/controllers/AdminController.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "Admin user management endpoints partially working after SOLID refactoring. User creation works but response structure changed - missing '_id' field in response. This causes frontend errors when trying to access user ID for further operations."
+
+  - task: "SOLID Refactored Stripe Integration"
+    implemented: true
+    working: false
+    file: "/app/backend/controllers/AdminController.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "Stripe integration endpoints failing due to invalid API key configuration (sk_test_*****************************E_ME). This is expected in test environment. Import customers endpoint structure working correctly, create payment link endpoint failing due to Stripe API key issues."
+
+  - task: "SOLID Refactored Client Endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/controllers/ClientController.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Client authentication endpoints working correctly after SOLID refactoring. Client login and forgot password endpoints responding appropriately. Non-existent clients properly rejected with 401 status."
+
   - task: "Stripe Admin Create Payment Link"
     implemented: true
     working: true

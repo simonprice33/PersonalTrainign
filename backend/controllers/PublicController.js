@@ -181,7 +181,27 @@ class PublicController {
         });
       }
 
-      const { email, name, age, gender, weight, height, activityLevel, goal, tdee, goalCalories } = req.body;
+      // Support both flat and nested structures for backward compatibility
+      let email, name, age, gender, weight, height, activityLevel, goal, tdee, goalCalories, macros, joinMailingList;
+      
+      if (req.body.results && req.body.userInfo) {
+        // Nested structure
+        email = req.body.email;
+        joinMailingList = req.body.joinMailingList;
+        tdee = req.body.results.tdee;
+        goalCalories = req.body.results.goalCalories;
+        macros = req.body.results.macros;
+        age = req.body.userInfo.age;
+        gender = req.body.userInfo.gender;
+        weight = req.body.userInfo.weight;
+        height = req.body.userInfo.height;
+        activityLevel = req.body.userInfo.activityLevel;
+        goal = req.body.userInfo.goal;
+        name = req.body.name || null;
+      } else {
+        // Flat structure
+        ({ email, name, age, gender, weight, height, activityLevel, goal, tdee, goalCalories, joinMailingList } = req.body);
+      }
 
       const tdeeData = {
         email,
@@ -194,12 +214,32 @@ class PublicController {
         goal,
         tdee,
         goalCalories,
+        macros: macros || null,
         created_at: new Date()
       };
 
       await this.collections.tdeeResults.insertOne(tdeeData);
 
-      console.log(`📊 TDEE result saved: ${name} (${email})`);
+      // If user wants to join mailing list, add them
+      if (joinMailingList === true || joinMailingList === 'true') {
+        const existingSubscriber = await this.collections.mailingList.findOne({ email });
+        if (!existingSubscriber) {
+          await this.collections.mailingList.insertOne({
+            email,
+            name: name || null,
+            opted_in: true,
+            subscribed_at: new Date(),
+            source: 'tdee_calculator',
+            age,
+            gender,
+            goal,
+            status: 'active'
+          });
+          console.log(`📧 TDEE calculator user opted into mailing list: ${email}`);
+        }
+      }
+
+      console.log(`📊 TDEE result saved: ${name || email}`);
       res.status(201).json({
         success: true,
         message: 'Results saved successfully'

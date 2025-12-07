@@ -598,10 +598,19 @@ metadata:
 
 test_plan:
   current_focus: 
-    - "Stripe Subscription System Testing Complete"
-  stuck_tasks: []
+    - "SOLID Refactored Health Check Endpoint"
+    - "SOLID Refactored Contact Form Endpoint"
+    - "SOLID Refactored TDEE Results Endpoint"
+    - "SOLID Refactored Admin Client Management"
+    - "SOLID Refactored Admin User Management"
+  stuck_tasks: 
+    - "SOLID Refactored Health Check Endpoint"
+    - "SOLID Refactored Contact Form Endpoint"
+    - "SOLID Refactored TDEE Results Endpoint"
+    - "SOLID Refactored Admin Client Management"
+    - "SOLID Refactored Admin User Management"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "stuck_first"
 
 agent_communication:
     - agent: "testing"

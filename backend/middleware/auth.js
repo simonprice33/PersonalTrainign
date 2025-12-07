@@ -123,6 +123,22 @@ class AuthMiddleware {
   decodeToken(token) {
     return jwt.decode(token);
   }
+
+  /**
+   * Generic authentication middleware (for admin)
+   * Alias for authenticateAdminToken
+   */
+  authenticate = (req, res, next) => {
+    return this.authenticateAdminToken(req, res, next);
+  }
+
+  /**
+   * Client authentication middleware
+   * Alias for authenticateClientToken
+   */
+  authenticateClient = (req, res, next) => {
+    return this.authenticateClientToken(req, res, next);
+  }
 }
 
 module.exports = AuthMiddleware;

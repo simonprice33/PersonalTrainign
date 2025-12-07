@@ -689,6 +689,7 @@ class AdminController {
 
       res.status(200).json({
         success: true,
+        count: clientUsers.length,
         clientUsers
       });
 

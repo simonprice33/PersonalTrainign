@@ -39,7 +39,7 @@ class PublicController {
         });
       }
 
-      const { name, email, phone, message, source } = req.body;
+      const { name, email, phone, message, source, goals, experience, optedIn } = req.body;
 
       // Store in database
       const contactData = {
@@ -47,12 +47,30 @@ class PublicController {
         email,
         phone: phone || null,
         message,
+        goals: goals || null,
+        experience: experience || null,
         source: source || 'website',
         created_at: new Date(),
         status: 'new'
       };
 
       await this.collections.contacts.insertOne(contactData);
+
+      // If user opted in to mailing list, add them
+      if (optedIn === true || optedIn === 'true') {
+        const existingSubscriber = await this.collections.mailingList.findOne({ email });
+        if (!existingSubscriber) {
+          await this.collections.mailingList.insertOne({
+            email,
+            name,
+            opted_in: true,
+            subscribed_at: new Date(),
+            source: 'contact_form',
+            status: 'active'
+          });
+          console.log(`📧 Contact form submission opted into mailing list: ${email}`);
+        }
+      }
 
       // Send notification email if configured
       if (this.emailConfig.getStatus().configured) {
@@ -68,8 +86,11 @@ class PublicController {
                   <p><strong>Name:</strong> ${name}</p>
                   <p><strong>Email:</strong> ${email}</p>
                   <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
+                  <p><strong>Goals:</strong> ${goals || 'Not specified'}</p>
+                  <p><strong>Experience:</strong> ${experience || 'Not specified'}</p>
                   <p><strong>Message:</strong></p>
                   <p>${message}</p>
+                  <p><strong>Opted into mailing list:</strong> ${optedIn ? 'Yes' : 'No'}</p>
                   <p><strong>Source:</strong> ${source || 'website'}</p>
                   <p><strong>Received:</strong> ${new Date().toLocaleString()}</p>
                 `

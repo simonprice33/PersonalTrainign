@@ -93,19 +93,73 @@ async function startServer() {
     app.locals.authMiddleware = authMiddleware;
     app.locals.config = config;
 
-    // 7. Load Routes (TODO: Implement route modules)
-    // const adminRoutes = require('./routes/admin');
-    // const clientRoutes = require('./routes/client');
-    // const webhookRoutes = require('./routes/webhooks');
-    
-    // app.use('/api/admin', adminRoutes);
-    // app.use('/api/client', clientRoutes);
-    // app.use('/api/webhooks', webhookRoutes);
+    // 7. Load Routes
+    const createPublicRoutes = require('./routes/public');
+    const createAdminRoutes = require('./routes/admin');
+    const createClientRoutes = require('./routes/client');
+    const createWebhookRoutes = require('./routes/webhooks');
 
-    // Temporary: Keep existing monolithic routes for now
-    // TODO: This will be replaced with modular routes
-    const legacyRoutes = require('./legacy/routes');
-    legacyRoutes(app);
+    // Route dependencies
+    const routeDependencies = {
+      db,
+      collections,
+      stripe,
+      stripeConfig,
+      emailConfig,
+      authMiddleware,
+      config
+    };
+
+    // Special handling for webhook endpoint (needs raw body)
+    app.use('/api/webhooks', express.raw({ type: 'application/json' }), createWebhookRoutes(routeDependencies));
+
+    // Public routes (no auth)
+    app.use('/api', createPublicRoutes(routeDependencies));
+
+    // Admin routes
+    app.use('/api/admin', createAdminRoutes(routeDependencies));
+
+    // Client routes
+    app.use('/api/client', createClientRoutes(routeDependencies));
+
+    // Portal session endpoint (can be used by both admin and client)
+    app.post('/api/create-portal-session', authMiddleware.authenticate, async (req, res) => {
+      try {
+        const userEmail = req.user.email;
+        const client = await collections.clients.findOne({ email: userEmail }, { _id: 0 });
+        
+        if (!client) {
+          return res.status(404).json({
+            success: false,
+            message: 'Client not found'
+          });
+        }
+
+        if (!client.customer_id) {
+          return res.status(400).json({
+            success: false,
+            message: 'No Stripe customer found'
+          });
+        }
+
+        const session = await stripe.billingPortal.sessions.create({
+          customer: client.customer_id,
+          return_url: `${config.frontendUrl}/admin/clients`
+        });
+
+        res.status(200).json({
+          success: true,
+          url: session.url
+        });
+
+      } catch (error) {
+        console.error('❌ Create portal session error:', error);
+        res.status(500).json({
+          success: false,
+          message: 'Failed to create portal session'
+        });
+      }
+    });
 
     // 8. Error Handling
     app.use(ErrorHandler.notFound);

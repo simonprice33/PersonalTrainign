@@ -80,12 +80,12 @@ function createAdminRoutes(dependencies) {
   // Create payment link for new client
   router.post('/create-payment-link', authenticate, [
     body('name').notEmpty().withMessage('Name is required'),
-    body('email').isEmail().withMessage('Valid email required')
+    body('email').isEmail({ allow_utf8_local_part: true }).withMessage('Valid email required')
   ], (req, res) => controller.createPaymentLink(req, res));
 
   // Resend payment link
   router.post('/resend-payment-link', authenticate, [
-    body('email').isEmail().withMessage('Valid email required')
+    body('email').isEmail({ allow_utf8_local_part: true }).withMessage('Valid email required')
   ], (req, res) => controller.resendPaymentLink(req, res));
 
   // Get all clients

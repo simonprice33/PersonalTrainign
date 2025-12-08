@@ -217,7 +217,7 @@ const ClientManagement = () => {
 
       const token = localStorage.getItem('adminAccessToken');
       
-      const response = await axios.put(
+      const response = await axiosInstance.put(
         `${BACKEND_URL}/api/admin/clients/${editingClient.email}`,
         editFormData,
         {

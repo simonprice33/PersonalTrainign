@@ -64,14 +64,16 @@ class EmailConfig {
         throw new Error('Failed to acquire access token');
       }
 
-      // Create Graph client with access token
-      const { GraphServiceClient } = require('@microsoft/microsoft-graph-client');
+      // Create Graph client with access token (v3.x syntax)
+      const { Client } = require('@microsoft/microsoft-graph-client');
       
-      return GraphServiceClient.init({
-        authProvider: {
-          getAccessToken: async () => response.accessToken
+      const client = Client.init({
+        authProvider: (done) => {
+          done(null, response.accessToken);
         }
       });
+      
+      return client;
     } catch (error) {
       console.error('❌ Graph client creation failed:', error.message);
       throw error;

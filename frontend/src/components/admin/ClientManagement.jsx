@@ -253,7 +253,7 @@ const ClientManagement = () => {
   const handleManageBilling = async (customerId) => {
     try {
       const token = localStorage.getItem('adminAccessToken');
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${BACKEND_URL}/api/create-portal-session`,
         { customerId },
         {

@@ -361,13 +361,16 @@ backend:
     implemented: true
     working: false
     file: "/app/backend/controllers/ClientController.js"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: false
           agent: "testing"
           comment: "CRITICAL: Client onboarding flow completely broken. POST /api/client/create-setup-intent returns 404 'Client not found', POST /api/client/complete-onboarding returns 404 'Client not found', POST /api/client/create-password requires undocumented 'token' field. Entire client registration process non-functional."
+        - working: false
+          agent: "testing"
+          comment: "URGENT: Client onboarding validation endpoint has critical bugs. POST /api/client/validate-token returns hardcoded values instead of actual client data: price: 125 (hardcoded), billingDay: new Date().getDate() (current day instead of client's billing day). Frontend shows 'Invalid Link - Client not found' because validation expects client record in database but field mapping is incorrect. The user's concern about field mapping (price/monthlyPrice, billingDay/billingDate, telephone/phone) is valid - backend validation logic is broken."
 
   - task: "MongoDB Connection Setup"
     implemented: true

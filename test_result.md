@@ -641,13 +641,11 @@ test_plan:
     - "SOLID Refactored Newsletter Subscription"
     - "SOLID Refactored Admin User Management"
     - "SOLID Refactored Stripe Payment Link Creation"
-    - "SOLID Refactored Client Onboarding Flow"
   stuck_tasks: 
     - "SOLID Refactored Contact Form Endpoint"
     - "SOLID Refactored Newsletter Subscription"
     - "SOLID Refactored Admin User Management"
     - "SOLID Refactored Stripe Payment Link Creation"
-    - "SOLID Refactored Client Onboarding Flow"
   test_all: true
   test_priority: "high_first"
 

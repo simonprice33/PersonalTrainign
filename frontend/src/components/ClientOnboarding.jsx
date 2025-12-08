@@ -373,7 +373,16 @@ const OnboardingForm = () => {
       }
 
       if (stripeError) {
-        setError(stripeError.message);
+        console.error('❌ STRIPE ERROR:', stripeError);
+        
+        // If SetupIntent is in bad state, try creating a new one
+        if (stripeError.code === 'setup_intent_unexpected_state' || 
+            stripeError.code === 'setup_intent_authentication_failure') {
+          setError('Payment setup failed. Please refresh the page and try again.');
+        } else {
+          setError(stripeError.message);
+        }
+        
         setSubmitting(false);
         return;
       }

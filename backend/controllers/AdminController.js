@@ -451,10 +451,14 @@ class AdminController {
         });
       }
 
-      const { name, email, phone, telephone, address } = req.body;
+      const { name, email, phone, telephone, address, billingDay, price } = req.body;
       
       // Frontend sends 'telephone', backend uses 'phone'
       const phoneNumber = phone || telephone || null;
+      
+      // Default billing day to 1st if not provided
+      const clientBillingDay = billingDay || 1;
+      const monthlyPrice = price || 125;
 
       // Check if client already exists
       const existingClient = await this.collections.clients.findOne({ email });

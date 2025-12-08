@@ -549,10 +549,7 @@ def main():
     sys.exit(0 if failed == 0 else 1)
 
 if __name__ == "__main__":
-                collection.delete_many({"email": email})
-            print("🧹 Cleaned up test emails from database")
-        except Exception as e:
-            print(f"⚠️ Error cleaning up test emails: {e}")
+    main()
 
 def test_mongodb_connection(collection):
     """Test MongoDB connection and mailing_list collection"""

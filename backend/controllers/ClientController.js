@@ -63,8 +63,8 @@ class ClientController {
             name: client.name,
             email: client.email,
             telephone: client.phone || '',
-            monthlyPrice: 125, // £125 per month
-            billingDate: new Date().getDate() // Current day of month
+            price: 125, // £125 per month (frontend expects 'price')
+            billingDay: new Date().getDate() // Current day of month (frontend expects 'billingDay')
           }
         });
 

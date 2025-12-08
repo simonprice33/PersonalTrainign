@@ -460,60 +460,35 @@ class AdminController {
       const clientBillingDay = billingDay || 1;
       const monthlyPrice = price || 125;
 
-      // Normalize email for database storage (strip + aliases)
-      const normalizedEmail = email.includes('+') 
-        ? email.replace(/\+[^@]*@/, '@')
-        : email;
-
-      // Check if client already exists (using normalized email)
-      const existingClient = await this.collections.clients.findOne({ email: normalizedEmail });
+      // Check if client already exists (use exact email as entered)
+      const existingClient = await this.collections.clients.findOne({ email });
       if (existingClient) {
         return res.status(409).json({
           success: false,
-          message: email !== normalizedEmail 
-            ? `A client with this email already exists (base email: ${normalizedEmail} is already registered)`
-            : 'A client with this email already exists'
+          message: 'A client with this email already exists'
         });
       }
 
-      // Also check if Stripe customer already exists with this email
-      let customer;
-      try {
-        const existingCustomers = await this.stripe.customers.list({
-          email: normalizedEmail,
-          limit: 1
-        });
-        
-        if (existingCustomers.data.length > 0) {
-          customer = existingCustomers.data[0];
-          console.log(`ℹ️ Reusing existing Stripe customer for ${normalizedEmail}`);
+      // Create Stripe customer (use exact email as entered)
+      const customer = await this.stripe.customers.create({
+        name,
+        email,
+        phone: phoneNumber || undefined,
+        address: address || undefined,
+        metadata: {
+          source: 'admin_created'
         }
-      } catch (error) {
-        console.log('Could not check existing Stripe customers:', error.message);
-      }
+      });
 
-      // Create Stripe customer if one doesn't already exist (use original email with alias for Stripe)
-      if (!customer) {
-        customer = await this.stripe.customers.create({
-          name,
-          email,  // Send to Stripe with alias
-          phone: phoneNumber || undefined,
-          address: address || undefined,
-          metadata: {
-            source: 'admin_created'
-          }
-        });
-      }
-
-      // Create payment link token (use normalized email in token for consistency)
-      const paymentToken = this.authService.generatePasswordSetupToken(normalizedEmail, 'client_onboarding');
+      // Create payment link token (use exact email)
+      const paymentToken = this.authService.generatePasswordSetupToken(email, 'client_onboarding');
       const paymentLink = `${this.config.frontendUrl}/client-onboarding?token=${paymentToken}`;
 
-      // Store client in database (use normalized email for DB)
+      // Store client in database (use exact email as entered)
       const clientData = {
         customer_id: customer.id,
         name,
-        email: normalizedEmail,  // Store normalized in DB
+        email,
         phone: phoneNumber,
         address: address || null,
         status: 'pending_payment',
@@ -527,10 +502,10 @@ class AdminController {
 
       await this.collections.clients.insertOne(clientData);
 
-      // Send payment link email (use original email with alias for sending)
+      // Send payment link email
       await this.emailService.sendPaymentLinkEmail(email, name, paymentLink);
 
-      console.log(`✅ Payment link created and sent to: ${email} (stored in DB as: ${normalizedEmail})`);
+      console.log(`✅ Payment link created and sent to: ${email}`);
 
       res.status(201).json({
         success: true,

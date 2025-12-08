@@ -166,12 +166,11 @@ class ClientController {
         }
       });
 
-      // Create subscription with dynamic pricing
-      // Calculate proration amount if billing day is set and proration is enabled
+      // Create subscription with dynamic pricing (like original working code)
       const today = new Date();
-      const currentDay = today.getDate();
       const billingDay = client.billing_day || 1;
       const monthlyPrice = client.monthly_price || 125;
+      const priceAmount = Math.round(monthlyPrice * 100); // Convert to pence
       
       // Calculate billing anchor (next occurrence of billing day)
       let billingAnchor = new Date(today);
@@ -179,22 +178,49 @@ class ClientController {
       if (billingAnchor <= today) {
         billingAnchor.setMonth(billingAnchor.getMonth() + 1);
       }
+
+      // Get or create product (replicating original working logic)
+      const products = await this.stripe.products.list({ limit: 1 });
+      let product = products.data[0];
       
+      if (!product) {
+        product = await this.stripe.products.create({
+          name: 'Personal Training Subscription',
+          description: 'Monthly personal training with Simon Price PT'
+        });
+        console.log(`✅ Created Stripe product: ${product.id}`);
+      }
+
+      // Find or create price for this amount
+      const prices = await this.stripe.prices.list({
+        product: product.id,
+        type: 'recurring',
+        limit: 100
+      });
+
+      let price = prices.data.find(p => 
+        p.unit_amount === priceAmount && 
+        p.recurring?.interval === 'month'
+      );
+
+      if (!price) {
+        price = await this.stripe.prices.create({
+          product: product.id,
+          currency: 'gbp',
+          unit_amount: priceAmount,
+          recurring: { interval: 'month' }
+        });
+        console.log(`✅ Created new price: ${price.id} (£${monthlyPrice}/month)`);
+      } else {
+        console.log(`✅ Using existing price: ${price.id} (£${monthlyPrice}/month)`);
+      }
+      
+      // Create subscription (like original working code)
       const subscription = await this.stripe.subscriptions.create({
         customer: client.customer_id,
-        items: [
-          {
-            price_data: {
-              currency: 'gbp',
-              product: client.customer_id, // Use customer ID as product reference
-              recurring: {
-                interval: 'month'
-              },
-              unit_amount: Math.round(monthlyPrice * 100) // Convert to pence
-            },
-            quantity: 1
-          }
-        ],
+        items: [{
+          price: price.id
+        }],
         billing_cycle_anchor: Math.floor(billingAnchor.getTime() / 1000),
         proration_behavior: 'create_prorations',
         default_payment_method: paymentMethodId,

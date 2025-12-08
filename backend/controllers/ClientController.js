@@ -124,9 +124,33 @@ class ClientController {
         });
       }
 
-      const { email, setupIntentId } = req.body;
+      const { token, paymentMethodId, ...clientData } = req.body;
 
-      const client = await this.collections.clients.findOne({ email }, { _id: 0 });
+      // Verify token and extract email
+      let decoded;
+      try {
+        decoded = this.authService.verifyToken(token);
+        if (decoded.type !== 'client_onboarding') {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid token type'
+          });
+        }
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid or expired token'
+        });
+      }
+
+      const email = decoded.email;
+
+      // Handle email aliases (e.g., user+alias@domain.com -> user@domain.com)
+      const normalizedEmail = email.includes('+') 
+        ? email.replace(/\+[^@]*@/, '@')
+        : email;
+
+      const client = await this.collections.clients.findOne({ email: normalizedEmail }, { _id: 0 });
       if (!client) {
         return res.status(404).json({
           success: false,
@@ -134,18 +158,7 @@ class ClientController {
         });
       }
 
-      // Verify setup intent
-      const setupIntent = await this.stripe.setupIntents.retrieve(setupIntentId);
-
-      if (setupIntent.status !== 'succeeded') {
-        return res.status(400).json({
-          success: false,
-          message: 'Payment method setup not completed'
-        });
-      }
-
-      // Attach payment method to customer
-      const paymentMethodId = setupIntent.payment_method;
+      // Attach payment method to customer (directly, no setup intent verification needed)
       await this.stripe.paymentMethods.attach(paymentMethodId, {
         customer: client.customer_id
       });

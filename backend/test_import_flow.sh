@@ -4,7 +4,7 @@ echo "=== Testing Import Customers Endpoints ==="
 echo ""
 
 # Use the actual backend URL
-BACKEND_URL="https://clientflow-portal-1.preview.emergentagent.com"
+BACKEND_URL="https://backend-modular-7.preview.emergentagent.com"
 echo "Backend URL: $BACKEND_URL"
 echo ""
 

@@ -15,4 +15,4 @@ const payload = {
 const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
 
 console.log('Test Token:', token);
-console.log('Test URL:', `https://clientflow-portal-1.preview.emergentagent.com/client-onboarding?token=${token}`);
+console.log('Test URL:', `https://backend-modular-7.preview.emergentagent.com/client-onboarding?token=${token}`);

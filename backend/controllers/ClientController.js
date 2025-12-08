@@ -46,9 +46,26 @@ class ClientController {
           });
         }
 
+        // Fetch client data from database
+        const client = await this.collections.clients.findOne({ email: decoded.email }, { _id: 0 });
+
+        if (!client) {
+          return res.status(404).json({
+            success: false,
+            message: 'Client not found'
+          });
+        }
+
+        // Return client data for form prefilling
         res.status(200).json({
           success: true,
-          email: decoded.email
+          data: {
+            name: client.name,
+            email: client.email,
+            telephone: client.phone || '',
+            monthlyPrice: 99, // TODO: Get from subscription plan
+            billingDate: new Date().getDate() // Current day of month
+          }
         });
 
       } catch (error) {

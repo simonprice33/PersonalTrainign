@@ -492,16 +492,18 @@ class AdminController {
         console.log('Could not check existing Stripe customers:', error.message);
       }
 
-      // Create Stripe customer (use original email with alias for Stripe)
-      const customer = await this.stripe.customers.create({
-        name,
-        email,  // Send to Stripe with alias
-        phone: phoneNumber || undefined,
-        address: address || undefined,
-        metadata: {
-          source: 'admin_created'
-        }
-      });
+      // Create Stripe customer if one doesn't already exist (use original email with alias for Stripe)
+      if (!customer) {
+        customer = await this.stripe.customers.create({
+          name,
+          email,  // Send to Stripe with alias
+          phone: phoneNumber || undefined,
+          address: address || undefined,
+          metadata: {
+            source: 'admin_created'
+          }
+        });
+      }
 
       // Create payment link token (use normalized email in token for consistency)
       const paymentToken = this.authService.generatePasswordSetupToken(normalizedEmail, 'client_onboarding');

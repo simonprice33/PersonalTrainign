@@ -181,13 +181,16 @@ backend:
     implemented: true
     working: false
     file: "/app/backend/controllers/AdminController.js"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "Admin user management endpoints partially working after SOLID refactoring. User creation works but response structure changed - missing '_id' field in response. This causes frontend errors when trying to access user ID for further operations."
+        - working: false
+          agent: "testing"
+          comment: "URGENT: GET /api/admin/users endpoint missing 'count' field in response. API contract broken - frontend expects count field for pagination/display. Response contains users array but no count metadata. This breaks admin dashboard user management interface."
 
   - task: "SOLID Refactored Stripe Integration"
     implemented: true

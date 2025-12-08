@@ -631,19 +631,19 @@ metadata:
 
 test_plan:
   current_focus: 
-    - "SOLID Refactored Health Check Endpoint"
     - "SOLID Refactored Contact Form Endpoint"
-    - "SOLID Refactored TDEE Results Endpoint"
-    - "SOLID Refactored Admin Client Management"
+    - "SOLID Refactored Newsletter Subscription"
     - "SOLID Refactored Admin User Management"
+    - "SOLID Refactored Stripe Payment Link Creation"
+    - "SOLID Refactored Client Onboarding Flow"
   stuck_tasks: 
-    - "SOLID Refactored Health Check Endpoint"
     - "SOLID Refactored Contact Form Endpoint"
-    - "SOLID Refactored TDEE Results Endpoint"
-    - "SOLID Refactored Admin Client Management"
+    - "SOLID Refactored Newsletter Subscription"
     - "SOLID Refactored Admin User Management"
-  test_all: false
-  test_priority: "stuck_first"
+    - "SOLID Refactored Stripe Payment Link Creation"
+    - "SOLID Refactored Client Onboarding Flow"
+  test_all: true
+  test_priority: "high_first"
 
 agent_communication:
     - agent: "testing"

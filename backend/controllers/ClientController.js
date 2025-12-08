@@ -86,26 +86,10 @@ class ClientController {
 
   /**
    * Create Stripe SetupIntent for payment method
+   * Note: Simplified to match original working code exactly
    */
   async createSetupIntent(req, res) {
     try {
-      const { email } = req.body;
-
-      if (!email) {
-        return res.status(400).json({
-          success: false,
-          message: 'Email is required'
-        });
-      }
-
-      const client = await this.collections.clients.findOne({ email }, { _id: 0 });
-      if (!client) {
-        return res.status(404).json({
-          success: false,
-          message: 'Client not found'
-        });
-      }
-
       // Create SetupIntent WITHOUT customer (as in original working code)
       // Customer will be attached during complete-onboarding
       const setupIntent = await this.stripe.setupIntents.create({

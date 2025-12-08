@@ -493,6 +493,8 @@ class AdminController {
         address: address || null,
         status: 'pending_payment',
         subscription_status: 'pending',
+        billing_day: clientBillingDay,
+        monthly_price: monthlyPrice,
         payment_link_sent_at: new Date(),
         created_at: new Date(),
         created_by: req.user.email

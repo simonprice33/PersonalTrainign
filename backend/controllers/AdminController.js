@@ -470,8 +470,26 @@ class AdminController {
       if (existingClient) {
         return res.status(409).json({
           success: false,
-          message: 'A client with this email already exists'
+          message: email !== normalizedEmail 
+            ? `A client with this email already exists (base email: ${normalizedEmail} is already registered)`
+            : 'A client with this email already exists'
         });
+      }
+
+      // Also check if Stripe customer already exists with this email
+      let customer;
+      try {
+        const existingCustomers = await this.stripe.customers.list({
+          email: normalizedEmail,
+          limit: 1
+        });
+        
+        if (existingCustomers.data.length > 0) {
+          customer = existingCustomers.data[0];
+          console.log(`ℹ️ Reusing existing Stripe customer for ${normalizedEmail}`);
+        }
+      } catch (error) {
+        console.log('Could not check existing Stripe customers:', error.message);
       }
 
       // Create Stripe customer (use original email with alias for Stripe)

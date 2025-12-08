@@ -121,13 +121,16 @@ backend:
     implemented: true
     working: false
     file: "/app/backend/controllers/PublicController.js"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "POST /api/contact endpoint functionality changed during SOLID refactoring. No longer saves emails to mailing_list collection for opt-in tracking. Now saves to contacts collection only. Email storage functionality for marketing purposes has been lost."
+        - working: false
+          agent: "testing"
+          comment: "CRITICAL: Contact form email storage system completely broken. Endpoint saves to 'contacts' collection instead of 'mailingList' collection. Email opt-in tracking functionality LOST - no opt-in/opt-out status, no marketing email capabilities. This breaks the entire email marketing system that was previously working."
 
   - task: "SOLID Refactored Newsletter Subscription"
     implemented: true

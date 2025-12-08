@@ -1,0 +1,115 @@
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+
+// Create axios instance
+const axiosInstance = axios.create({
+  baseURL: BACKEND_URL
+});
+
+// Flag to prevent multiple refresh attempts
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  
+  failedQueue = [];
+};
+
+// Request interceptor to add auth token
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('adminAccessToken');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor to handle token refresh
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If error is 401 and we haven't tried to refresh yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // If already refreshing, queue this request
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers['Authorization'] = `Bearer ${token}`;
+            return axiosInstance(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      const refreshToken = localStorage.getItem('adminRefreshToken');
+
+      if (!refreshToken) {
+        // No refresh token, redirect to login
+        localStorage.removeItem('adminAccessToken');
+        localStorage.removeItem('adminRefreshToken');
+        window.location.href = '/admin';
+        return Promise.reject(error);
+      }
+
+      try {
+        // Attempt to refresh the token
+        const response = await axios.post(`${BACKEND_URL}/api/admin/refresh`, {
+          refreshToken
+        });
+
+        if (response.data.success) {
+          const { accessToken } = response.data;
+          
+          // Update stored token
+          localStorage.setItem('adminAccessToken', accessToken);
+          
+          // Update the authorization header
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+          originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+          
+          // Process queued requests
+          processQueue(null, accessToken);
+          
+          // Retry the original request
+          return axiosInstance(originalRequest);
+        }
+      } catch (refreshError) {
+        // Refresh failed, clear tokens and redirect to login
+        processQueue(refreshError, null);
+        localStorage.removeItem('adminAccessToken');
+        localStorage.removeItem('adminRefreshToken');
+        window.location.href = '/admin';
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default axiosInstance;

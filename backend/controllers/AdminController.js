@@ -460,8 +460,13 @@ class AdminController {
       const clientBillingDay = billingDay || 1;
       const monthlyPrice = price || 125;
 
-      // Check if client already exists
-      const existingClient = await this.collections.clients.findOne({ email });
+      // Normalize email for database storage (strip + aliases)
+      const normalizedEmail = email.includes('+') 
+        ? email.replace(/\+[^@]*@/, '@')
+        : email;
+
+      // Check if client already exists (using normalized email)
+      const existingClient = await this.collections.clients.findOne({ email: normalizedEmail });
       if (existingClient) {
         return res.status(409).json({
           success: false,

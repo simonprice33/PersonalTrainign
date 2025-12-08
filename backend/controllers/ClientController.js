@@ -145,12 +145,8 @@ class ClientController {
 
       const email = decoded.email;
 
-      // Handle email aliases (e.g., user+alias@domain.com -> user@domain.com)
-      const normalizedEmail = email.includes('+') 
-        ? email.replace(/\+[^@]*@/, '@')
-        : email;
-
-      const client = await this.collections.clients.findOne({ email: normalizedEmail }, { _id: 0 });
+      // Find client using exact email
+      const client = await this.collections.clients.findOne({ email }, { _id: 0 });
       if (!client) {
         return res.status(404).json({
           success: false,

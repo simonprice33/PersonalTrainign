@@ -345,6 +345,30 @@ backend:
           agent: "testing"
           comment: "CORS configuration tested and working correctly. Preflight OPTIONS requests return proper CORS headers including Access-Control-Allow-Origin, Access-Control-Allow-Methods, and Access-Control-Allow-Headers. Client contact form CORS errors should be resolved."
 
+  - task: "SOLID Refactored Stripe Payment Link Creation"
+    implemented: true
+    working: false
+    file: "/app/backend/controllers/AdminController.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "CRITICAL: POST /api/admin/create-payment-link failing with 'Invalid API Key provided: sk_test_*****************************E_ME' error. Stripe secret key configuration issue preventing payment link generation. This blocks entire client onboarding flow."
+
+  - task: "SOLID Refactored Client Onboarding Flow"
+    implemented: true
+    working: false
+    file: "/app/backend/controllers/ClientController.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "CRITICAL: Client onboarding flow completely broken. POST /api/client/create-setup-intent returns 404 'Client not found', POST /api/client/complete-onboarding returns 404 'Client not found', POST /api/client/create-password requires undocumented 'token' field. Entire client registration process non-functional."
+
   - task: "MongoDB Connection Setup"
     implemented: true
     working: true

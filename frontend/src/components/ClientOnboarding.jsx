@@ -309,6 +309,12 @@ const OnboardingForm = () => {
       return;
     }
 
+    // Prevent double submission
+    if (submitting) {
+      console.log('⚠️ Already submitting, ignoring duplicate submit');
+      return;
+    }
+
     setSubmitting(true);
     setError('');
 

@@ -267,7 +267,7 @@ const OnboardingForm = () => {
 
     setToken(tokenParam);
     validateToken(tokenParam);
-    initializeStripe();
+    // initializeStripe is now called from within validateToken after we have the email
   }, [searchParams]);
 
   const validateToken = async (tokenValue) => {

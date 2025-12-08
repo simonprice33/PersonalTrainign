@@ -186,9 +186,9 @@ class ClientController {
         expand: ['latest_invoice.payment_intent']
       });
 
-      // Update client status
+      // Update client status (use normalized email for DB)
       await this.collections.clients.updateOne(
-        { email },
+        { email: normalizedEmail },
         {
           $set: {
             status: 'active',
@@ -200,29 +200,29 @@ class ClientController {
         }
       );
 
-      // Create client user if doesn't exist
-      const existingUser = await this.collections.clientUsers.findOne({ email });
+      // Create client user if doesn't exist (use normalized email)
+      const existingUser = await this.collections.clientUsers.findOne({ email: normalizedEmail });
       if (!existingUser) {
         await this.collections.clientUsers.insertOne({
-          email,
+          email: normalizedEmail,
           password: null,
           status: 'active',
           created_at: new Date()
         });
       } else {
         await this.collections.clientUsers.updateOne(
-          { email },
+          { email: normalizedEmail },
           { $set: { status: 'active', updated_at: new Date() } }
         );
       }
 
-      // Send password creation email
-      const passwordToken = this.authService.generatePasswordSetupToken(email, 'client_password_setup');
+      // Send password creation email (to original email address)
+      const passwordToken = this.authService.generatePasswordSetupToken(normalizedEmail, 'client_password_setup');
       const passwordLink = `${this.config.frontendUrl}/client-create-password/${passwordToken}`;
 
       await this.emailService.sendPasswordSetupEmail(email, passwordLink);
 
-      console.log(`✅ Client onboarding completed: ${email}`);
+      console.log(`✅ Client onboarding completed: ${email} (normalized DB lookup: ${normalizedEmail})`);
 
       res.status(200).json({
         success: true,

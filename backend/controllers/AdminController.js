@@ -469,7 +469,7 @@ class AdminController {
       const customer = await this.stripe.customers.create({
         name,
         email,
-        phone: phone || undefined,
+        phone: phoneNumber || undefined,
         address: address || undefined,
         metadata: {
           source: 'admin_created'
@@ -485,7 +485,7 @@ class AdminController {
         customer_id: customer.id,
         name,
         email,
-        phone: phone || null,
+        phone: phoneNumber,
         address: address || null,
         status: 'pending_payment',
         subscription_status: null,

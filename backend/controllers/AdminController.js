@@ -451,7 +451,10 @@ class AdminController {
         });
       }
 
-      const { name, email, phone, address } = req.body;
+      const { name, email, phone, telephone, address } = req.body;
+      
+      // Frontend sends 'telephone', backend uses 'phone'
+      const phoneNumber = phone || telephone || null;
 
       // Check if client already exists
       const existingClient = await this.collections.clients.findOne({ email });

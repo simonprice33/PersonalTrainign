@@ -278,6 +278,8 @@ const OnboardingForm = () => {
 
       if (response.data.success) {
         setPrefilledData(response.data.data);
+        // Initialize Stripe AFTER we have the email
+        await initializeStripe(response.data.data.email);
         setLoading(false);
       }
     } catch (err) {
@@ -286,14 +288,17 @@ const OnboardingForm = () => {
     }
   };
 
-  const initializeStripe = async () => {
+  const initializeStripe = async (email) => {
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/client/create-setup-intent`);
+      const response = await axios.post(`${BACKEND_URL}/api/client/create-setup-intent`, {
+        email
+      });
       if (response.data.success) {
         setClientSecret(response.data.clientSecret);
       }
     } catch (err) {
       console.error('Failed to initialize Stripe:', err);
+      setError('Failed to initialize payment. Please try again.');
     }
   };
 

@@ -79,6 +79,16 @@ class DatabaseConfig {
       await this.collections.mailingList.createIndex({ email: 1 }, { unique: true });
       console.log('✅ Email index created');
 
+      // Contacts collection indexes
+      await this.collections.contacts.createIndex({ email: 1 });
+      await this.collections.contacts.createIndex({ created_at: -1 });
+      console.log('✅ Contacts indexes created');
+
+      // TDEE results collection indexes
+      await this.collections.tdeeResults.createIndex({ email: 1 });
+      await this.collections.tdeeResults.createIndex({ created_at: -1 });
+      console.log('✅ TDEE results indexes created');
+
       // Clients collection indexes
       await this.collections.clients.createIndex({ email: 1 }, { unique: true });
       await this.collections.clients.createIndex({ stripe_customer_id: 1 }, { unique: true, sparse: true });

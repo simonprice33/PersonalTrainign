@@ -43,13 +43,13 @@ function createClientRoutes(dependencies) {
 
   // Client login
   router.post('/login', [
-    body('email').isEmail().normalizeEmail(),
+    body('email').isEmail({ allow_utf8_local_part: true }),
     body('password').notEmpty()
   ], (req, res) => controller.login(req, res));
 
   // Forgot password
   router.post('/forgot-password', [
-    body('email').isEmail().normalizeEmail()
+    body('email').isEmail({ allow_utf8_local_part: true })
   ], (req, res) => controller.forgotPassword(req, res));
 
   // Reset password

@@ -203,7 +203,7 @@ class ClientController {
 
       // Send password creation email
       const passwordToken = this.authService.generatePasswordSetupToken(email, 'client_password_setup');
-      const passwordLink = `${this.config.frontendUrl}/client/create-password?token=${passwordToken}`;
+      const passwordLink = `${this.config.frontendUrl}/client-create-password/${passwordToken}`;
 
       await this.emailService.sendPasswordSetupEmail(email, passwordLink);
 

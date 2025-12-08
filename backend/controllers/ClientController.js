@@ -63,7 +63,7 @@ class ClientController {
             name: client.name,
             email: client.email,
             telephone: client.phone || '',
-            monthlyPrice: 99, // TODO: Get from subscription plan
+            monthlyPrice: 125, // £125 per month
             billingDate: new Date().getDate() // Current day of month
           }
         });

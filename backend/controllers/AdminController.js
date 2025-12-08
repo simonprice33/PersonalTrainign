@@ -475,7 +475,7 @@ class AdminController {
 
       // Create payment link token
       const paymentToken = this.authService.generatePasswordSetupToken(email, 'client_onboarding');
-      const paymentLink = `${this.config.frontendUrl}/client/onboarding?token=${paymentToken}`;
+      const paymentLink = `${this.config.frontendUrl}/client-onboarding?token=${paymentToken}`;
 
       // Store client in database
       const clientData = {
@@ -548,7 +548,7 @@ class AdminController {
 
       // Generate new payment link
       const paymentToken = this.authService.generatePasswordSetupToken(email, 'client_onboarding');
-      const paymentLink = `${this.config.frontendUrl}/client/onboarding?token=${paymentToken}`;
+      const paymentLink = `${this.config.frontendUrl}/client-onboarding?token=${paymentToken}`;
 
       // Send email
       await this.emailService.sendPaymentLinkEmail(email, client.name, paymentLink);

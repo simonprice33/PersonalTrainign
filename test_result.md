@@ -643,12 +643,10 @@ test_plan:
     - "SOLID Refactored Contact Form Endpoint"
     - "SOLID Refactored Newsletter Subscription"
     - "SOLID Refactored Admin User Management"
-    - "SOLID Refactored Stripe Payment Link Creation"
   stuck_tasks: 
     - "SOLID Refactored Contact Form Endpoint"
     - "SOLID Refactored Newsletter Subscription"
     - "SOLID Refactored Admin User Management"
-    - "SOLID Refactored Stripe Payment Link Creation"
   test_all: true
   test_priority: "high_first"
 

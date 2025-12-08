@@ -17,7 +17,8 @@ describe('PublicController', () => {
       },
       mailingList: {
         findOne: jest.fn(),
-        insertOne: jest.fn()
+        insertOne: jest.fn(),
+        updateOne: jest.fn()
       },
       tdeeResults: {
         insertOne: jest.fn()

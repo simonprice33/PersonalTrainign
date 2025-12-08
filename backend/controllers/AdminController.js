@@ -488,7 +488,7 @@ class AdminController {
         phone: phoneNumber,
         address: address || null,
         status: 'pending_payment',
-        subscription_status: null,
+        subscription_status: 'pending',
         payment_link_sent_at: new Date(),
         created_at: new Date(),
         created_by: req.user.email

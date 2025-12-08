@@ -390,7 +390,8 @@ const OnboardingForm = () => {
       // Complete onboarding with backend
       const response = await axios.post(`${BACKEND_URL}/api/client/complete-onboarding`, {
         token,
-        paymentMethodId: setupIntent.payment_method,
+        email: prefilledData.email,
+        setupIntentId: setupIntent.id,
         ...formData
       });
 

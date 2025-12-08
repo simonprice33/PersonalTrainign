@@ -27,8 +27,8 @@ function createClientRoutes(dependencies) {
 
   // Complete onboarding
   router.post('/complete-onboarding', [
-    body('email').isEmail().withMessage('Valid email required'),
-    body('setupIntentId').notEmpty().withMessage('Setup intent ID required')
+    body('token').notEmpty().withMessage('Token is required'),
+    body('paymentMethodId').notEmpty().withMessage('Payment method ID required')
   ], (req, res) => controller.completeOnboarding(req, res));
 
   // ============================================================================

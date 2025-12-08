@@ -310,7 +310,7 @@ class ClientController {
 
       if (clientUser && clientUser.password) {
         const resetToken = this.authService.generatePasswordResetToken(email, 'client_password_reset');
-        const resetLink = `${this.config.frontendUrl}/client/reset-password?token=${resetToken}`;
+        const resetLink = `${this.config.frontendUrl}/client-reset-password/${resetToken}`;
 
         await this.emailService.sendPasswordResetEmail(email, resetLink, 'client');
         console.log(`📧 Password reset email sent to client: ${email}`);

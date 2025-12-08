@@ -170,19 +170,41 @@ class ClientController {
         }
       });
 
-      // Create subscription
+      // Create subscription with dynamic pricing
+      // Calculate proration amount if billing day is set and proration is enabled
+      const today = new Date();
+      const currentDay = today.getDate();
+      const billingDay = client.billing_day || 1;
+      const monthlyPrice = client.monthly_price || 125;
+      
+      // Calculate billing anchor (next occurrence of billing day)
+      let billingAnchor = new Date(today);
+      billingAnchor.setDate(billingDay);
+      if (billingAnchor <= today) {
+        billingAnchor.setMonth(billingAnchor.getMonth() + 1);
+      }
+      
       const subscription = await this.stripe.subscriptions.create({
         customer: client.customer_id,
         items: [
           {
-            price: process.env.STRIPE_PRICE_ID
+            price_data: {
+              currency: 'gbp',
+              product_data: {
+                name: 'Personal Training Subscription',
+                description: `Monthly personal training with Simon Price PT`
+              },
+              recurring: {
+                interval: 'month'
+              },
+              unit_amount: Math.round(monthlyPrice * 100) // Convert to pence
+            },
+            quantity: 1
           }
         ],
-        payment_behavior: 'default_incomplete',
-        payment_settings: {
-          payment_method_types: ['card'],
-          save_default_payment_method: 'on_subscription'
-        },
+        billing_cycle_anchor: Math.floor(billingAnchor.getTime() / 1000),
+        proration_behavior: 'create_prorations',
+        default_payment_method: paymentMethodId,
         expand: ['latest_invoice.payment_intent']
       });
 

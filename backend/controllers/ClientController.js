@@ -186,10 +186,7 @@ class ClientController {
           {
             price_data: {
               currency: 'gbp',
-              product_data: {
-                name: 'Personal Training Subscription',
-                description: `Monthly personal training with Simon Price PT`
-              },
+              product: client.customer_id, // Use customer ID as product reference
               recurring: {
                 interval: 'month'
               },

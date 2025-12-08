@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import { UserPlus, ArrowLeft, Trash2, Key, Users } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
@@ -32,7 +32,7 @@ const UserManagement = () => {
         return;
       }
 
-      const response = await axios.get(`${BACKEND_URL}/api/admin/users`, {
+      const response = await axiosInstance.get(`${BACKEND_URL}/api/admin/users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -56,7 +56,7 @@ const UserManagement = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('adminAccessToken');
-      const response = await axios.post(`${BACKEND_URL}/api/admin/users`, newUser, {
+      const response = await axiosInstance.post(`${BACKEND_URL}/api/admin/users`, newUser, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -77,7 +77,7 @@ const UserManagement = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('adminAccessToken');
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/users/${selectedUser._id}/reset-password`,
         { newPassword: resetPassword },
         {
@@ -105,7 +105,7 @@ const UserManagement = () => {
 
     try {
       const token = localStorage.getItem('adminAccessToken');
-      const response = await axios.delete(`${BACKEND_URL}/api/admin/users/${userId}`, {
+      const response = await axiosInstance.delete(`${BACKEND_URL}/api/admin/users/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

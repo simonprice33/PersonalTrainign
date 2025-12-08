@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import { Download, Filter, ArrowLeft, Mail, CheckCircle, XCircle } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
@@ -32,7 +32,7 @@ const EmailManagement = () => {
         return;
       }
 
-      const response = await axios.get(`${BACKEND_URL}/api/admin/emails`, {
+      const response = await axiosInstance.get(`${BACKEND_URL}/api/admin/emails`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -70,7 +70,7 @@ const EmailManagement = () => {
   const handleExport = async () => {
     try {
       const token = localStorage.getItem('adminAccessToken');
-      const response = await axios.get(`${BACKEND_URL}/api/admin/emails/export`, {
+      const response = await axiosInstance.get(`${BACKEND_URL}/api/admin/emails/export`, {
         headers: {
           'Authorization': `Bearer ${token}`
         },

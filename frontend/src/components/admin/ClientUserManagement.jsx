@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Users, RefreshCw, Mail, Shield, Ban, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
@@ -34,7 +34,7 @@ const ClientUserManagement = () => {
     
     try {
       const token = localStorage.getItem('adminAccessToken');
-      const response = await axios.get(
+      const response = await axiosInstance.get(
         `${BACKEND_URL}/api/admin/client-users`,
         {
           headers: {
@@ -75,7 +75,7 @@ const ClientUserManagement = () => {
     
     try {
       const token = localStorage.getItem('adminAccessToken');
-      const response = await axios.put(
+      const response = await axiosInstance.put(
         `${BACKEND_URL}/api/admin/client-users/${email}/status`,
         { status: newStatus },
         {
@@ -130,7 +130,7 @@ const ClientUserManagement = () => {
 
     try {
       const token = localStorage.getItem('adminAccessToken');
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/client-users/${email}/resend-password-email`,
         {},
         {

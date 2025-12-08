@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Upload, RefreshCw, CheckCircle, XCircle, AlertCircle, Edit2, Save, X, Mail } from 'lucide-react';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
@@ -47,7 +47,7 @@ const ImportCustomers = () => {
         return;
       }
 
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/import-customers/fetch`,
         { customerIds: ids },
         {
@@ -86,7 +86,7 @@ const ImportCustomers = () => {
     try {
       const token = localStorage.getItem('adminAccessToken');
       
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/import-customers/save`,
         { customers: fetchedCustomers },
         {

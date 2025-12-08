@@ -106,8 +106,9 @@ class ClientController {
         });
       }
 
+      // Create SetupIntent WITHOUT customer (as in original working code)
+      // Customer will be attached during complete-onboarding
       const setupIntent = await this.stripe.setupIntents.create({
-        customer: client.customer_id,
         payment_method_types: ['card']
       });
 

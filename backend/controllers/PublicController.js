@@ -239,10 +239,99 @@ class PublicController {
         }
       }
 
+      // Send TDEE results email to user
+      if (this.emailConfig.getStatus().configured) {
+        try {
+          const graphClient = await this.emailConfig.createGraphClient();
+          
+          // Format goal for display
+          const goalText = goal === 'lose' ? 'Weight Loss' : goal === 'gain' ? 'Muscle Gain' : 'Maintenance';
+          
+          // Format macros if available
+          let macrosHtml = '';
+          if (macros) {
+            macrosHtml = `
+              <h3>Recommended Macros</h3>
+              <ul>
+                <li><strong>Protein:</strong> ${macros.protein}g (${Math.round((macros.protein * 4 / goalCalories) * 100)}%)</li>
+                <li><strong>Carbs:</strong> ${macros.carbs}g (${Math.round((macros.carbs * 4 / goalCalories) * 100)}%)</li>
+                <li><strong>Fat:</strong> ${macros.fat}g (${Math.round((macros.fat * 9 / goalCalories) * 100)}%)</li>
+              </ul>
+            `;
+          }
+
+          const resultsEmail = {
+            message: {
+              subject: 'Your TDEE Calculator Results - Simon Price PT',
+              body: {
+                contentType: 'HTML',
+                content: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2>Your TDEE Calculator Results</h2>
+                    <p>Hi${name ? ' ' + name : ''},</p>
+                    <p>Thank you for using the TDEE Calculator! Here are your personalized results:</p>
+                    
+                    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                      <h3>Your Profile</h3>
+                      <ul>
+                        <li><strong>Age:</strong> ${age} years</li>
+                        <li><strong>Gender:</strong> ${gender}</li>
+                        <li><strong>Weight:</strong> ${weight}</li>
+                        <li><strong>Height:</strong> ${height}</li>
+                        <li><strong>Activity Level:</strong> ${activityLevel}</li>
+                        <li><strong>Goal:</strong> ${goalText}</li>
+                      </ul>
+                    </div>
+
+                    <div style="background-color: #d3ff62; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                      <h3>Your Results</h3>
+                      <ul>
+                        <li><strong>TDEE (Maintenance):</strong> ${Math.round(tdee)} calories/day</li>
+                        <li><strong>Goal Calories:</strong> ${Math.round(goalCalories)} calories/day</li>
+                      </ul>
+                      ${macrosHtml}
+                    </div>
+
+                    <div style="background-color: #f0f0f0; padding: 15px; border-left: 4px solid #d3ff62; margin: 20px 0;">
+                      <h4>What this means:</h4>
+                      ${goal === 'lose' ? 
+                        '<p>To lose weight safely, aim for <strong>' + Math.round(goalCalories) + ' calories per day</strong>. This creates a 500-calorie deficit for approximately 1lb weight loss per week.</p>' :
+                        goal === 'gain' ?
+                        '<p>To build muscle, aim for <strong>' + Math.round(goalCalories) + ' calories per day</strong>. This creates a 300-calorie surplus while focusing on strength training.</p>' :
+                        '<p>To maintain your current weight, aim for <strong>' + Math.round(goalCalories) + ' calories per day</strong>.</p>'
+                      }
+                    </div>
+
+                    <p><strong>Remember:</strong> These are estimates. Monitor your progress and adjust as needed. For personalized coaching and guidance, feel free to reach out!</p>
+                    
+                    <p style="margin-top: 30px;">
+                      Keep pushing!<br>
+                      <strong>Simon Price</strong><br>
+                      Personal Trainer<br>
+                      📧 simon.price@simonprice-pt.co.uk<br>
+                      🌐 <a href="https://www.simonprice-pt.co.uk">www.simonprice-pt.co.uk</a>
+                    </p>
+                  </div>
+                `
+              },
+              toRecipients: [{
+                emailAddress: { address: email }
+              }]
+            }
+          };
+
+          await graphClient.api(`/users/${this.emailConfig.getFromAddress()}/sendMail`).post(resultsEmail);
+          console.log(`📧 TDEE results email sent to: ${email}`);
+        } catch (emailError) {
+          console.error('❌ Failed to send TDEE results email:', emailError.message);
+          // Don't fail the request if email fails - results are still saved
+        }
+      }
+
       console.log(`📊 TDEE result saved: ${name || email}`);
       res.status(201).json({
         success: true,
-        message: 'Results saved successfully'
+        message: 'Results saved successfully! Check your email for the full report.'
       });
 
     } catch (error) {

@@ -134,15 +134,18 @@ backend:
 
   - task: "SOLID Refactored Newsletter Subscription"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/controllers/PublicController.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
           agent: "testing"
           comment: "POST /api/newsletter/subscribe endpoint working correctly after SOLID refactoring. Saves to mailingList collection with proper opt-in tracking. Returns 201 status with success message."
+        - working: false
+          agent: "testing"
+          comment: "CRITICAL: Newsletter subscription endpoint broken - emails NOT being saved to mailingList collection. Endpoint returns 201 success but no database record created. Email opt-in tracking completely non-functional. This breaks newsletter subscription system."
 
   - task: "SOLID Refactored TDEE Results Endpoint"
     implemented: true

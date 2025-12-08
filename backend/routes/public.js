@@ -30,10 +30,9 @@ function createPublicRoutes(dependencies) {
 
   // TDEE calculator results
   router.post('/tdee-results', [
-    body('email').isEmail().withMessage('Valid email required'),
-    body('name').notEmpty().withMessage('Name is required'),
-    body('tdee').isNumeric().withMessage('TDEE must be a number'),
-    body('goalCalories').isNumeric().withMessage('Goal calories must be a number')
+    body('email').isEmail().withMessage('Valid email required')
+    // Note: Other fields (tdee, goalCalories, etc.) can be in nested structure
+    // Validation is handled in the controller
   ], (req, res) => controller.storeTDEEResults(req, res));
 
   // Newsletter subscription

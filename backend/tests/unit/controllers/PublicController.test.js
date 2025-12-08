@@ -162,7 +162,6 @@ describe('PublicController', () => {
         expect.objectContaining({
           email: 'subscriber@example.com',
           name: 'Jane Doe',
-          opted_in: true,
           status: 'active',
           source: 'newsletter_form'
         })

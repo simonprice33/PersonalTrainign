@@ -82,7 +82,7 @@ const ClientManagement = () => {
   const fetchClients = async () => {
     try {
       const token = localStorage.getItem('adminAccessToken');
-      const response = await axios.get(
+      const response = await axiosInstance.get(
         `${BACKEND_URL}/api/admin/clients`,
         {
           headers: {

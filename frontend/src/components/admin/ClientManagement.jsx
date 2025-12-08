@@ -158,7 +158,7 @@ const ClientManagement = () => {
     try {
       const token = localStorage.getItem('adminAccessToken');
       
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/resend-payment-link`,
         { 
           email: clientEmail,

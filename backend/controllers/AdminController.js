@@ -782,7 +782,7 @@ class AdminController {
 
       // Generate new password setup token
       const passwordToken = this.authService.generatePasswordSetupToken(email, 'client_password_setup');
-      const passwordLink = `${this.config.frontendUrl}/client/create-password?token=${passwordToken}`;
+      const passwordLink = `${this.config.frontendUrl}/client-create-password/${passwordToken}`;
 
       // Send password setup email
       await this.emailService.sendPasswordSetupEmail(email, passwordLink);
@@ -962,7 +962,7 @@ class AdminController {
 
           // Send password creation email
           const passwordToken = this.authService.generatePasswordSetupToken(email, 'client_password_setup');
-          const passwordLink = `${this.config.frontendUrl}/client/create-password?token=${passwordToken}`;
+          const passwordLink = `${this.config.frontendUrl}/client-create-password/${passwordToken}`;
 
           try {
             await this.emailService.sendPasswordSetupEmail(email, passwordLink);

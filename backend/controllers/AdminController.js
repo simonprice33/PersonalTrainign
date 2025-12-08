@@ -474,10 +474,10 @@ class AdminController {
         });
       }
 
-      // Create Stripe customer
+      // Create Stripe customer (use original email with alias for Stripe)
       const customer = await this.stripe.customers.create({
         name,
-        email,
+        email,  // Send to Stripe with alias
         phone: phoneNumber || undefined,
         address: address || undefined,
         metadata: {
@@ -485,15 +485,15 @@ class AdminController {
         }
       });
 
-      // Create payment link token
-      const paymentToken = this.authService.generatePasswordSetupToken(email, 'client_onboarding');
+      // Create payment link token (use normalized email in token for consistency)
+      const paymentToken = this.authService.generatePasswordSetupToken(normalizedEmail, 'client_onboarding');
       const paymentLink = `${this.config.frontendUrl}/client-onboarding?token=${paymentToken}`;
 
-      // Store client in database
+      // Store client in database (use normalized email for DB)
       const clientData = {
         customer_id: customer.id,
         name,
-        email,
+        email: normalizedEmail,  // Store normalized in DB
         phone: phoneNumber,
         address: address || null,
         status: 'pending_payment',
@@ -507,10 +507,10 @@ class AdminController {
 
       await this.collections.clients.insertOne(clientData);
 
-      // Send payment link email
+      // Send payment link email (use original email with alias for sending)
       await this.emailService.sendPaymentLinkEmail(email, name, paymentLink);
 
-      console.log(`✅ Payment link created and sent to: ${email}`);
+      console.log(`✅ Payment link created and sent to: ${email} (stored in DB as: ${normalizedEmail})`);
 
       res.status(201).json({
         success: true,

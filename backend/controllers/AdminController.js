@@ -538,13 +538,8 @@ class AdminController {
 
       const { email } = req.body;
 
-      // Normalize email for database lookup
-      const normalizedEmail = email.includes('+') 
-        ? email.replace(/\+[^@]*@/, '@')
-        : email;
-
-      // Find client (using normalized email)
-      const client = await this.collections.clients.findOne({ email: normalizedEmail }, { _id: 0 });
+      // Find client (use exact email)
+      const client = await this.collections.clients.findOne({ email }, { _id: 0 });
       if (!client) {
         return res.status(404).json({
           success: false,
@@ -560,16 +555,16 @@ class AdminController {
         });
       }
 
-      // Generate new payment link (use normalized email in token)
-      const paymentToken = this.authService.generatePasswordSetupToken(normalizedEmail, 'client_onboarding');
+      // Generate new payment link (use exact email)
+      const paymentToken = this.authService.generatePasswordSetupToken(email, 'client_onboarding');
       const paymentLink = `${this.config.frontendUrl}/client-onboarding?token=${paymentToken}`;
 
-      // Send email (use original email with alias for sending)
+      // Send email
       await this.emailService.sendPaymentLinkEmail(email, client.name, paymentLink);
 
-      // Update last sent timestamp (use normalized email for DB)
+      // Update last sent timestamp
       await this.collections.clients.updateOne(
-        { email: normalizedEmail },
+        { email },
         { $set: { payment_link_sent_at: new Date() } }
       );
 

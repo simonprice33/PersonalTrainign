@@ -54,16 +54,24 @@ async function startServer() {
     app.use(cors(corsOptions));
     app.options('/api/*', cors(corsOptions));
 
-    // Rate limiting
+    // Rate limiting - more lenient for development
     const limiter = rateLimit({
-      windowMs: config.rateLimit.windowMs,
-      max: config.rateLimit.maxRequests,
+      windowMs: config.rateLimit.windowMs || 15 * 60 * 1000, // 15 minutes
+      max: config.rateLimit.maxRequests || 100, // 100 requests per window
       message: {
         success: false,
         message: 'Too many requests from this IP, please try again later.'
-      }
+      },
+      standardHeaders: true, // Return rate limit info in headers
+      legacyHeaders: false
     });
-    app.use('/api/', limiter);
+    
+    // Only apply rate limiting in production
+    if (process.env.NODE_ENV === 'production') {
+      app.use('/api/', limiter);
+    } else {
+      console.log('⚠️  Rate limiting disabled in development mode');
+    }
 
     // Body parsing
     app.use(express.json({ limit: '10mb' }));

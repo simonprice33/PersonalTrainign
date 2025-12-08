@@ -49,6 +49,8 @@ class DatabaseConfig {
       this.collections = {
         users: this.db.collection('users'),
         mailingList: this.db.collection('mailing_list'),
+        contacts: this.db.collection('contacts'),
+        tdeeResults: this.db.collection('tdee_results'),
         clients: this.db.collection('clients'),
         clientUsers: this.db.collection('client_users')
       };

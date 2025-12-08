@@ -55,7 +55,7 @@ function createAdminRoutes(dependencies) {
 
   // Create new admin user
   router.post('/users', authenticate, [
-    body('email').isEmail().normalizeEmail(),
+    body('email').isEmail({ allow_utf8_local_part: true }),
     body('password').isLength({ min: 8 }),
     body('name').notEmpty()
   ], (req, res) => controller.createUser(req, res));

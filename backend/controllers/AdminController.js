@@ -943,9 +943,10 @@ class AdminController {
             continue;
           }
 
-          // Insert client
+          // Insert client (use consistent field naming)
           const clientDoc = {
-            customer_id,
+            customer_id,           // Keep for backward compatibility
+            stripe_customer_id: customer_id,  // Also add this for frontend compatibility
             name,
             email,
             phone: phone || null,

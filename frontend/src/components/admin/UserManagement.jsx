@@ -85,12 +85,7 @@ const UserManagement = () => {
     }
 
     try {
-      const token = localStorage.getItem('adminAccessToken');
-      const response = await axiosInstance.delete(`${BACKEND_URL}/api/admin/users/${userId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axiosInstance.delete(`${BACKEND_URL}/api/admin/users/${userId}`);
 
       if (response.data.success) {
         alert('User deleted successfully');

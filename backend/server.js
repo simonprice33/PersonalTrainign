@@ -54,16 +54,20 @@ async function startServer() {
     app.use(cors(corsOptions));
     app.options('/api/*', cors(corsOptions));
 
-    // Rate limiting - more lenient for development
+    // Rate limiting - balanced for production use
     const limiter = rateLimit({
       windowMs: config.rateLimit.windowMs || 15 * 60 * 1000, // 15 minutes
-      max: config.rateLimit.maxRequests || 100, // 100 requests per window
+      max: config.rateLimit.maxRequests || 200, // 200 requests per window
       message: {
         success: false,
         message: 'Too many requests from this IP, please try again later.'
       },
       standardHeaders: true, // Return rate limit info in headers
-      legacyHeaders: false
+      legacyHeaders: false,
+      skip: (req) => {
+        // Skip rate limiting for health checks
+        return req.path === '/api/health' || req.path === '/health';
+      }
     });
     
     // Only apply rate limiting in production

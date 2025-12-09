@@ -19,11 +19,18 @@ class AuthService {
       const user = await this.collections.users.findOne({ email });
       
       if (!user) {
+        console.log(`❌ Admin login failed: User not found for email ${email}`);
         throw new Error('Invalid credentials');
       }
 
+      console.log(`🔍 Attempting admin login for: ${email}`);
+      console.log(`🔍 Password hash exists: ${!!user.password}`);
+      console.log(`🔍 Password length: ${password?.length || 0}`);
+      
       const isValidPassword = await bcrypt.compare(password, user.password);
+      
       if (!isValidPassword) {
+        console.log(`❌ Admin login failed: Invalid password for ${email}`);
         throw new Error('Invalid credentials');
       }
 

@@ -63,15 +63,9 @@ const UserManagement = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('adminAccessToken');
       const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/users/${selectedUser._id}/reset-password`,
-        { newPassword: resetPassword },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
+        { newPassword: resetPassword }
       );
 
       if (response.data.success) {

@@ -91,6 +91,9 @@ function createAdminRoutes(dependencies) {
   // Get all clients
   router.get('/clients', authenticate, (req, res) => controller.getClients(req, res));
 
+  // Get client details
+  router.get('/clients/:email', authenticate, (req, res) => controller.getClientDetails(req, res));
+
   // Update client status
   router.put('/clients/:email', authenticate, [
     body('status').isIn(['active', 'suspended', 'cancelled', 'pending_payment']).withMessage('Invalid status')

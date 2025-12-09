@@ -516,6 +516,120 @@ const ClientUserManagement = () => {
           </div>
         </div>
       )}
+
+      {/* Profile Modal */}
+      {showProfileModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-2xl border border-cyan-500/30 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Client Profile</h2>
+                <button
+                  onClick={() => setShowProfileModal(false)}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  <XCircle size={24} />
+                </button>
+              </div>
+
+              {loadingProfile ? (
+                <div className="text-center py-8">
+                  <RefreshCw size={48} className="text-cyan-500 mx-auto mb-4 animate-spin" />
+                  <p className="text-gray-400">Loading profile...</p>
+                </div>
+              ) : selectedProfile ? (
+                <div className="space-y-6">
+                  {/* Personal Information */}
+                  <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                    <h3 className="text-lg font-semibold text-white mb-4">Personal Information</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-400">Name</p>
+                        <p className="text-white font-medium">{selectedProfile.name || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400">Email</p>
+                        <p className="text-white font-medium">{selectedProfile.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400">Phone</p>
+                        <p className="text-white font-medium">{selectedProfile.phone || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400">Status</p>
+                        <p className="text-white font-medium capitalize">{selectedProfile.status}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Subscription Information */}
+                  <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                    <h3 className="text-lg font-semibold text-white mb-4">Subscription Details</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-400">Subscription Status</p>
+                        <p className="text-white font-medium capitalize">{selectedProfile.subscription_status || 'None'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400">Monthly Price</p>
+                        <p className="text-white font-medium">£{selectedProfile.monthly_price || 0}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400">Billing Day</p>
+                        <p className="text-white font-medium">{selectedProfile.billing_day || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400">Stripe Customer ID</p>
+                        <p className="text-white font-medium text-xs">{selectedProfile.customer_id || selectedProfile.stripe_customer_id || 'N/A'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Activity Information */}
+                  <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                    <h3 className="text-lg font-semibold text-white mb-4">Activity</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-400">Created</p>
+                        <p className="text-white font-medium">
+                          {selectedProfile.created_at ? new Date(selectedProfile.created_at).toLocaleDateString() : 'N/A'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400">Onboarded</p>
+                        <p className="text-white font-medium">
+                          {selectedProfile.onboarded_at ? new Date(selectedProfile.onboarded_at).toLocaleDateString() : 'Not yet'}
+                        </p>
+                      </div>
+                      {selectedProfile.imported_at && (
+                        <div className="col-span-2">
+                          <p className="text-sm text-gray-400">Imported from Stripe</p>
+                          <p className="text-cyan-400 font-medium">
+                            {new Date(selectedProfile.imported_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-400">No profile data available</p>
+                </div>
+              )}
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowProfileModal(false)}
+                  className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

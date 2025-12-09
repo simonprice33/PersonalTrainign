@@ -128,6 +128,9 @@ function createAdminRoutes(dependencies) {
     body('customers').isArray().withMessage('Customers must be an array')
   ], (req, res) => controller.saveImportedCustomers(req, res));
 
+  // Sync client status from Stripe
+  router.post('/clients/:email/sync-status', authenticate, (req, res) => controller.syncClientStatusFromStripe(req, res));
+
   return router;
 }
 

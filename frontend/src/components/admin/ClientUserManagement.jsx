@@ -324,6 +324,14 @@ const ClientUserManagement = () => {
                             <option value="cancelled" className="bg-gray-800 text-red-400">✗ Cancelled</option>
                           </select>
                           
+                          <button
+                            onClick={() => handleViewProfile(user.email)}
+                            className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm"
+                            title="View Profile"
+                          >
+                            👤 View
+                          </button>
+
                           {(!user.password || user.status === 'pending') && (
                             <button
                               onClick={() => handleResendPasswordEmailRequest(user.email, user.name || user.email)}

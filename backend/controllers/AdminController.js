@@ -1013,6 +1013,84 @@ class AdminController {
   }
 
   /**
+   * Sync client status from Stripe
+   */
+  async syncClientStatusFromStripe(req, res) {
+    try {
+      const { email } = req.params;
+
+      // Find client
+      const client = await this.collections.clients.findOne({ email }, { _id: 0 });
+      if (!client) {
+        return res.status(404).json({
+          success: false,
+          message: 'Client not found'
+        });
+      }
+
+      const customerId = client.customer_id || client.stripe_customer_id;
+      if (!customerId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Client has no Stripe customer ID'
+        });
+      }
+
+      // Fetch from Stripe
+      const customer = await this.stripe.customers.retrieve(customerId, {
+        expand: ['subscriptions']
+      });
+
+      // Determine status based on Stripe data
+      let status = 'pending';
+      let subscription_status = 'none';
+
+      if (customer.subscriptions && customer.subscriptions.data.length > 0) {
+        const activeSubscription = customer.subscriptions.data.find(
+          sub => ['active', 'trialing'].includes(sub.status)
+        );
+        
+        if (activeSubscription) {
+          status = 'active';
+          subscription_status = activeSubscription.status;
+        } else {
+          subscription_status = customer.subscriptions.data[0].status;
+        }
+      }
+
+      // Update client in database
+      await this.collections.clients.updateOne(
+        { email },
+        {
+          $set: {
+            status,
+            subscription_status,
+            synced_at: new Date()
+          }
+        }
+      );
+
+      console.log(`✅ Synced client status from Stripe: ${email} - ${status}`);
+
+      res.json({
+        success: true,
+        message: 'Client status synced successfully',
+        data: {
+          status,
+          subscription_status
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Sync client status error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to sync client status'
+      });
+    }
+  }
+
+  /**
    * Cancel client subscription
    */
   async cancelSubscription(req, res) {

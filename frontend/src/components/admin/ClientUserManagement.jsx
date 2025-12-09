@@ -164,6 +164,25 @@ const ClientUserManagement = () => {
     setPendingResendEmail(null);
   };
 
+  const handleViewProfile = async (email) => {
+    setLoadingProfile(true);
+    setShowProfileModal(true);
+    setSelectedProfile(null);
+
+    try {
+      const response = await axiosInstance.get(`${BACKEND_URL}/api/admin/clients/${encodeURIComponent(email)}`);
+      
+      if (response.data.success) {
+        setSelectedProfile(response.data.client);
+      }
+    } catch (err) {
+      setError('Failed to load client profile');
+      setShowProfileModal(false);
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case 'active':

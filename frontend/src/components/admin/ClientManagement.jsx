@@ -438,6 +438,16 @@ const ClientManagement = () => {
                               <Edit size={16} />
                               Edit
                             </button>
+                            {client.imported_at && (
+                              <button
+                                onClick={() => handleSyncStatus(client.email, client.name)}
+                                className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors text-sm"
+                                title="Sync status from Stripe"
+                              >
+                                <RefreshCw size={16} />
+                                Sync
+                              </button>
+                            )}
                             <button
                               onClick={() => handleManageBilling(client.stripe_customer_id)}
                               className="flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors text-sm"

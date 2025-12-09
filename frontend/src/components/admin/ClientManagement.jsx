@@ -150,18 +150,11 @@ const ClientManagement = () => {
     setError('');
 
     try {
-      const token = localStorage.getItem('adminAccessToken');
-      
       const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/resend-payment-link`,
         { 
           email: clientEmail,
           expirationDays: 7 
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
         }
       );
 
@@ -170,6 +163,8 @@ const ClientManagement = () => {
       }
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
+        localStorage.removeItem('adminAccessToken');
+        localStorage.removeItem('adminRefreshToken');
         navigate('/admin');
       } else {
         alert(err.response?.data?.message || 'Failed to resend payment link');

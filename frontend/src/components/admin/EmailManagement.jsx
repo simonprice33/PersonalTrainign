@@ -34,6 +34,8 @@ const EmailManagement = () => {
       }
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
+        localStorage.removeItem('adminAccessToken');
+        localStorage.removeItem('adminRefreshToken');
         navigate('/admin');
       } else {
         setError('Failed to fetch emails');

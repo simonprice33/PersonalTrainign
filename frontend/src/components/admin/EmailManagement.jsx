@@ -26,7 +26,6 @@ const EmailManagement = () => {
 
   const fetchEmails = async () => {
     try {
-      const token = localStorage.getItem('adminAccessToken');
       const response = await axiosInstance.get(`${BACKEND_URL}/api/admin/emails`);
 
       if (response.data.success) {

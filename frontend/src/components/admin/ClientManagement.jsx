@@ -236,15 +236,9 @@ const ClientManagement = () => {
 
   const handleManageBilling = async (customerId) => {
     try {
-      const token = localStorage.getItem('adminAccessToken');
       const response = await axiosInstance.post(
         `${BACKEND_URL}/api/create-portal-session`,
-        { customerId },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
+        { customerId }
       );
 
       if (response.data.success) {
@@ -261,15 +255,9 @@ const ClientManagement = () => {
     }
 
     try {
-      const token = localStorage.getItem('adminAccessToken');
       const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/client/${customerId}/cancel-subscription`,
-        {},
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
+        {}
       );
 
       if (response.data.success) {

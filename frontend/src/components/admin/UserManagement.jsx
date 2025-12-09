@@ -47,12 +47,7 @@ const UserManagement = () => {
   const handleCreateUser = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('adminAccessToken');
-      const response = await axiosInstance.post(`${BACKEND_URL}/api/admin/users`, newUser, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axiosInstance.post(`${BACKEND_URL}/api/admin/users`, newUser);
 
       if (response.data.success) {
         alert('User created successfully');

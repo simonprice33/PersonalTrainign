@@ -390,7 +390,7 @@ const ClientManagement = () => {
                       </div>
                       
                       <div className="flex gap-2">
-                        {!client.stripe_customer_id && (
+                        {!(client.stripe_customer_id || client.customer_id) && (
                           <button
                             onClick={() => handleResendLink(client.email)}
                             disabled={resendingEmail === client.email}
@@ -410,7 +410,7 @@ const ClientManagement = () => {
                           </button>
                         )}
                         
-                        {client.stripe_customer_id && (
+                        {(client.stripe_customer_id || client.customer_id) && (
                           <>
                             <button
                               onClick={() => handleEditClient(client)}

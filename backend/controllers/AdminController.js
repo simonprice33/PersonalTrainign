@@ -1013,6 +1013,36 @@ class AdminController {
   }
 
   /**
+   * Get client details
+   */
+  async getClientDetails(req, res) {
+    try {
+      const { email } = req.params;
+
+      const client = await this.collections.clients.findOne({ email }, { _id: 0 });
+      
+      if (!client) {
+        return res.status(404).json({
+          success: false,
+          message: 'Client not found'
+        });
+      }
+
+      res.json({
+        success: true,
+        client
+      });
+
+    } catch (error) {
+      console.error('❌ Get client details error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch client details'
+      });
+    }
+  }
+
+  /**
    * Sync client status from Stripe
    */
   async syncClientStatusFromStripe(req, res) {

@@ -369,12 +369,17 @@ const ClientManagement = () => {
                               {client.prorate !== false && ' • Prorated'}
                             </span>
                           </div>
-                          {client.stripe_customer_id && (
+                          {(client.stripe_customer_id || client.customer_id) && (
                             <div className="mt-2">
                               {getStatusBadge(client.status, client.subscription_status)}
+                              {client.imported_at && (
+                                <span className="ml-2 text-xs text-cyan-400">
+                                  (Imported from Stripe)
+                                </span>
+                              )}
                             </div>
                           )}
-                          {!client.stripe_customer_id && (
+                          {!(client.stripe_customer_id || client.customer_id) && (
                             <div className="mt-2">
                               <span className="inline-block px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">
                                 ⏳ Pending Setup

@@ -36,22 +36,11 @@ const ChangePassword = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('adminAccessToken');
-      if (!token) {
-        navigate('/admin');
-        return;
-      }
-
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/change-password`,
         {
           currentPassword: formData.currentPassword,
           newPassword: formData.newPassword
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
         }
       );
 

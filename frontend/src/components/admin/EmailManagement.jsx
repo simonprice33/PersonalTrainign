@@ -62,11 +62,7 @@ const EmailManagement = () => {
 
   const handleExport = async () => {
     try {
-      const token = localStorage.getItem('adminAccessToken');
       const response = await axiosInstance.get(`${BACKEND_URL}/api/admin/emails/export`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
         responseType: 'blob'
       });
 

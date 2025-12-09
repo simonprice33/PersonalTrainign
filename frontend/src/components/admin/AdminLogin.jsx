@@ -19,7 +19,15 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/admin/login`, formData);
+      // Trim email and password to remove any whitespace
+      const loginData = {
+        email: formData.email.trim(),
+        password: formData.password.trim()
+      };
+      
+      console.log('🔵 Attempting login for:', loginData.email);
+      
+      const response = await axios.post(`${BACKEND_URL}/api/admin/login`, loginData);
       
       if (response.data.success) {
         // Store tokens in localStorage

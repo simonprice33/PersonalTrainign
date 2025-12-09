@@ -80,20 +80,29 @@ const ClientManagement = () => {
   }, [navigate]);
 
   const fetchClients = async () => {
+    setLoadingClients(true);
     try {
       // Use axiosInstance without manual token - interceptor handles it
       const response = await axiosInstance.get(`${BACKEND_URL}/api/admin/clients`);
 
       if (response.data.success) {
+        console.log(`✅ Loaded ${response.data.clients.length} clients`);
         setClients(response.data.clients);
+        setError(''); // Clear any previous errors
       }
     } catch (err) {
-      console.error('Failed to fetch clients:', err);
+      console.error('❌ Failed to fetch clients:', err);
+      console.error('Error response:', err.response);
+      
       // If authentication fails, redirect to login
       if (err.response?.status === 401) {
+        console.log('Token expired, clearing and redirecting to login');
         localStorage.removeItem('adminAccessToken');
         localStorage.removeItem('adminRefreshToken');
         navigate('/admin');
+      } else {
+        // Show error message to user
+        setError('Failed to load clients. Please try refreshing the page.');
       }
     } finally {
       setLoadingClients(false);

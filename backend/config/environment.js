@@ -236,8 +236,8 @@ class EnvironmentConfig {
         webhookSecret: process.env.STRIPE_WEBHOOK_SECRET
       },
       rateLimit: {
-        windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 900000,
-        maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 10
+        windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 900000, // 15 minutes
+        maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 200 // 200 requests per 15 mins (reasonable for admin usage)
       }
     };
   }

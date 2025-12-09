@@ -278,6 +278,25 @@ const ClientManagement = () => {
     }
   };
 
+  const handleSyncStatus = async (email, name) => {
+    if (!window.confirm(`Sync ${name}'s status from Stripe? This will update their local status based on their current Stripe subscription.`)) {
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post(
+        `${BACKEND_URL}/api/admin/clients/${encodeURIComponent(email)}/sync-status`
+      );
+
+      if (response.data.success) {
+        alert(`Status synced! New status: ${response.data.data.status}`);
+        fetchClients();
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to sync status');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       {/* Header */}

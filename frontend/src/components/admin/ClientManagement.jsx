@@ -106,16 +106,9 @@ const ClientManagement = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('adminAccessToken');
-      
       const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/create-payment-link`,
-        formData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
+        formData
       );
 
       if (response.data.success) {
@@ -125,6 +118,8 @@ const ClientManagement = () => {
       }
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
+        localStorage.removeItem('adminAccessToken');
+        localStorage.removeItem('adminRefreshToken');
         navigate('/admin');
       } else {
         setError(err.response?.data?.message || 'Failed to create payment link');

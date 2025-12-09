@@ -18,6 +18,9 @@ const ClientUserManagement = () => {
   const [pendingResendEmail, setPendingResendEmail] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('adminAccessToken');

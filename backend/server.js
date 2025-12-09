@@ -33,6 +33,12 @@ async function startServer() {
     // 2. Initialize Express App
     const app = express();
     
+    // Trust proxy for production (behind nginx/load balancer)
+    if (process.env.NODE_ENV === 'production') {
+      app.set('trust proxy', 1); // Trust first proxy
+      console.log('✅ Trust proxy enabled for production');
+    }
+    
     // Security middleware
     app.use(helmet({
       crossOriginEmbedderPolicy: false

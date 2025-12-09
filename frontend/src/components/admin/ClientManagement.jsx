@@ -81,21 +81,20 @@ const ClientManagement = () => {
 
   const fetchClients = async () => {
     try {
-      const token = localStorage.getItem('adminAccessToken');
-      const response = await axiosInstance.get(
-        `${BACKEND_URL}/api/admin/clients`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
+      // Use axiosInstance without manual token - interceptor handles it
+      const response = await axiosInstance.get(`${BACKEND_URL}/api/admin/clients`);
 
       if (response.data.success) {
         setClients(response.data.clients);
       }
     } catch (err) {
       console.error('Failed to fetch clients:', err);
+      // If authentication fails, redirect to login
+      if (err.response?.status === 401) {
+        localStorage.removeItem('adminAccessToken');
+        localStorage.removeItem('adminRefreshToken');
+        navigate('/admin');
+      }
     } finally {
       setLoadingClients(false);
     }

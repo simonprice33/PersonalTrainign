@@ -26,17 +26,7 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('adminAccessToken');
-      if (!token) {
-        navigate('/admin');
-        return;
-      }
-
-      const response = await axiosInstance.get(`${BACKEND_URL}/api/admin/users`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axiosInstance.get(`${BACKEND_URL}/api/admin/users`);
 
       if (response.data.success) {
         setUsers(response.data.users);

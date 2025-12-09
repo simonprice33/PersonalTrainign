@@ -203,17 +203,10 @@ const ClientManagement = () => {
     try {
       setLoading(true);
       setError('');
-
-      const token = localStorage.getItem('adminAccessToken');
       
       const response = await axiosInstance.put(
         `${BACKEND_URL}/api/admin/clients/${editingClient.email}`,
-        editFormData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
+        editFormData
       );
 
       if (response.data.success) {
@@ -224,6 +217,8 @@ const ClientManagement = () => {
       }
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
+        localStorage.removeItem('adminAccessToken');
+        localStorage.removeItem('adminRefreshToken');
         navigate('/admin');
       } else {
         setError(err.response?.data?.message || 'Failed to update client');

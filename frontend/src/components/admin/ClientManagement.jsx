@@ -236,7 +236,12 @@ const ClientManagement = () => {
       );
 
       if (response.data.success) {
-        alert('Client updated successfully!');
+        setAlertModal({
+          show: true,
+          title: 'Success',
+          message: 'Client updated successfully!',
+          type: 'success'
+        });
         setShowEditModal(false);
         setEditingClient(null);
         fetchClients(); // Refresh the list

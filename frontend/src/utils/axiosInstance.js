@@ -45,8 +45,12 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    console.log('🔴 Axios interceptor caught error:', error.response?.status, error.config?.url);
+
     // If error is 401 and we haven't tried to refresh yet
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log('🔄 Token expired, attempting refresh...');
+      
       if (isRefreshing) {
         // If already refreshing, queue this request
         return new Promise((resolve, reject) => {

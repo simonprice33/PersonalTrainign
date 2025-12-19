@@ -72,6 +72,7 @@ axiosInstance.interceptors.response.use(
 
       if (!refreshToken) {
         // No refresh token, redirect to login
+        console.log('❌ No refresh token found, redirecting to login');
         localStorage.removeItem('adminAccessToken');
         localStorage.removeItem('adminRefreshToken');
         window.location.href = '/admin';
@@ -80,12 +81,15 @@ axiosInstance.interceptors.response.use(
 
       try {
         // Attempt to refresh the token
+        console.log('🔄 Calling refresh token endpoint...');
         const response = await axios.post(`${BACKEND_URL}/api/admin/refresh`, {
           refreshToken
         });
 
         if (response.data.success) {
           const { accessToken } = response.data;
+          
+          console.log('✅ Token refreshed successfully');
           
           // Update stored token
           localStorage.setItem('adminAccessToken', accessToken);
@@ -102,6 +106,7 @@ axiosInstance.interceptors.response.use(
         }
       } catch (refreshError) {
         // Refresh failed, clear tokens and redirect to login
+        console.log('❌ Token refresh failed:', refreshError.response?.status, refreshError.message);
         processQueue(refreshError, null);
         localStorage.removeItem('adminAccessToken');
         localStorage.removeItem('adminRefreshToken');

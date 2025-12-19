@@ -276,7 +276,12 @@ const ClientManagement = () => {
         window.open(response.data.url, '_blank');
       }
     } catch (err) {
-      alert('Failed to open billing portal');
+      setAlertModal({
+        show: true,
+        title: 'Error',
+        message: 'Failed to open billing portal',
+        type: 'error'
+      });
     }
   };
 

@@ -16,6 +16,7 @@ const EmailManagement = () => {
     source: 'all',
     opted_in: 'all'
   });
+  const [alertModal, setAlertModal] = useState({ show: false, title: '', message: '', type: 'info' });
 
   useEffect(() => {
     fetchEmails();

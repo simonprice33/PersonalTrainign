@@ -197,7 +197,12 @@ const ClientManagement = () => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(paymentLink);
-    alert('Payment link copied to clipboard!');
+    setAlertModal({
+      show: true,
+      title: 'Copied',
+      message: 'Payment link copied to clipboard!',
+      type: 'success'
+    });
   };
 
   const handleEditClient = (client) => {

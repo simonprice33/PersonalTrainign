@@ -324,11 +324,18 @@ const ClientManagement = () => {
     }
   };
 
-  const handleSyncStatus = async (email, name) => {
-    if (!window.confirm(`Sync ${name}'s status from Stripe? This will update their local status based on their current Stripe subscription.`)) {
-      return;
-    }
+  const handleSyncStatus = (email, name) => {
+    setConfirmModal({
+      show: true,
+      title: 'Sync Status',
+      message: `Sync ${name}'s status from Stripe? This will update their local status based on their current Stripe subscription.`,
+      onConfirm: () => executeSyncStatus(email, name)
+    });
+  };
 
+  const executeSyncStatus = async (email, name) => {
+    setConfirmModal({ show: false, title: '', message: '', onConfirm: null });
+    
     try {
       const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/clients/${encodeURIComponent(email)}/sync-status`

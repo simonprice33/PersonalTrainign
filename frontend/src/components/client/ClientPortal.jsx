@@ -172,11 +172,18 @@ const ClientPortal = () => {
     }
   };
 
-  const handleCancelSubscription = async () => {
-    if (!window.confirm('Are you sure you want to cancel your subscription? It will remain active until the end of your current billing period.')) {
-      return;
-    }
+  const handleCancelSubscription = () => {
+    setConfirmModal({
+      show: true,
+      title: 'Cancel Subscription',
+      message: 'Are you sure you want to cancel your subscription? It will remain active until the end of your current billing period.',
+      onConfirm: () => executeCancelSubscription()
+    });
+  };
 
+  const executeCancelSubscription = async () => {
+    setConfirmModal({ show: false, title: '', message: '', onConfirm: null });
+    
     try {
       const token = localStorage.getItem('clientAccessToken');
       const response = await axios.post(

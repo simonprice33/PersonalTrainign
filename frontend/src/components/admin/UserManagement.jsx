@@ -20,6 +20,7 @@ const UserManagement = () => {
     name: ''
   });
   const [resetPassword, setResetPassword] = useState('');
+  const [alertModal, setAlertModal] = useState({ show: false, title: '', message: '', type: 'info' });
 
   useEffect(() => {
     fetchUsers();

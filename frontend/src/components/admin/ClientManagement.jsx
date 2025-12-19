@@ -170,7 +170,12 @@ const ClientManagement = () => {
       );
 
       if (response.data.success) {
-        alert(`Payment link resent successfully to ${clientEmail}!`);
+        setAlertModal({
+          show: true,
+          title: 'Success',
+          message: `Payment link resent successfully to ${clientEmail}!`,
+          type: 'success'
+        });
       }
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
@@ -178,7 +183,12 @@ const ClientManagement = () => {
         localStorage.removeItem('adminRefreshToken');
         navigate('/admin');
       } else {
-        alert(err.response?.data?.message || 'Failed to resend payment link');
+        setAlertModal({
+          show: true,
+          title: 'Error',
+          message: err.response?.data?.message || 'Failed to resend payment link',
+          type: 'error'
+        });
       }
     } finally {
       setResendingEmail(null);

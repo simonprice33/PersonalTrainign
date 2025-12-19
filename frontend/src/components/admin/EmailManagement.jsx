@@ -76,7 +76,12 @@ const EmailManagement = () => {
       link.click();
       link.remove();
     } catch (err) {
-      alert('Failed to export emails');
+      setAlertModal({
+        show: true,
+        title: 'Error',
+        message: 'Failed to export emails',
+        type: 'error'
+      });
     }
   };
 

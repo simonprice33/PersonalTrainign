@@ -326,11 +326,21 @@ const ClientManagement = () => {
       );
 
       if (response.data.success) {
-        alert(`Status synced! New status: ${response.data.data.status}`);
+        setAlertModal({
+          show: true,
+          title: 'Status Synced',
+          message: `New status: ${response.data.data.status}`,
+          type: 'success'
+        });
         fetchClients();
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to sync status');
+      setAlertModal({
+        show: true,
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to sync status',
+        type: 'error'
+      });
     }
   };
 

@@ -81,13 +81,23 @@ const UserManagement = () => {
       );
 
       if (response.data.success) {
-        alert('Password reset successfully');
+        setAlertModal({
+          show: true,
+          title: 'Success',
+          message: 'Password reset successfully',
+          type: 'success'
+        });
         setShowResetModal(false);
         setResetPassword('');
         setSelectedUser(null);
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to reset password');
+      setAlertModal({
+        show: true,
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to reset password',
+        type: 'error'
+      });
     }
   };
 

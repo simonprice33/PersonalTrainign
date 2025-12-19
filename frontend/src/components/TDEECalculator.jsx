@@ -120,7 +120,12 @@ const TDEECalculator = ({ isOpen, onClose }) => {
     const age = parseInt(formData.age);
 
     if (!weightKg || !heightCm || !age) {
-      alert('Please fill in all required fields');
+      setAlertModal({
+        show: true,
+        title: 'Missing Information',
+        message: 'Please fill in all required fields',
+        type: 'warning'
+      });
       return;
     }
 

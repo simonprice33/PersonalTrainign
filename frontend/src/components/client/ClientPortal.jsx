@@ -21,6 +21,7 @@ const ClientPortal = () => {
   });
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [alertModal, setAlertModal] = useState({ show: false, title: '', message: '', type: 'info' });
 
   // Address Update State
   const [addressData, setAddressData] = useState({

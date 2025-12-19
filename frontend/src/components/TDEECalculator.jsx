@@ -834,6 +834,15 @@ const TDEECalculator = ({ isOpen, onClose }) => {
         </div>
         </div>
       </div>
+
+      {/* Alert Modal */}
+      <AlertModal
+        show={alertModal.show}
+        title={alertModal.title}
+        message={alertModal.message}
+        type={alertModal.type}
+        onClose={() => setAlertModal({ show: false, title: '', message: '', type: 'info' })}
+      />
     </>
   );
 

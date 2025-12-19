@@ -103,11 +103,18 @@ const UserManagement = () => {
     }
   };
 
-  const handleDeleteUser = async (userId, userEmail) => {
-    if (!window.confirm(`Are you sure you want to delete ${userEmail}?`)) {
-      return;
-    }
+  const handleDeleteUser = (userId, userEmail) => {
+    setConfirmModal({
+      show: true,
+      title: 'Delete User',
+      message: `Are you sure you want to delete ${userEmail}?`,
+      onConfirm: () => executeDeleteUser(userId, userEmail)
+    });
+  };
 
+  const executeDeleteUser = async (userId, userEmail) => {
+    setConfirmModal({ show: false, title: '', message: '', onConfirm: null });
+    
     try {
       const response = await axiosInstance.delete(`${BACKEND_URL}/api/admin/users/${userId}`);
 

@@ -26,6 +26,7 @@ const TDEECalculator = ({ isOpen, onClose }) => {
   const [results, setResults] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [alertModal, setAlertModal] = useState({ show: false, title: '', message: '', type: 'info' });
 
   if (!isOpen) return null;
 

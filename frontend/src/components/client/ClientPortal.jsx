@@ -186,11 +186,21 @@ const ClientPortal = () => {
       );
 
       if (response.data.success) {
-        alert('Subscription canceled. You will retain access until ' + new Date(response.data.endsAt).toLocaleDateString());
+        setAlertModal({
+          show: true,
+          title: 'Subscription Canceled',
+          message: `You will retain access until ${new Date(response.data.endsAt).toLocaleDateString()}`,
+          type: 'success'
+        });
         fetchClientData();
       }
     } catch (err) {
-      alert('Failed to cancel subscription');
+      setAlertModal({
+        show: true,
+        title: 'Error',
+        message: 'Failed to cancel subscription',
+        type: 'error'
+      });
     }
   };
 

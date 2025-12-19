@@ -922,6 +922,16 @@ const ClientManagement = () => {
         type={alertModal.type}
         onClose={() => setAlertModal({ show: false, title: '', message: '', type: 'info' })}
       />
+
+      {/* Confirm Modal */}
+      <ConfirmModal
+        show={confirmModal.show}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        onConfirm={confirmModal.onConfirm}
+        onClose={() => setConfirmModal({ show: false, title: '', message: '', onConfirm: null })}
+        type="warning"
+      />
     </div>
   );
 };

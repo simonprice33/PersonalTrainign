@@ -152,7 +152,12 @@ const TDEECalculator = ({ isOpen, onClose }) => {
 
   const handleEmailResults = async () => {
     if (!formData.email) {
-      alert('Please enter your email address');
+      setAlertModal({
+        show: true,
+        title: 'Email Required',
+        message: 'Please enter your email address',
+        type: 'warning'
+      });
       return;
     }
 

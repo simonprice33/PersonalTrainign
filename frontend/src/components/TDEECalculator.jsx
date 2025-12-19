@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { X, Calculator, Mail, TrendingDown, TrendingUp, Minus, Activity } from 'lucide-react';
+import AlertModal from './AlertModal';
 
 const TDEECalculator = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1); // 1 = form, 2 = results

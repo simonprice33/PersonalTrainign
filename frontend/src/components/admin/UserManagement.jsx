@@ -110,11 +110,21 @@ const UserManagement = () => {
       const response = await axiosInstance.delete(`${BACKEND_URL}/api/admin/users/${userId}`);
 
       if (response.data.success) {
-        alert('User deleted successfully');
+        setAlertModal({
+          show: true,
+          title: 'Success',
+          message: 'User deleted successfully',
+          type: 'success'
+        });
         fetchUsers();
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete user');
+      setAlertModal({
+        show: true,
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to delete user',
+        type: 'error'
+      });
     }
   };
 

@@ -297,11 +297,21 @@ const ClientManagement = () => {
       );
 
       if (response.data.success) {
-        alert(`Subscription canceled. Access until: ${new Date(response.data.endsAt).toLocaleDateString()}`);
+        setAlertModal({
+          show: true,
+          title: 'Subscription Canceled',
+          message: `Access will continue until: ${new Date(response.data.endsAt).toLocaleDateString()}`,
+          type: 'success'
+        });
         fetchClients();
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to cancel subscription');
+      setAlertModal({
+        show: true,
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to cancel subscription',
+        type: 'error'
+      });
     }
   };
 

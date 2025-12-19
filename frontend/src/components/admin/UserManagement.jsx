@@ -52,13 +52,23 @@ const UserManagement = () => {
       const response = await axiosInstance.post(`${BACKEND_URL}/api/admin/users`, newUser);
 
       if (response.data.success) {
-        alert('User created successfully');
+        setAlertModal({
+          show: true,
+          title: 'Success',
+          message: 'User created successfully',
+          type: 'success'
+        });
         setShowCreateModal(false);
         setNewUser({ email: '', password: '', name: '' });
         fetchUsers();
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to create user');
+      setAlertModal({
+        show: true,
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to create user',
+        type: 'error'
+      });
     }
   };
 

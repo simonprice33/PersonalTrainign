@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, User, CreditCard, MapPin, Lock, AlertTriangle, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
 import axios from 'axios';
+import AlertModal from '../AlertModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 

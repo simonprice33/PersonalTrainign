@@ -287,11 +287,18 @@ const ClientManagement = () => {
     }
   };
 
-  const handleCancelSubscription = async (customerId, clientName) => {
-    if (!window.confirm(`Cancel subscription for ${clientName}? They will retain access until the end of their billing period.`)) {
-      return;
-    }
+  const handleCancelSubscription = (customerId, clientName) => {
+    setConfirmModal({
+      show: true,
+      title: 'Cancel Subscription',
+      message: `Cancel subscription for ${clientName}? They will retain access until the end of their billing period.`,
+      onConfirm: () => executeCancelSubscription(customerId, clientName)
+    });
+  };
 
+  const executeCancelSubscription = async (customerId, clientName) => {
+    setConfirmModal({ show: false, title: '', message: '', onConfirm: null });
+    
     try {
       const response = await axiosInstance.post(
         `${BACKEND_URL}/api/admin/client/${customerId}/cancel-subscription`,

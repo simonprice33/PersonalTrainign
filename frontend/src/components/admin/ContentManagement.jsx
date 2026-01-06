@@ -173,7 +173,9 @@ const ContentManagement = () => {
       const response = await axiosInstance.post(`${BACKEND_URL}/api/admin/parq-questions`, {
         question: parqForm.question,
         order: parseInt(parqForm.order),
-        requires_doctor_approval: parqForm.requires_doctor_approval
+        requires_doctor_approval: parqForm.requires_doctor_approval,
+        applicable_packages: parqForm.applicable_packages,
+        category: parqForm.category
       });
       
       if (response.data.success) {
@@ -193,6 +195,8 @@ const ContentManagement = () => {
         question: parqForm.question,
         order: parseInt(parqForm.order),
         requires_doctor_approval: parqForm.requires_doctor_approval,
+        applicable_packages: parqForm.applicable_packages,
+        category: parqForm.category,
         active: editingItem.active
       });
       

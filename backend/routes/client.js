@@ -55,7 +55,7 @@ function createClientRoutes(dependencies) {
   // Reset password
   router.post('/reset-password', [
     body('token').notEmpty(),
-    body('newPassword').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+    body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
   ], (req, res) => controller.resetPassword(req, res));
 
   // ============================================================================

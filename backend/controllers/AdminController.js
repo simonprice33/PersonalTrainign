@@ -1182,29 +1182,21 @@ class AdminController {
   }
 
   /**
-   * Create Stripe Customer Portal session
+   * Create Stripe Customer Portal session for a specific customer
    */
   async createPortalSession(req, res) {
     try {
-      const userEmail = req.user.email;
+      const { customerId } = req.body;
 
-      const client = await this.collections.clients.findOne({ email: userEmail }, { _id: 0 });
-      if (!client) {
-        return res.status(404).json({
-          success: false,
-          message: 'Client not found'
-        });
-      }
-
-      if (!client.customer_id) {
+      if (!customerId) {
         return res.status(400).json({
           success: false,
-          message: 'No Stripe customer found'
+          message: 'Customer ID is required'
         });
       }
 
       const session = await this.stripe.billingPortal.sessions.create({
-        customer: client.customer_id,
+        customer: customerId,
         return_url: `${this.config.frontendUrl}/admin/clients`
       });
 

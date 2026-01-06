@@ -70,6 +70,7 @@ function App() {
           <Route path="/admin/clients" element={<ClientManagement />} />
           <Route path="/admin/client-users" element={<ClientUserManagement />} />
           <Route path="/admin/import-customers" element={<ImportCustomers />} />
+          <Route path="/admin/content" element={<ContentManagement />} />
           <Route path="/admin/change-password" element={<ChangePassword />} />
           
           {/* Main Website Route */}

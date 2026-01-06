@@ -630,6 +630,18 @@ backend:
           agent: "testing"
           comment: "Purchase endpoint validation working correctly using express-validator. Validates packageId, paymentMethodId, clientInfo object with name/email/phone, parqResponses array, and healthResponses array. Returns detailed validation errors with field-specific messages when required fields are missing."
 
+  - task: "Admin Content Management API"
+    implemented: true
+    working: true
+    file: "/app/backend/controllers/PackageController.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "ADMIN CONTENT MANAGEMENT API TESTING COMPLETED - ALL ENDPOINTS WORKING PERFECTLY! ✅ Packages CRUD: GET /admin/packages (retrieved 2 packages), POST /admin/packages (created test package), PUT /admin/packages/:id (updated successfully), DELETE /admin/packages/:id (deleted successfully). ✅ PARQ Questions CRUD: GET /admin/parq-questions (retrieved 5 questions), POST /admin/parq-questions (created test question), PUT /admin/parq-questions/:id (updated successfully), DELETE /admin/parq-questions/:id (deleted successfully). ✅ Health Questions CRUD: GET /admin/health-questions (retrieved 3 questions), POST /admin/health-questions (created test question with multiple-choice type), PUT /admin/health-questions/:id (updated successfully), DELETE /admin/health-questions/:id (deleted successfully). ✅ Authentication: Admin JWT authentication working correctly for all protected endpoints. ✅ Data Persistence: All created items properly stored in MongoDB and retrieved in subsequent GET requests. ✅ Validation: Request validation working for required fields and data types. All 13/13 tests passed with 100% success rate. The admin content management system is fully functional and ready for production use."
+
 frontend:
   - task: "Admin Login Page"
     implemented: true

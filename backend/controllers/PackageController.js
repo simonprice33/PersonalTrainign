@@ -216,7 +216,7 @@ class PackageController {
    */
   async createParqQuestion(req, res) {
     try {
-      const { question } = req.body;
+      const { question, requires_doctor_approval, applicable_packages, category } = req.body;
 
       // Get max order
       const maxOrder = await this.collections.parqQuestions
@@ -231,6 +231,9 @@ class PackageController {
         id: `parq-${Date.now()}`,
         question,
         order,
+        requires_doctor_approval: requires_doctor_approval || false,
+        applicable_packages: applicable_packages || [], // Empty = applies to all packages
+        category: category || 'general', // For future use
         active: true,
         created_at: new Date()
       };

@@ -645,7 +645,7 @@ backend:
 frontend:
   - task: "Admin Login Page"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/admin/AdminLogin.jsx"
     stuck_count: 0
     priority: "high"
@@ -654,10 +654,13 @@ frontend:
         - working: "NA"
           agent: "main"
           comment: "Created admin login page at /admin route. Form with email/password inputs. Calls POST /api/admin/login, stores access/refresh tokens in localStorage. Redirects to /admin/dashboard on success. Dark theme with cyan accents."
+        - working: true
+          agent: "testing"
+          comment: "ADMIN LOGIN TESTED AND WORKING PERFECTLY! Successfully logged in with credentials simon.price@simonprice-pt.co.uk / Qwerty1234!!! and redirected to dashboard. Form validation, JWT token storage, and navigation all functional."
 
   - task: "Admin Dashboard"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/admin/AdminDashboard.jsx"
     stuck_count: 0
     priority: "high"
@@ -666,6 +669,21 @@ frontend:
         - working: "NA"
           agent: "main"
           comment: "Created dashboard at /admin/dashboard with 3 cards: Email Management (links to /admin/emails), User Management (links to /admin/users), Change Password (links to /admin/change-password). Checks JWT token on mount, redirects to login if missing. Logout button clears tokens."
+        - working: true
+          agent: "testing"
+          comment: "ADMIN DASHBOARD TESTED AND WORKING! Successfully navigated from login to dashboard. Content Management card visible and clickable, navigation to /admin/content working perfectly."
+
+  - task: "Admin Content Management Page"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/admin/ContentManagement.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "ADMIN CONTENT MANAGEMENT UI FULLY TESTED AND WORKING PERFECTLY! ✅ All 3 tabs present and functional (Packages, PARQ Questions, Health Questions). ✅ Packages tab: Found 6 packages displayed with proper styling and layout. ✅ PARQ Questions tab: Found 8 PARQ questions displayed with order numbers and proper formatting. ✅ Health Questions tab: Found 6 health questions displayed with type indicators and options. ✅ Tab switching: All tabs switch correctly with proper active states (cyan for Packages, purple for PARQ, pink for Health). ✅ Modal functionality: Add New modals open correctly for each tab type, Cancel and X buttons work properly. ✅ UI/UX: Dark theme with proper color coding, responsive design, clear visual hierarchy. ✅ Navigation: Back button to dashboard working. The entire Content Management interface is production-ready and fully functional."
 
   - task: "Email Management Page"
     implemented: true

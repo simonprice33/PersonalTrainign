@@ -48,7 +48,11 @@ function createPublicRoutes(dependencies) {
   // Purchase endpoint (landing page)
   router.post('/public/purchase', [
     body('packageId').notEmpty().withMessage('Package ID required'),
+    body('paymentMethodId').notEmpty().withMessage('Payment method ID required'),
     body('clientInfo').isObject().withMessage('Client info required'),
+    body('clientInfo.name').notEmpty().withMessage('Name is required'),
+    body('clientInfo.email').isEmail().withMessage('Valid email required'),
+    body('clientInfo.phone').notEmpty().withMessage('Phone is required'),
     body('parqResponses').isArray().withMessage('PARQ responses required'),
     body('healthResponses').isArray().withMessage('Health responses required')
   ], (req, res) => controller.handlePurchase(req, res));

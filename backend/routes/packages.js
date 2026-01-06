@@ -1,8 +1,13 @@
 const express = require('express');
 const { body } = require('express-validator');
+const PackageController = require('../controllers/PackageController');
 
-function createPackageRoutes(controller, authenticate) {
+function createPackageRoutes(dependencies) {
   const router = express.Router();
+  const { collections, stripe, config, authMiddleware } = dependencies;
+  const authenticate = authMiddleware.authenticate.bind(authMiddleware);
+  
+  const controller = new PackageController(collections, stripe, config);
 
   // Public routes
   router.get('/public/packages', (req, res) => controller.getPackages(req, res));

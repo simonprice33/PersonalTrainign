@@ -438,6 +438,39 @@ class ClientController {
   }
 
   /**
+   * Get client profile
+   */
+  async getProfile(req, res) {
+    try {
+      const userEmail = req.user.email;
+
+      const client = await this.collections.clients.findOne(
+        { email: userEmail },
+        { projection: { _id: 0 } }
+      );
+
+      if (!client) {
+        return res.status(404).json({
+          success: false,
+          message: 'Client not found'
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        client
+      });
+
+    } catch (error) {
+      console.error('❌ Get profile error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to load profile'
+      });
+    }
+  }
+
+  /**
    * Manage billing - Create Customer Portal session
    */
   async manageBilling(req, res) {

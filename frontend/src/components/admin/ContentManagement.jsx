@@ -299,11 +299,11 @@ const ContentManagement = () => {
   };
 
   const resetParqForm = () => {
-    setParqForm({ question: '', order: parqQuestions.length + 1, requires_doctor_approval: false });
+    setParqForm({ question: '', order: parqQuestions.length + 1, requires_doctor_approval: false, applicable_packages: [], category: 'general' });
   };
 
   const resetHealthForm = () => {
-    setHealthForm({ question: '', type: 'text', order: healthQuestions.length + 1, options: [''] });
+    setHealthForm({ question: '', type: 'text', order: healthQuestions.length + 1, options: [''], applicable_packages: [], category: 'general' });
   };
 
   // Edit handlers

@@ -101,9 +101,152 @@ class DatabaseConfig {
       await this.collections.clientUsers.createIndex({ email: 1 }, { unique: true });
       console.log('✅ Client users indexes created');
 
+      // Packages collection indexes
+      await this.collections.packages.createIndex({ active: 1 });
+      console.log('✅ Packages indexes created');
+
+      // PARQ questions collection indexes
+      await this.collections.parqQuestions.createIndex({ order: 1 });
+      console.log('✅ PARQ questions indexes created');
+
+      // Health questions collection indexes
+      await this.collections.healthQuestions.createIndex({ order: 1 });
+      console.log('✅ Health questions indexes created');
+
+      // Seed initial data
+      await this._seedInitialData();
+
     } catch (error) {
       console.error('❌ Index creation failed:', error.message);
       // Don't throw - indexes are not critical for functionality
+    }
+  }
+
+  /**
+   * Seed initial data for packages and questions
+   * @private
+   */
+  async _seedInitialData() {
+    try {
+      // Seed packages if empty
+      const packageCount = await this.collections.packages.countDocuments();
+      if (packageCount === 0) {
+        await this.collections.packages.insertMany([
+          {
+            id: 'nutrition-only',
+            name: 'Nutrition Only',
+            price: 75,
+            description: 'Personalized nutrition coaching and meal planning',
+            features: [
+              'Custom meal plans',
+              'Nutrition tracking',
+              'Weekly check-ins',
+              'Email support'
+            ],
+            active: true,
+            created_at: new Date()
+          },
+          {
+            id: 'pt-with-nutrition',
+            name: 'Personal Training with Nutrition',
+            price: 125,
+            description: 'Complete fitness and nutrition transformation',
+            features: [
+              'Personal training sessions',
+              'Custom meal plans',
+              'Nutrition tracking',
+              'Weekly check-ins',
+              'Priority support',
+              'Workout programming'
+            ],
+            active: true,
+            created_at: new Date()
+          }
+        ]);
+        console.log('✅ Seeded default packages');
+      }
+
+      // Seed PARQ questions if empty
+      const parqCount = await this.collections.parqQuestions.countDocuments();
+      if (parqCount === 0) {
+        await this.collections.parqQuestions.insertMany([
+          {
+            id: 'parq-1',
+            question: 'Has your doctor ever said that you have a heart condition?',
+            order: 1,
+            active: true,
+            created_at: new Date()
+          },
+          {
+            id: 'parq-2',
+            question: 'Do you feel pain in your chest when you do physical activity?',
+            order: 2,
+            active: true,
+            created_at: new Date()
+          },
+          {
+            id: 'parq-3',
+            question: 'Do you lose your balance because of dizziness or do you ever lose consciousness?',
+            order: 3,
+            active: true,
+            created_at: new Date()
+          },
+          {
+            id: 'parq-4',
+            question: 'Do you have a bone or joint problem that could be made worse by physical activity?',
+            order: 4,
+            active: true,
+            created_at: new Date()
+          },
+          {
+            id: 'parq-5',
+            question: 'Are you currently taking medication for blood pressure or a heart condition?',
+            order: 5,
+            active: true,
+            created_at: new Date()
+          }
+        ]);
+        console.log('✅ Seeded default PARQ questions');
+      }
+
+      // Seed health questions if empty
+      const healthCount = await this.collections.healthQuestions.countDocuments();
+      if (healthCount === 0) {
+        await this.collections.healthQuestions.insertMany([
+          {
+            id: 'health-1',
+            question: 'Do you have any current injuries or physical limitations?',
+            type: 'text',
+            options: [],
+            order: 1,
+            active: true,
+            created_at: new Date()
+          },
+          {
+            id: 'health-2',
+            question: 'What is your current activity level?',
+            type: 'multiple_choice',
+            options: ['Sedentary', 'Lightly Active', 'Moderately Active', 'Very Active', 'Extremely Active'],
+            order: 2,
+            active: true,
+            created_at: new Date()
+          },
+          {
+            id: 'health-3',
+            question: 'Do you have any dietary restrictions or allergies?',
+            type: 'text',
+            options: [],
+            order: 3,
+            active: true,
+            created_at: new Date()
+          }
+        ]);
+        console.log('✅ Seeded default health questions');
+      }
+
+    } catch (error) {
+      console.error('❌ Data seeding failed:', error.message);
+      // Don't throw - seeding failure is not critical
     }
   }
 

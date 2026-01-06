@@ -443,12 +443,12 @@ const ClientManagement = () => {
                           </div>
                           <div className="flex items-center gap-2 text-gray-300">
                             <DollarSign size={16} className="text-cyan-400" />
-                            <span className="text-sm">£{client.price || 125}/month</span>
+                            <span className="text-sm">£{client.price || client.monthly_price || 125}/month</span>
                           </div>
                           <div className="flex items-center gap-2 text-gray-300">
                             <Calendar size={16} className="text-purple-400" />
                             <span className="text-sm">
-                              Billing: {client.billingDay || 1}{(client.billingDay || 1) === 1 ? 'st' : (client.billingDay || 1) === 2 ? 'nd' : (client.billingDay || 1) === 3 ? 'rd' : 'th'} of each month
+                              Billing: {client.billingDay || client.billing_day || 1}{(client.billingDay || client.billing_day || 1) === 1 ? 'st' : (client.billingDay || client.billing_day || 1) === 2 ? 'nd' : (client.billingDay || client.billing_day || 1) === 3 ? 'rd' : 'th'} of each month
                               {client.prorate !== false && ' • Prorated'}
                             </span>
                           </div>

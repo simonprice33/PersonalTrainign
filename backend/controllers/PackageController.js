@@ -381,7 +381,7 @@ class PackageController {
    */
   async createHealthQuestion(req, res) {
     try {
-      const { question, type, options } = req.body;
+      const { question, type, options, applicable_packages, category } = req.body;
 
       // Get max order
       const maxOrder = await this.collections.healthQuestions
@@ -397,6 +397,8 @@ class PackageController {
         question,
         type: type || 'text',
         options: Array.isArray(options) ? options : [],
+        applicable_packages: applicable_packages || [], // Empty = applies to all packages
+        category: category || 'general', // For future use
         order,
         active: true,
         created_at: new Date()

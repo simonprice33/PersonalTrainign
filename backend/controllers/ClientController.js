@@ -486,15 +486,18 @@ class ClientController {
         });
       }
 
-      if (!client.customer_id) {
+      // Handle both field names
+      const stripeCustomerId = client.stripe_customer_id || client.customer_id;
+      
+      if (!stripeCustomerId) {
         return res.status(400).json({
           success: false,
-          message: 'No billing account found'
+          message: 'No billing account found. Please contact support.'
         });
       }
 
       const session = await this.stripe.billingPortal.sessions.create({
-        customer: client.customer_id,
+        customer: stripeCustomerId,
         return_url: `${this.config.frontendUrl}/client/portal`
       });
 
@@ -507,7 +510,7 @@ class ClientController {
       console.error('❌ Manage billing error:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to access billing portal'
+        message: 'Failed to access billing portal. Please try again later.'
       });
     }
   }

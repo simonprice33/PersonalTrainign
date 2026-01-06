@@ -49,30 +49,28 @@ const ClientPortal = () => {
   const fetchClientData = async () => {
     try {
       const token = localStorage.getItem('clientAccessToken');
-      const storedData = JSON.parse(localStorage.getItem('clientData') || '{}');
       
-      // Fetch full client details
+      // Fetch client's own profile data
       const response = await axios.get(
-        `${BACKEND_URL}/api/admin/clients`,
+        `${BACKEND_URL}/api/client/profile`,
         {
           headers: { 'Authorization': `Bearer ${token}` }
         }
       );
 
-      if (response.data.success) {
-        const client = response.data.clients.find(c => c.email === storedData.email);
-        if (client) {
-          setClientData(client);
-          setAddressData({
-            addressLine1: client.address_line_1 || '',
-            addressLine2: client.address_line_2 || '',
-            city: client.city || '',
-            postcode: client.postcode || '',
-            country: client.country || 'GB'
-          });
-        }
+      if (response.data.success && response.data.client) {
+        const client = response.data.client;
+        setClientData(client);
+        setAddressData({
+          addressLine1: client.address_line_1 || client.address?.line1 || '',
+          addressLine2: client.address_line_2 || client.address?.line2 || '',
+          city: client.city || client.address?.city || '',
+          postcode: client.postcode || client.address?.postcode || '',
+          country: client.country || client.address?.country || 'GB'
+        });
       }
     } catch (err) {
+      console.error('Failed to fetch client data:', err);
       if (err.response?.status === 401) {
         navigate('/client-login');
       }

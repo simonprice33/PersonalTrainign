@@ -193,12 +193,14 @@ def test_purchase_validation():
         
         if response.status_code == 400:
             data = response.json()
-            if 'payment method' in data.get('message', '').lower():
+            errors = data.get('errors', [])
+            payment_method_error = any('payment method' in error.get('msg', '').lower() for error in errors)
+            if payment_method_error:
                 log_test("Purchase validation - Missing paymentMethodId", "PASS", 
                        "Correctly rejected missing payment method")
             else:
                 log_test("Purchase validation - Missing paymentMethodId", "FAIL", 
-                       f"Wrong error message: {data.get('message')}")
+                       f"Expected payment method error, got: {[e.get('msg') for e in errors]}")
         else:
             log_test("Purchase validation - Missing paymentMethodId", "FAIL", 
                    f"Expected 400, got {response.status_code}")

@@ -22,6 +22,7 @@ import ResetPassword from "./components/admin/ResetPassword";
 import ClientManagement from "./components/admin/ClientManagement";
 import ClientUserManagement from "./components/admin/ClientUserManagement";
 import ImportCustomers from "./components/admin/ImportCustomers";
+import ContentManagement from "./components/admin/ContentManagement";
 
 // Client Portal Components
 import ClientLogin from "./components/client/ClientLogin";

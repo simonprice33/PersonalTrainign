@@ -201,6 +201,9 @@ const PurchaseFlowContent = () => {
         throw new Error(error.message);
       }
 
+      // Store the payment method ID for final submission
+      setPaymentMethodId(setupIntent.payment_method);
+
       // Move to health questions
       setCurrentStep(4);
 

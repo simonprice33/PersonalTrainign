@@ -52,7 +52,10 @@ class DatabaseConfig {
         contacts: this.db.collection('contacts'),
         tdeeResults: this.db.collection('tdee_results'),
         clients: this.db.collection('clients'),
-        clientUsers: this.db.collection('client_users')
+        clientUsers: this.db.collection('client_users'),
+        packages: this.db.collection('packages'),
+        parqQuestions: this.db.collection('parq_questions'),
+        healthQuestions: this.db.collection('health_questions')
       };
 
       // Create indexes for better performance

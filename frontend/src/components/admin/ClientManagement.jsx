@@ -443,7 +443,7 @@ const ClientManagement = () => {
                           </div>
                           <div className="flex items-center gap-2 text-gray-300">
                             <DollarSign size={16} className="text-cyan-400" />
-                            <span className="text-sm">£{client.price || client.monthly_price || 125}/month</span>
+                            <span className="text-sm">£{client.price || client.monthly_price || client.subscription_price || 125}/month</span>
                           </div>
                           <div className="flex items-center gap-2 text-gray-300">
                             <Calendar size={16} className="text-purple-400" />

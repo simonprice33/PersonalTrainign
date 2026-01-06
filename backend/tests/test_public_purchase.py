@@ -48,9 +48,9 @@ def test_get_packages():
                     pt_with_nutrition = None
                     
                     for pkg in packages:
-                        if 'nutrition' in pkg.get('name', '').lower() and pkg.get('price') == 75:
+                        if pkg.get('name') == 'Nutrition Only' and pkg.get('price') == 75:
                             nutrition_only = pkg
-                        elif 'pt' in pkg.get('name', '').lower() and pkg.get('price') == 125:
+                        elif pkg.get('name') == 'Personal Training with Nutrition' and pkg.get('price') == 125:
                             pt_with_nutrition = pkg
                     
                     if nutrition_only and pt_with_nutrition:

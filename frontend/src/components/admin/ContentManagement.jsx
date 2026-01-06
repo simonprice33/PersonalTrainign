@@ -397,20 +397,39 @@ const ContentManagement = () => {
       {/* Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex gap-2 mb-6">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                activeTab === tab.id 
-                  ? `bg-${tab.color}-500 text-white` 
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
-            >
-              <tab.icon size={18} />
-              {tab.label}
-            </button>
-          ))}
+          <button
+            onClick={() => setActiveTab('packages')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              activeTab === 'packages' 
+                ? 'bg-cyan-500 text-white' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            <Package size={18} />
+            Packages
+          </button>
+          <button
+            onClick={() => setActiveTab('parq')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              activeTab === 'parq' 
+                ? 'bg-purple-500 text-white' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            <ClipboardList size={18} />
+            PARQ Questions
+          </button>
+          <button
+            onClick={() => setActiveTab('health')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              activeTab === 'health' 
+                ? 'bg-pink-500 text-white' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            <Heart size={18} />
+            Health Questions
+          </button>
         </div>
 
         {error && (

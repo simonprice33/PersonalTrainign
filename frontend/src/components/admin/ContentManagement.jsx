@@ -49,14 +49,18 @@ const ContentManagement = () => {
   const [parqForm, setParqForm] = useState({
     question: '',
     order: 1,
-    requires_doctor_approval: false
+    requires_doctor_approval: false,
+    applicable_packages: [],
+    category: 'general'
   });
   
   const [healthForm, setHealthForm] = useState({
     question: '',
     type: 'text',
     order: 1,
-    options: ['']
+    options: [''],
+    applicable_packages: [],
+    category: 'general'
   });
 
   useEffect(() => {

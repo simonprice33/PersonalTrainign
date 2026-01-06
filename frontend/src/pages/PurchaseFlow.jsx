@@ -59,6 +59,7 @@ const PurchaseFlowContent = () => {
   const [hasDoctorApproval, setHasDoctorApproval] = useState(false);
 
   const [healthResponses, setHealthResponses] = useState({});
+  const [paymentMethodId, setPaymentMethodId] = useState(null);
 
   useEffect(() => {
     if (packageId) {

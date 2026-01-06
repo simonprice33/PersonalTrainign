@@ -426,14 +426,16 @@ class PackageController {
   async updateHealthQuestion(req, res) {
     try {
       const { id } = req.params;
-      const { question, type, options, active, order } = req.body;
+      const { question, type, options, active, order, applicable_packages, category } = req.body;
 
       const updateData = {
         ...(question && { question }),
         ...(type && { type }),
-        ...(options && { options: Array.isArray(options) ? options : [] }),
+        ...(options !== undefined && { options: Array.isArray(options) ? options : [] }),
         ...(active !== undefined && { active }),
-        ...(order && { order }),
+        ...(order !== undefined && { order: parseInt(order) }),
+        ...(applicable_packages !== undefined && { applicable_packages }),
+        ...(category !== undefined && { category }),
         updated_at: new Date()
       };
 

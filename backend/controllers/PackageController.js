@@ -151,11 +151,27 @@ class PackageController {
 
   /**
    * Get active PARQ questions (public)
+   * Optionally filter by packageId
    */
   async getParqQuestions(req, res) {
     try {
+      const { packageId } = req.query;
+      
+      let query = { active: true };
+      
+      // If packageId provided, filter questions that apply to this package
+      // Questions with empty/null applicable_packages apply to ALL packages
+      if (packageId) {
+        query.$or = [
+          { applicable_packages: { $exists: false } },
+          { applicable_packages: { $size: 0 } },
+          { applicable_packages: packageId },
+          { applicable_packages: 'all' }
+        ];
+      }
+      
       const questions = await this.collections.parqQuestions
-        .find({ active: true }, { _id: 0 })
+        .find(query, { _id: 0 })
         .sort({ order: 1 })
         .toArray();
 

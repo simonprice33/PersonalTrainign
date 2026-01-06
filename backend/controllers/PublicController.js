@@ -475,6 +475,36 @@ class PublicController {
       });
     }
   }
+
+  /**
+   * Handle purchase from landing page
+   */
+  async handlePurchase(req, res) {
+    try {
+      const { packageId, clientInfo, parqResponses, healthResponses } = req.body;
+
+      // For now, return success - full implementation pending
+      // TODO: Implement full purchase flow with Stripe integration
+
+      console.log(`📦 Purchase initiated:`, {
+        packageId,
+        email: clientInfo.email,
+        name: clientInfo.name
+      });
+
+      res.json({
+        success: true,
+        message: 'Purchase successful! Check your email for next steps.'
+      });
+
+    } catch (error) {
+      console.error('❌ Purchase error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to process purchase'
+      });
+    }
+  }
 }
 
 module.exports = PublicController;

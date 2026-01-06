@@ -52,6 +52,9 @@ function App() {
           <Route path="/client-reset-password/:token" element={<ClientResetPassword />} />
           <Route path="/client-portal" element={<ClientPortal />} />
           
+          {/* Landing Page */}
+          <Route path="/join-now" element={<JoinNow />} />
+          
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/forgot-password" element={<ForgotPassword />} />

@@ -403,7 +403,8 @@ class ClientController {
         });
       }
 
-      const { token, newPassword } = req.body;
+      const { token, newPassword, password } = req.body;
+      const passwordToUse = newPassword || password;
 
       // Verify token
       let decoded;
@@ -419,7 +420,7 @@ class ClientController {
         });
       }
 
-      await this.authService.resetClientPassword(decoded.email, newPassword, null);
+      await this.authService.resetClientPassword(decoded.email, passwordToUse, null);
 
       console.log(`✅ Client password reset successful for: ${decoded.email}`);
 

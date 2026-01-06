@@ -672,6 +672,7 @@ const Step3Payment = ({ packageInfo, billing }) => (
     <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
       <CardElement
         options={{
+          hidePostalCode: true, // We collect postcode from address form
           style: {
             base: {
               fontSize: '16px',

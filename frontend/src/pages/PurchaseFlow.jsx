@@ -223,9 +223,9 @@ const PurchaseFlowContent = () => {
     setSubmitting(true);
 
     try {
-      // TODO: Call backend purchase endpoint
       const response = await axios.post(`${BACKEND_URL}/api/public/purchase`, {
         packageId,
+        paymentMethodId,
         clientInfo: {
           ...clientInfo,
           goals: [clientInfo.goal1, clientInfo.goal2, clientInfo.goal3].filter(Boolean)
@@ -240,7 +240,8 @@ const PurchaseFlowContent = () => {
           questionId,
           question: healthQuestions.find(q => q.id === questionId)?.question,
           answer
-        }))
+        })),
+        hasDoctorApproval: needsDoctorApproval ? hasDoctorApproval : null
       });
 
       if (response.data.success) {

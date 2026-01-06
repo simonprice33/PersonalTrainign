@@ -45,6 +45,14 @@ function createPublicRoutes(dependencies) {
     body('email').isEmail().withMessage('Valid email required')
   ], (req, res) => controller.unsubscribe(req, res));
 
+  // Purchase endpoint (landing page)
+  router.post('/public/purchase', [
+    body('packageId').notEmpty().withMessage('Package ID required'),
+    body('clientInfo').isObject().withMessage('Client info required'),
+    body('parqResponses').isArray().withMessage('PARQ responses required'),
+    body('healthResponses').isArray().withMessage('Health responses required')
+  ], (req, res) => controller.handlePurchase(req, res));
+
   return router;
 }
 

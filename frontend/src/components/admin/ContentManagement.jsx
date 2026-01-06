@@ -236,7 +236,9 @@ const ContentManagement = () => {
         question: healthForm.question,
         type: healthForm.type,
         order: parseInt(healthForm.order),
-        options: healthForm.type === 'multiple-choice' ? healthForm.options.filter(o => o.trim()) : []
+        options: healthForm.type === 'multiple-choice' ? healthForm.options.filter(o => o.trim()) : [],
+        applicable_packages: healthForm.applicable_packages,
+        category: healthForm.category
       });
       
       if (response.data.success) {
@@ -257,6 +259,8 @@ const ContentManagement = () => {
         type: healthForm.type,
         order: parseInt(healthForm.order),
         options: healthForm.type === 'multiple-choice' ? healthForm.options.filter(o => o.trim()) : [],
+        applicable_packages: healthForm.applicable_packages,
+        category: healthForm.category,
         active: editingItem.active
       });
       

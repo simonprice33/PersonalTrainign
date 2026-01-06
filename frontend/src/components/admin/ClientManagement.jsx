@@ -211,15 +211,16 @@ const ClientManagement = () => {
     setEditingClient(client);
     setEditFormData({
       name: client.name || '',
-      telephone: client.telephone || '',
-      price: client.price || 125,
-      billingDay: client.billingDay || 1,
+      telephone: client.telephone || client.phone || '',
+      price: client.price || client.monthly_price || 125,
+      billingDay: client.billingDay || client.billing_day || 1,
       prorate: client.prorate !== undefined ? client.prorate : true,
-      addressLine1: client.address_line_1 || '',
-      addressLine2: client.address_line_2 || '',
-      city: client.city || '',
-      postcode: client.postcode || '',
-      country: client.country || 'GB',
+      // Handle both flat and nested address structures
+      addressLine1: client.address_line_1 || client.address?.line1 || '',
+      addressLine2: client.address_line_2 || client.address?.line2 || '',
+      city: client.city || client.address?.city || '',
+      postcode: client.postcode || client.address?.postcode || '',
+      country: client.country || client.address?.country || 'GB',
       emergencyContactName: client.emergency_contact_name || '',
       emergencyContactNumber: client.emergency_contact_number || '',
       emergencyContactRelationship: client.emergency_contact_relationship || ''

@@ -262,6 +262,13 @@ const PurchaseFlowContent = () => {
 
   const nextStep = () => {
     if (currentStep === 1 && !validateStep1()) return;
+    
+    // Skip PARQ step if no PARQ questions for this package
+    if (currentStep === 1 && parqQuestions.length === 0) {
+      setCurrentStep(3); // Go directly to payment
+      return;
+    }
+    
     if (currentStep === 2 && !validateStep2()) return;
     if (currentStep === 3) {
       handlePayment();
@@ -275,6 +282,11 @@ const PurchaseFlowContent = () => {
   };
 
   const prevStep = () => {
+    // Skip back over PARQ step if no PARQ questions
+    if (currentStep === 3 && parqQuestions.length === 0) {
+      setCurrentStep(1);
+      return;
+    }
     setCurrentStep(prev => prev - 1);
   };
 

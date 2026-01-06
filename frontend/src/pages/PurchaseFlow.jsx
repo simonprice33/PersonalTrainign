@@ -54,6 +54,12 @@ const PurchaseFlow = () => {
       {/* Header */}
       <header className="border-b border-cyan-500/20 backdrop-blur-sm bg-gray-900/50 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/logo.png" alt="Simon Price PT" className="h-10 w-10 object-contain" />
+            <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              Simon Price PT
+            </span>
+          </div>
           <button
             onClick={() => navigate('/join-now')}
             className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors"
@@ -61,12 +67,6 @@ const PurchaseFlow = () => {
             <ArrowLeft size={20} />
             Back to Packages
           </button>
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Simon Price PT" className="h-10 w-10 object-contain" />
-            <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-              Simon Price PT
-            </span>
-          </div>
         </div>
       </header>
 

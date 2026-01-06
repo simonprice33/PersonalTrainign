@@ -6,10 +6,13 @@
 const { validationResult } = require('express-validator');
 
 class PublicController {
-  constructor(collections, emailConfig, config) {
+  constructor(collections, emailConfig, config, stripe, authService, emailService) {
     this.collections = collections;
     this.emailConfig = emailConfig;
     this.config = config;
+    this.stripe = stripe;
+    this.authService = authService;
+    this.emailService = emailService;
   }
 
   /**

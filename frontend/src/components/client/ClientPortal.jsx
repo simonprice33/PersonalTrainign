@@ -378,19 +378,23 @@ const ClientPortal = () => {
                   <div className="space-y-3">
                     <div>
                       <p className="text-gray-400 text-sm">Email</p>
-                      <p className="text-white">{clientData?.email}</p>
+                      <p className="text-white">{clientData?.email || 'Not set'}</p>
                     </div>
                     <div>
                       <p className="text-gray-400 text-sm">Phone</p>
-                      <p className="text-white">{clientData?.telephone}</p>
+                      <p className="text-white">{clientData?.telephone || clientData?.phone || 'Not set'}</p>
                     </div>
                     <div>
                       <p className="text-gray-400 text-sm">Address</p>
                       <p className="text-white">
-                        {clientData?.address_line_1 || 'Not set'}<br />
-                        {clientData?.address_line_2 && <>{clientData.address_line_2}<br /></>}
-                        {clientData?.city && <>{clientData.city}, </>}
-                        {clientData?.postcode}
+                        {(clientData?.address_line_1 || clientData?.address?.line1) ? (
+                          <>
+                            {clientData?.address_line_1 || clientData?.address?.line1}<br />
+                            {(clientData?.address_line_2 || clientData?.address?.line2) && <>{clientData?.address_line_2 || clientData?.address?.line2}<br /></>}
+                            {(clientData?.city || clientData?.address?.city) && <>{clientData?.city || clientData?.address?.city}, </>}
+                            {clientData?.postcode || clientData?.address?.postcode}
+                          </>
+                        ) : 'Not set'}
                       </p>
                     </div>
                   </div>

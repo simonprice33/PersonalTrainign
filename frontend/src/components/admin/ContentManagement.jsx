@@ -1041,6 +1041,23 @@ const ContentManagement = () => {
                     min="1"
                   />
                 </div>
+                <div>
+                  <label className="block text-gray-300 text-sm mb-2">Applies to Packages</label>
+                  <p className="text-gray-500 text-xs mb-2">Leave empty to show for all packages</p>
+                  <div className="space-y-2">
+                    {packages.map(pkg => (
+                      <label key={pkg.id} className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={healthForm.applicable_packages?.includes(pkg.id)}
+                          onChange={() => togglePackageSelection(pkg.id, 'health')}
+                          className="w-4 h-4 rounded border-gray-700 text-pink-500 focus:ring-pink-500"
+                        />
+                        <span className="text-gray-300 text-sm">{pkg.name} (£{pkg.price})</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 

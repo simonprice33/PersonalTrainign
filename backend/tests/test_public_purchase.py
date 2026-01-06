@@ -58,8 +58,9 @@ def test_get_packages():
                                f"Found {len(packages)} packages including Nutrition Only (£75) and PT with Nutrition (£125)")
                         return True, packages
                     else:
+                        package_list = [f"{p.get('name')} £{p.get('price')}" for p in packages]
                         log_test("GET /api/public/packages", "FAIL", 
-                               f"Expected packages not found. Got: {[f\"{p.get('name')} £{p.get('price')}\" for p in packages]}")
+                               f"Expected packages not found. Got: {package_list}")
                         return False, packages
                 else:
                     log_test("GET /api/public/packages", "FAIL", 

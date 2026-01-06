@@ -548,7 +548,7 @@ const ContentManagement = () => {
                     </div>
                     <div className="flex-1">
                       <p className="text-white font-medium">{q.question}</p>
-                      <div className="flex gap-2 mt-2">
+                      <div className="flex gap-2 mt-2 flex-wrap">
                         {q.requires_doctor_approval && (
                           <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs">
                             Requires Doctor Approval
@@ -557,6 +557,15 @@ const ContentManagement = () => {
                         <span className={`px-2 py-1 rounded text-xs ${q.active ? 'bg-green-500/20 text-green-400' : 'bg-gray-600/20 text-gray-400'}`}>
                           {q.active ? 'Active' : 'Inactive'}
                         </span>
+                        {q.applicable_packages?.length > 0 ? (
+                          <span className="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded text-xs">
+                            {q.applicable_packages.map(pkgId => packages.find(p => p.id === pkgId)?.name || pkgId).join(', ')}
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 bg-gray-600/20 text-gray-400 rounded text-xs">
+                            All Packages
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

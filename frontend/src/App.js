@@ -56,6 +56,9 @@ function App() {
           {/* Landing Page */}
           <Route path="/join-now" element={<JoinNow />} />
           
+          {/* Purchase Flow */}
+          <Route path="/purchase" element={<PurchaseFlow />} />
+          
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/forgot-password" element={<ForgotPassword />} />

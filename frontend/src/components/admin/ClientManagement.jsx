@@ -212,7 +212,7 @@ const ClientManagement = () => {
     setEditFormData({
       name: client.name || '',
       telephone: client.telephone || client.phone || '',
-      price: client.price || client.monthly_price || 125,
+      price: client.price || client.monthly_price || client.subscription_price || 125,
       billingDay: client.billingDay || client.billing_day || 1,
       prorate: client.prorate !== undefined ? client.prorate : true,
       // Handle both flat and nested address structures

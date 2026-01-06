@@ -340,7 +340,7 @@ backend:
     status_history:
         - working: "NA"
           agent: "main"
-          comment: "Updated CORS_ORIGINS in .env to explicitly list allowed origins instead of using wildcard '*'. Now includes: http://localhost:3000, https://backend-modular-7.preview.emergentagent.com, https://simonprice-pt.co.uk, https://www.simonprice-pt.co.uk. This fixes the 'Not allowed by CORS' error that was blocking client contact form."
+          comment: "Updated CORS_ORIGINS in .env to explicitly list allowed origins instead of using wildcard '*'. Now includes: http://localhost:3000, https://healthsub.preview.emergentagent.com, https://simonprice-pt.co.uk, https://www.simonprice-pt.co.uk. This fixes the 'Not allowed by CORS' error that was blocking client contact form."
         - working: true
           agent: "testing"
           comment: "CORS configuration tested and working correctly. Preflight OPTIONS requests return proper CORS headers including Access-Control-Allow-Origin, Access-Control-Allow-Methods, and Access-Control-Allow-Headers. Client contact form CORS errors should be resolved."

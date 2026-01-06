@@ -5,12 +5,18 @@
 const express = require('express');
 const { body } = require('express-validator');
 const PublicController = require('../controllers/PublicController');
+const AuthService = require('../services/AuthService');
+const EmailService = require('../services/EmailService');
 
 function createPublicRoutes(dependencies) {
   const router = express.Router();
-  const { collections, emailConfig, config } = dependencies;
+  const { collections, emailConfig, config, stripe, authMiddleware } = dependencies;
 
-  const controller = new PublicController(collections, emailConfig, config);
+  // Initialize services needed for purchase flow
+  const authService = new AuthService(authMiddleware, collections);
+  const emailService = new EmailService(emailConfig);
+
+  const controller = new PublicController(collections, emailConfig, config, stripe, authService, emailService);
 
   // Health check
   router.get('/health', (req, res) => controller.healthCheck(req, res));

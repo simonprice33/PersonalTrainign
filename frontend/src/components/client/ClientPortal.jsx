@@ -297,15 +297,27 @@ const ClientPortal = () => {
                     <div>
                       <p className="text-gray-400 text-sm">Status</p>
                       <div className="flex items-center gap-2 mt-1">
-                        {clientData?.subscription_status === 'active' ? (
+                        {clientData?.subscription_status === 'active' || clientData?.subscription_status === 'trialing' ? (
                           <>
                             <CheckCircle size={20} className="text-green-400" />
                             <span className="text-white font-semibold">Active</span>
                           </>
-                        ) : clientData?.subscription_status === 'canceling' ? (
+                        ) : clientData?.subscription_status === 'canceling' || clientData?.subscription_status === 'canceled' ? (
                           <>
                             <AlertTriangle size={20} className="text-yellow-400" />
-                            <span className="text-white font-semibold">Canceling</span>
+                            <span className="text-white font-semibold">
+                              {clientData?.subscription_status === 'canceled' ? 'Cancelled' : 'Canceling'}
+                            </span>
+                          </>
+                        ) : clientData?.subscription_status === 'suspended' || clientData?.subscription_status === 'paused' ? (
+                          <>
+                            <AlertTriangle size={20} className="text-orange-400" />
+                            <span className="text-white font-semibold">Suspended</span>
+                          </>
+                        ) : clientData?.subscription_status === 'past_due' ? (
+                          <>
+                            <AlertTriangle size={20} className="text-red-400" />
+                            <span className="text-white font-semibold">Past Due</span>
                           </>
                         ) : (
                           <>

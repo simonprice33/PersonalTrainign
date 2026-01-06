@@ -116,6 +116,7 @@ async function startServer() {
     const createAdminRoutes = require('./routes/admin');
     const createClientRoutes = require('./routes/client');
     const createWebhookRoutes = require('./routes/webhooks');
+    const createPackageRoutes = require('./routes/packages');
 
     // Route dependencies
     const routeDependencies = {

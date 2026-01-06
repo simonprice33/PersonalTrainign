@@ -98,13 +98,25 @@ const ClientPortal = () => {
         }
       );
 
-      if (response.data.success) {
+      if (response.data.success && response.data.url) {
         // Open Stripe Customer Portal in a new tab
-        window.open(response.data.portal_url, '_blank');
+        window.open(response.data.url, '_blank');
+      } else {
+        setAlertModal({
+          show: true,
+          title: 'Error',
+          message: 'Failed to open billing portal',
+          type: 'error'
+        });
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to open billing portal');
       console.error('Billing portal error:', err);
+      setAlertModal({
+        show: true,
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to open billing portal. Please try again later.',
+        type: 'error'
+      });
     }
   };
 

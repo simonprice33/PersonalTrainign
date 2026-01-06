@@ -323,7 +323,9 @@ const ContentManagement = () => {
     setParqForm({
       question: question.question,
       order: question.order,
-      requires_doctor_approval: question.requires_doctor_approval || false
+      requires_doctor_approval: question.requires_doctor_approval || false,
+      applicable_packages: question.applicable_packages || [],
+      category: question.category || 'general'
     });
     setShowEditModal(true);
   };
@@ -334,9 +336,28 @@ const ContentManagement = () => {
       question: question.question,
       type: question.type || 'text',
       order: question.order,
-      options: question.options?.length ? question.options : ['']
+      options: question.options?.length ? question.options : [''],
+      applicable_packages: question.applicable_packages || [],
+      category: question.category || 'general'
     });
     setShowEditModal(true);
+  };
+
+  // Package selection handler for questions
+  const togglePackageSelection = (packageId, formType) => {
+    if (formType === 'parq') {
+      const current = parqForm.applicable_packages || [];
+      const updated = current.includes(packageId)
+        ? current.filter(p => p !== packageId)
+        : [...current, packageId];
+      setParqForm({ ...parqForm, applicable_packages: updated });
+    } else {
+      const current = healthForm.applicable_packages || [];
+      const updated = current.includes(packageId)
+        ? current.filter(p => p !== packageId)
+        : [...current, packageId];
+      setHealthForm({ ...healthForm, applicable_packages: updated });
+    }
   };
 
   // Feature/Option array handlers

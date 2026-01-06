@@ -141,6 +141,9 @@ async function startServer() {
     // Client routes
     app.use('/api/client', createClientRoutes(routeDependencies));
 
+    // Package routes (public + admin)
+    app.use('/api', createPackageRoutes(routeDependencies));
+
     // Portal session endpoint (can be used by both admin and client)
     app.post('/api/create-portal-session', authMiddleware.authenticate, async (req, res) => {
       try {

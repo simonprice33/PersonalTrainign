@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Users, LogOut, Key, CreditCard, Upload } from 'lucide-react';
+import { Mail, Users, LogOut, Key, CreditCard, Upload, Settings } from 'lucide-react';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();

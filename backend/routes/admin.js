@@ -102,6 +102,9 @@ function createAdminRoutes(dependencies) {
   // Cancel client subscription
   router.post('/client/:id/cancel-subscription', authenticate, (req, res) => controller.cancelSubscription(req, res));
 
+  // Create Stripe portal session for a client
+  router.post('/create-portal-session', authenticate, (req, res) => controller.createPortalSession(req, res));
+
   // ============================================================================
   // CLIENT USER MANAGEMENT
   // ============================================================================

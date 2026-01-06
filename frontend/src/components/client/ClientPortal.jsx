@@ -339,12 +339,12 @@ const ClientPortal = () => {
                     </div>
                     <div>
                       <p className="text-gray-400 text-sm">Monthly Price</p>
-                      <p className="text-white font-semibold text-xl mt-1">£{clientData?.price || 125}</p>
+                      <p className="text-white font-semibold text-xl mt-1">£{clientData?.price || clientData?.monthly_price || clientData?.subscription_price || 125}</p>
                     </div>
                     <div>
                       <p className="text-gray-400 text-sm">Billing Day</p>
                       <p className="text-white font-semibold mt-1">
-                        {clientData?.billingDay || 1}{(clientData?.billingDay || 1) === 1 ? 'st' : (clientData?.billingDay || 1) === 2 ? 'nd' : (clientData?.billingDay || 1) === 3 ? 'rd' : 'th'} of each month
+                        {clientData?.billingDay || clientData?.billing_day || 1}{(clientData?.billingDay || clientData?.billing_day || 1) === 1 ? 'st' : (clientData?.billingDay || clientData?.billing_day || 1) === 2 ? 'nd' : (clientData?.billingDay || clientData?.billing_day || 1) === 3 ? 'rd' : 'th'} of each month
                       </p>
                     </div>
                     {clientData?.subscription_ends_at && (

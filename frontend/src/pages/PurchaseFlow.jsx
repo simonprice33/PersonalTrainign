@@ -73,8 +73,8 @@ const PurchaseFlowContent = () => {
     try {
       const [pkgRes, parqRes, healthRes] = await Promise.all([
         axios.get(`${BACKEND_URL}/api/public/packages`),
-        axios.get(`${BACKEND_URL}/api/public/parq-questions`),
-        axios.get(`${BACKEND_URL}/api/public/health-questions`)
+        axios.get(`${BACKEND_URL}/api/public/parq-questions?packageId=${packageId}`),
+        axios.get(`${BACKEND_URL}/api/public/health-questions?packageId=${packageId}`)
       ]);
 
       const pkg = pkgRes.data.packages?.find(p => p.id === packageId);

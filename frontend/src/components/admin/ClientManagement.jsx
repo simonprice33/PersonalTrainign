@@ -271,18 +271,25 @@ const ClientManagement = () => {
   const handleManageBilling = async (customerId) => {
     try {
       const response = await axiosInstance.post(
-        `${BACKEND_URL}/api/create-portal-session`,
+        `${BACKEND_URL}/api/admin/create-portal-session`,
         { customerId }
       );
 
-      if (response.data.success) {
+      if (response.data.success && response.data.url) {
         window.open(response.data.url, '_blank');
+      } else {
+        setAlertModal({
+          show: true,
+          title: 'Error',
+          message: 'Failed to open billing portal',
+          type: 'error'
+        });
       }
     } catch (err) {
       setAlertModal({
         show: true,
         title: 'Error',
-        message: 'Failed to open billing portal',
+        message: err.response?.data?.message || 'Failed to open billing portal. Please check your Stripe configuration.',
         type: 'error'
       });
     }

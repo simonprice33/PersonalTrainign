@@ -260,12 +260,15 @@ class PackageController {
   async updateParqQuestion(req, res) {
     try {
       const { id } = req.params;
-      const { question, active, order } = req.body;
+      const { question, active, order, requires_doctor_approval, applicable_packages, category } = req.body;
 
       const updateData = {
         ...(question && { question }),
         ...(active !== undefined && { active }),
-        ...(order && { order }),
+        ...(order !== undefined && { order: parseInt(order) }),
+        ...(requires_doctor_approval !== undefined && { requires_doctor_approval }),
+        ...(applicable_packages !== undefined && { applicable_packages }),
+        ...(category !== undefined && { category }),
         updated_at: new Date()
       };
 

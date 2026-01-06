@@ -29,6 +29,7 @@ import ClientForgotPassword from "./components/client/ClientForgotPassword";
 import ClientCreatePassword from "./components/client/ClientCreatePassword";
 import ClientResetPassword from "./components/client/ClientResetPassword";
 import ClientPortal from "./components/client/ClientPortal";
+import JoinNow from "./pages/JoinNow";
 
 function App() {
   return (

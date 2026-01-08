@@ -483,7 +483,7 @@ const PurchaseFlowContent = () => {
             )}
 
             {/* Navigation Buttons */}
-            {currentStep < 5 && (
+            {((hasParq && currentStep < 5) || (!hasParq && currentStep < 4)) && (
               <div className="flex gap-4 mt-8">
                 {currentStep > 1 && (
                   <button
@@ -507,7 +507,9 @@ const PurchaseFlowContent = () => {
                     </>
                   ) : (
                     <>
-                      {currentStep === 4 ? 'Complete Purchase' : 'Continue'}
+                      {/* Button text changes based on flow */}
+                      {hasParq && currentStep === 4 ? 'Complete Purchase' : 
+                       !hasParq && currentStep === 3 ? 'Complete Purchase' : 'Continue'}
                       <ArrowRight size={20} />
                     </>
                   )}

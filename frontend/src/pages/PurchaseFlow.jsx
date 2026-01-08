@@ -84,7 +84,6 @@ const PurchaseFlowContent = () => {
       }
 
       setSelectedPackage(pkg);
-      console.log('PARQ questions received:', parqRes.data.questions?.length || 0, 'for package:', packageId);
       setParqQuestions(parqRes.data.questions || []);
       setHealthQuestions(healthRes.data.questions || []);
     } catch (error) {

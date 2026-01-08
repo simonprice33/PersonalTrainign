@@ -9,6 +9,70 @@ function createPackageRoutes(dependencies) {
   
   const controller = new PackageController(collections, stripe, config);
 
+  // Debug endpoint - check PARQ filtering (no auth required for debugging)
+  router.get('/debug/parq-check', async (req, res) => {
+    try {
+      const { packageId } = req.query;
+      
+      // Get all PARQ questions
+      const allQuestions = await collections.parqQuestions.find({}).toArray();
+      
+      // Get filtered questions using the same logic
+      let query = { active: true };
+      if (packageId) {
+        query.$or = [
+          { applicable_packages: { $exists: false } },
+          { applicable_packages: { $size: 0 } },
+          { applicable_packages: packageId },
+          { applicable_packages: 'all' }
+        ];
+      }
+      const filteredQuestions = await collections.parqQuestions.find(query).toArray();
+      
+      res.json({
+        packageId: packageId || 'none provided',
+        totalQuestions: allQuestions.length,
+        filteredCount: filteredQuestions.length,
+        allQuestions: allQuestions.map(q => ({
+          id: q.id,
+          question: q.question?.substring(0, 40),
+          applicable_packages: q.applicable_packages,
+          active: q.active
+        })),
+        filteredQuestions: filteredQuestions.map(q => ({
+          id: q.id,
+          question: q.question?.substring(0, 40)
+        }))
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Public migration endpoint (no auth for easier access during debugging)
+  router.get('/debug/migrate-parq', async (req, res) => {
+    try {
+      const result = await collections.parqQuestions.updateMany(
+        {},
+        { $set: { applicable_packages: ['pt-with-nutrition'] } }
+      );
+      
+      const allQuestions = await collections.parqQuestions.find({}).toArray();
+      
+      res.json({
+        success: true,
+        message: `Updated ${result.modifiedCount} PARQ questions`,
+        questions: allQuestions.map(q => ({
+          id: q.id,
+          question: q.question?.substring(0, 40),
+          applicable_packages: q.applicable_packages
+        }))
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Public routes
   router.get('/public/packages', (req, res) => controller.getPackages(req, res));
   router.get('/public/parq-questions', (req, res) => controller.getParqQuestions(req, res));

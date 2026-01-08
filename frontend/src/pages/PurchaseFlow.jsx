@@ -406,7 +406,7 @@ const PurchaseFlowContent = () => {
               />
             )}
 
-            {/* Step 2: PARQ (with PARQ flow) OR Health Questions (no PARQ flow) */}
+            {/* Step 2: PARQ (with PARQ) OR Health Questions (no PARQ) */}
             {currentStep === 2 && hasParq && (
               <Step2PARQ
                 questions={parqQuestions}
@@ -426,20 +426,27 @@ const PurchaseFlowContent = () => {
               />
             )}
 
-            {/* Step 3: Payment - Same for both flows */}
-            {currentStep === 3 && (
+            {/* Step 3: Health Questions (with PARQ) OR Payment (no PARQ) */}
+            {currentStep === 3 && hasParq && (
+              <Step4Health
+                questions={healthQuestions}
+                responses={healthResponses}
+                onChange={handleHealthChange}
+              />
+            )}
+            
+            {currentStep === 3 && !hasParq && (
               <Step3Payment
                 packageInfo={selectedPackage}
                 billing={billing}
               />
             )}
 
-            {/* Step 4: Health Questions (with PARQ flow only) OR Success (no PARQ flow) */}
+            {/* Step 4: Payment (with PARQ) OR Success (no PARQ) */}
             {currentStep === 4 && hasParq && (
-              <Step4Health
-                questions={healthQuestions}
-                responses={healthResponses}
-                onChange={handleHealthChange}
+              <Step3Payment
+                packageInfo={selectedPackage}
+                billing={billing}
               />
             )}
             
@@ -449,7 +456,7 @@ const PurchaseFlowContent = () => {
               />
             )}
 
-            {/* Step 5: Success (with PARQ flow only) */}
+            {/* Step 5: Success (with PARQ only) */}
             {currentStep === 5 && hasParq && (
               <Step5Success
                 clientEmail={clientInfo.email}

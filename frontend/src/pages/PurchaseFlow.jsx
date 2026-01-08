@@ -226,13 +226,12 @@ const PurchaseFlowContent = () => {
     }
   };
 
-  const handleFinalSubmit = async () => {
-    setSubmitting(true);
-
+  // Shared purchase submission logic
+  const submitPurchase = async (pmId = paymentMethodId) => {
     try {
       const response = await axios.post(`${BACKEND_URL}/api/public/purchase`, {
         packageId,
-        paymentMethodId,
+        paymentMethodId: pmId,
         clientInfo: {
           ...clientInfo,
           goals: [clientInfo.goal1, clientInfo.goal2, clientInfo.goal3].filter(Boolean)
@@ -252,9 +251,20 @@ const PurchaseFlowContent = () => {
       });
 
       if (response.data.success) {
-        setCurrentStep(5);
+        // Go to success step (4 for no PARQ, 5 for PARQ flow)
+        setCurrentStep(parqQuestions.length === 0 ? 4 : 5);
       }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
 
+  const handleFinalSubmit = async () => {
+    setSubmitting(true);
+
+    try {
+      await submitPurchase();
     } catch (error) {
       setAlertModal({
         show: true,

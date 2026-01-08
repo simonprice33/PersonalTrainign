@@ -204,15 +204,8 @@ const PurchaseFlowContent = () => {
       // Store the payment method ID for final submission
       setPaymentMethodId(setupIntent.payment_method);
 
-      // For NO PARQ flow: Payment is last step before success, so submit immediately
-      // For PARQ flow: Move to health questions (step 4)
-      if (parqQuestions.length === 0) {
-        // No PARQ flow - submit now and show success
-        await submitPurchase(setupIntent.payment_method);
-      } else {
-        // PARQ flow - move to health questions
-        setCurrentStep(4);
-      }
+      // Submit purchase and go to success
+      await submitPurchase(setupIntent.payment_method);
 
     } catch (error) {
       setAlertModal({

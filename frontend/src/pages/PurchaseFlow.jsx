@@ -423,6 +423,7 @@ const PurchaseFlowContent = () => {
 
           {/* Step Content */}
           <div className="bg-gray-800 rounded-2xl border border-cyan-500/30 p-8">
+            {/* Step 1: Client Info - Same for both flows */}
             {currentStep === 1 && (
               <Step1ClientInfo 
                 clientInfo={clientInfo}
@@ -431,7 +432,8 @@ const PurchaseFlowContent = () => {
               />
             )}
 
-            {currentStep === 2 && (
+            {/* Step 2: PARQ (with PARQ flow) OR Health Questions (no PARQ flow) */}
+            {currentStep === 2 && hasParq && (
               <Step2PARQ
                 questions={parqQuestions}
                 responses={parqResponses}
@@ -441,15 +443,8 @@ const PurchaseFlowContent = () => {
                 setHasDoctorApproval={setHasDoctorApproval}
               />
             )}
-
-            {currentStep === 3 && (
-              <Step3Payment
-                packageInfo={selectedPackage}
-                billing={billing}
-              />
-            )}
-
-            {currentStep === 4 && (
+            
+            {currentStep === 2 && !hasParq && (
               <Step4Health
                 questions={healthQuestions}
                 responses={healthResponses}
@@ -457,7 +452,31 @@ const PurchaseFlowContent = () => {
               />
             )}
 
-            {currentStep === 5 && (
+            {/* Step 3: Payment - Same for both flows */}
+            {currentStep === 3 && (
+              <Step3Payment
+                packageInfo={selectedPackage}
+                billing={billing}
+              />
+            )}
+
+            {/* Step 4: Health Questions (with PARQ flow only) OR Success (no PARQ flow) */}
+            {currentStep === 4 && hasParq && (
+              <Step4Health
+                questions={healthQuestions}
+                responses={healthResponses}
+                onChange={handleHealthChange}
+              />
+            )}
+            
+            {currentStep === 4 && !hasParq && (
+              <Step5Success
+                clientEmail={clientInfo.email}
+              />
+            )}
+
+            {/* Step 5: Success (with PARQ flow only) */}
+            {currentStep === 5 && hasParq && (
               <Step5Success
                 clientEmail={clientInfo.email}
               />

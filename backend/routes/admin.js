@@ -108,27 +108,32 @@ function createAdminRoutes(dependencies) {
   // Migrate PARQ questions to set applicable_packages for PT only
   router.post('/migrate-parq-to-pt-only', authenticate, async (req, res) => {
     try {
+      // Force update ALL PARQ questions to only apply to PT with Nutrition
       const result = await dependencies.collections.parqQuestions.updateMany(
-        { applicable_packages: { $exists: false } },
+        {}, // Match ALL documents
         { $set: { applicable_packages: ['pt-with-nutrition'] } }
       );
       
-      const result2 = await dependencies.collections.parqQuestions.updateMany(
-        { applicable_packages: { $size: 0 } },
-        { $set: { applicable_packages: ['pt-with-nutrition'] } }
-      );
+      // Log for debugging
+      const allQuestions = await dependencies.collections.parqQuestions.find({}).toArray();
+      console.log('After migration, PARQ questions:', allQuestions.map(q => ({
+        question: q.question?.substring(0, 30),
+        applicable_packages: q.applicable_packages
+      })));
       
       res.json({
         success: true,
-        message: `Updated ${result.modifiedCount + result2.modifiedCount} PARQ questions to PT with Nutrition only`,
-        details: {
-          noFieldUpdated: result.modifiedCount,
-          emptyArrayUpdated: result2.modifiedCount
-        }
+        message: `Updated ${result.modifiedCount} PARQ questions to PT with Nutrition only`,
+        totalQuestions: allQuestions.length,
+        questions: allQuestions.map(q => ({
+          id: q.id,
+          question: q.question?.substring(0, 50),
+          applicable_packages: q.applicable_packages
+        }))
       });
     } catch (error) {
       console.error('Migration error:', error);
-      res.status(500).json({ success: false, message: 'Migration failed' });
+      res.status(500).json({ success: false, message: 'Migration failed: ' + error.message });
     }
   });
 

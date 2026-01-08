@@ -280,42 +280,25 @@ const PurchaseFlowContent = () => {
   // Determine if this package has PARQ
   const hasParq = parqQuestions.length > 0;
 
-  // Step flow differs based on package:
-  // WITH PARQ: 1=ClientInfo, 2=PARQ, 3=Payment, 4=Health, 5=Success
-  // NO PARQ:   1=ClientInfo, 2=Health, 3=Payment, 4=Success (skip PARQ, health before payment)
+  // Step flow - Health Questions always come BEFORE Payment:
+  // WITH PARQ: 1=ClientInfo, 2=PARQ, 3=Health, 4=Payment, 5=Success
+  // NO PARQ:   1=ClientInfo, 2=Health, 3=Payment, 4=Success
 
   const nextStep = () => {
     if (currentStep === 1 && !validateStep1()) return;
     
     if (hasParq) {
-      // Flow WITH PARQ: ClientInfo -> PARQ -> Payment -> Health -> Success
+      // Flow WITH PARQ: ClientInfo -> PARQ -> Health -> Payment -> Success
       if (currentStep === 2 && !validateStep2()) return;
-      if (currentStep === 3) {
-        handlePayment();
-        return;
-      }
       if (currentStep === 4) {
-        handleFinalSubmit();
+        handlePayment();
         return;
       }
       setCurrentStep(prev => prev + 1);
     } else {
       // Flow WITHOUT PARQ: ClientInfo -> Health -> Payment -> Success
-      if (currentStep === 1) {
-        setCurrentStep(2); // Go to Health Questions
-        return;
-      }
-      if (currentStep === 2) {
-        // Validate health questions before moving to payment
-        setCurrentStep(3);
-        return;
-      }
       if (currentStep === 3) {
         handlePayment();
-        return;
-      }
-      if (currentStep === 4) {
-        handleFinalSubmit();
         return;
       }
       setCurrentStep(prev => prev + 1);
@@ -323,21 +306,7 @@ const PurchaseFlowContent = () => {
   };
 
   const prevStep = () => {
-    if (hasParq) {
-      // Flow WITH PARQ
-      setCurrentStep(prev => prev - 1);
-    } else {
-      // Flow WITHOUT PARQ
-      if (currentStep === 3) {
-        setCurrentStep(2); // Back to Health
-        return;
-      }
-      if (currentStep === 2) {
-        setCurrentStep(1); // Back to Client Info
-        return;
-      }
-      setCurrentStep(prev => prev - 1);
-    }
+    setCurrentStep(prev => prev - 1);
   };
 
   if (loading) {

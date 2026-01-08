@@ -360,45 +360,33 @@ const PurchaseFlowContent = () => {
           </div>
 
           {/* Progress Steps */}
-          {currentStep < 5 && (
+          {((hasParq && currentStep < 5) || (!hasParq && currentStep < 4)) && (
             <div className="flex items-center justify-between mb-12 overflow-x-auto">
               {(() => {
-                // Dynamic steps based on whether PARQ is required
-                // WITH PARQ: ClientInfo -> PARQ -> Payment -> Health
+                // Dynamic steps - Health Questions always before Payment
+                // WITH PARQ: ClientInfo -> PARQ -> Health -> Payment
                 // NO PARQ: ClientInfo -> Health -> Payment
                 const steps = hasParq 
-                  ? ['Client Info', 'PARQ', 'Payment', 'Health Questions']
+                  ? ['Client Info', 'PARQ', 'Health Questions', 'Payment']
                   : ['Client Info', 'Health Questions', 'Payment'];
-                
-                // Map current step to display step
-                const getDisplayStep = () => {
-                  if (!hasParq) {
-                    // No PARQ flow: 1=ClientInfo, 2=Health, 3=Payment
-                    if (currentStep === 1) return 1;
-                    if (currentStep === 2) return 2; // Health is step 2
-                    if (currentStep === 3) return 3; // Payment is step 3
-                  }
-                  return currentStep;
-                };
-                const displayStep = getDisplayStep();
                 
                 return steps.map((step, index) => (
                   <div key={index} className="flex items-center">
                     <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                      index + 1 === displayStep 
+                      index + 1 === currentStep 
                         ? 'border-cyan-400 bg-cyan-400 text-gray-900' 
-                        : index + 1 < displayStep 
+                        : index + 1 < currentStep 
                         ? 'border-green-400 bg-green-400 text-gray-900'
                         : 'border-gray-600 text-gray-400'
                     } font-bold text-sm flex-shrink-0`}>
-                      {index + 1 < displayStep ? <Check size={20} /> : index + 1}
+                      {index + 1 < currentStep ? <Check size={20} /> : index + 1}
                     </div>
-                    <span className={`ml-2 text-xs ${index + 1 === displayStep ? 'text-cyan-400' : index + 1 < displayStep ? 'text-green-400' : 'text-gray-400'} hidden sm:block`}>
+                    <span className={`ml-2 text-xs ${index + 1 === currentStep ? 'text-cyan-400' : index + 1 < currentStep ? 'text-green-400' : 'text-gray-400'} hidden sm:block`}>
                       {step}
                     </span>
                     {index < steps.length - 1 && (
                       <div className={`h-1 w-8 sm:w-16 mx-2 ${
-                        index + 1 < displayStep ? 'bg-green-400' : 'bg-gray-600'
+                        index + 1 < currentStep ? 'bg-green-400' : 'bg-gray-600'
                       } flex-shrink-0`} />
                     )}
                   </div>

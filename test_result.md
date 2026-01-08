@@ -746,6 +746,18 @@ frontend:
           agent: "testing"
           comment: "JOIN NOW PURCHASE FLOW UI TESTING COMPLETED - ALL FRONTEND FUNCTIONALITY WORKING! ✅ Join Now Page: Successfully loads at /join-now with two package cards (Nutrition Only £75, Personal Training with Nutrition £125). Both cards display correctly with 'Buy Now' and 'Book a Call' buttons. ✅ Navigation: Clicking 'Buy Now' on Nutrition Only package successfully navigates to /purchase?package=nutrition-only with correct package parameter. ✅ Step 1 (Client Info): Form loads correctly with all required fields (Full Name, Age, Email, Phone, Address Line 1, City, Postcode, Goal 1) and step indicators (1: Client Info, 2: PARQ, 3: Payment, 4: Health Questions). Form accepts input and validation works - shows 'Missing Information' modal when required fields are empty. ✅ Multi-step Structure: Purchase flow properly structured with 4-step progression indicator at top. Form validation prevents progression until all required fields are completed. ✅ UI/UX: Dark theme with cyan accents consistent throughout. Responsive design with proper form layout and visual feedback. ✅ Integration Ready: Stripe payment integration properly set up (sandboxed in test environment). The entire Join Now to Purchase flow UI is fully functional and ready for production."
 
+  - task: "Nutrition Only PARQ Skip Functionality"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/PurchaseFlow.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "NUTRITION ONLY PARQ SKIP TESTING COMPLETED - FUNCTIONALITY WORKING PERFECTLY! ✅ Backend API: GET /api/public/parq-questions?packageId=nutrition-only correctly returns 0 questions (empty array), confirming PARQ questions are properly filtered by package. ✅ Console Logs: Browser console shows 'PARQ questions received: 0 for package: nutrition-only' confirming frontend receives correct data. ✅ Frontend Logic: PurchaseFlow.jsx nextStep() function (lines 270-274) correctly implements PARQ skip logic - when parqQuestions.length === 0, it logs 'Skipping PARQ step - no questions' and jumps directly from step 1 to step 3. ✅ UI Structure: Purchase flow displays correct 4-step progression (Client Info, PARQ, Payment, Health Questions) with step 1 properly highlighted. Form accepts all required data (name, age, email, phone, address, goals) as specified in test requirements. ✅ Step Navigation: The Continue button on Step 1 triggers the skip logic and navigates directly to Step 3 (Payment), bypassing Step 2 (PARQ) entirely. ✅ Code Implementation: The skip functionality is properly implemented in both frontend logic and backend API filtering. The nutrition-only package is correctly configured to have no applicable PARQ questions, enabling the skip behavior as designed."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"

@@ -174,6 +174,8 @@ class DatabaseConfig {
             id: 'parq-1',
             question: 'Has your doctor ever said that you have a heart condition?',
             order: 1,
+            requires_doctor_approval: true,
+            applicable_packages: ['pt-with-nutrition'],
             active: true,
             created_at: new Date()
           },
@@ -181,6 +183,8 @@ class DatabaseConfig {
             id: 'parq-2',
             question: 'Do you feel pain in your chest when you do physical activity?',
             order: 2,
+            requires_doctor_approval: true,
+            applicable_packages: ['pt-with-nutrition'],
             active: true,
             created_at: new Date()
           },
@@ -188,6 +192,8 @@ class DatabaseConfig {
             id: 'parq-3',
             question: 'Do you lose your balance because of dizziness or do you ever lose consciousness?',
             order: 3,
+            requires_doctor_approval: true,
+            applicable_packages: ['pt-with-nutrition'],
             active: true,
             created_at: new Date()
           },
@@ -195,6 +201,8 @@ class DatabaseConfig {
             id: 'parq-4',
             question: 'Do you have a bone or joint problem that could be made worse by physical activity?',
             order: 4,
+            requires_doctor_approval: true,
+            applicable_packages: ['pt-with-nutrition'],
             active: true,
             created_at: new Date()
           },
@@ -202,11 +210,22 @@ class DatabaseConfig {
             id: 'parq-5',
             question: 'Are you currently taking medication for blood pressure or a heart condition?',
             order: 5,
+            requires_doctor_approval: true,
+            applicable_packages: ['pt-with-nutrition'],
             active: true,
             created_at: new Date()
           }
         ]);
-        console.log('✅ Seeded default PARQ questions');
+        console.log('✅ Seeded default PARQ questions (PT with Nutrition only)');
+      } else {
+        // Migrate existing PARQ questions to have applicable_packages if not set
+        const updateResult = await this.collections.parqQuestions.updateMany(
+          { applicable_packages: { $exists: false } },
+          { $set: { applicable_packages: ['pt-with-nutrition'] } }
+        );
+        if (updateResult.modifiedCount > 0) {
+          console.log(`✅ Migrated ${updateResult.modifiedCount} PARQ questions to PT with Nutrition only`);
+        }
       }
 
       // Seed health questions if empty

@@ -160,20 +160,27 @@ class PackageController {
       let query = { active: true };
       
       // If packageId provided, filter questions that apply to this package
-      // Questions with empty/null applicable_packages apply to ALL packages
       if (packageId) {
+        // Questions apply if:
+        // 1. applicable_packages field doesn't exist (legacy - show for all)
+        // 2. applicable_packages is empty array (show for all)
+        // 3. applicable_packages array contains this packageId
+        // 4. applicable_packages array contains 'all'
         query.$or = [
           { applicable_packages: { $exists: false } },
           { applicable_packages: { $size: 0 } },
-          { applicable_packages: packageId },
-          { applicable_packages: 'all' }
+          { applicable_packages: { $in: [packageId, 'all'] } }
         ];
       }
       
+      console.log(`📋 PARQ query for packageId="${packageId}":`, JSON.stringify(query));
+      
       const questions = await this.collections.parqQuestions
-        .find(query, { _id: 0 })
+        .find(query, { projection: { _id: 0 } })
         .sort({ order: 1 })
         .toArray();
+      
+      console.log(`📋 PARQ results: ${questions.length} questions found`);
 
       res.json({
         success: true,

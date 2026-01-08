@@ -416,13 +416,42 @@ const ContentManagement = () => {
                 <p className="text-gray-400 text-sm mt-1">Manage packages, PARQ and health questions</p>
               </div>
             </div>
-            <button
-              onClick={openAddModal}
-              className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors"
-            >
-              <Plus size={18} />
-              Add New
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await axiosInstance.post(`${BACKEND_URL}/api/admin/migrate-parq-to-pt-only`);
+                    if (response.data.success) {
+                      setAlertModal({
+                        show: true,
+                        title: 'Migration Complete',
+                        message: response.data.message,
+                        type: 'success'
+                      });
+                      fetchAllData();
+                    }
+                  } catch (err) {
+                    setAlertModal({
+                      show: true,
+                      title: 'Error',
+                      message: 'Migration failed',
+                      type: 'error'
+                    });
+                  }
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black rounded-lg transition-colors text-sm"
+                title="Set all PARQ questions to only show for PT with Nutrition package"
+              >
+                Migrate PARQ to PT Only
+              </button>
+              <button
+                onClick={openAddModal}
+                className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors"
+              >
+                <Plus size={18} />
+                Add New
+              </button>
+            </div>
           </div>
         </div>
       </div>

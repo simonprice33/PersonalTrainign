@@ -332,18 +332,16 @@ class PackageController {
       let query = { active: true };
       
       // If packageId provided, filter questions that apply to this package
-      // Questions with empty/null applicable_packages apply to ALL packages
       if (packageId) {
         query.$or = [
           { applicable_packages: { $exists: false } },
           { applicable_packages: { $size: 0 } },
-          { applicable_packages: packageId },
-          { applicable_packages: 'all' }
+          { applicable_packages: { $in: [packageId, 'all'] } }
         ];
       }
       
       const questions = await this.collections.healthQuestions
-        .find(query, { _id: 0 })
+        .find(query, { projection: { _id: 0 } })
         .sort({ order: 1 })
         .toArray();
 

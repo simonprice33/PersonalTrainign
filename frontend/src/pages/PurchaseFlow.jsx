@@ -260,34 +260,67 @@ const PurchaseFlowContent = () => {
     }
   };
 
+  // Determine if this package has PARQ
+  const hasParq = parqQuestions.length > 0;
+
+  // Step flow differs based on package:
+  // WITH PARQ: 1=ClientInfo, 2=PARQ, 3=Payment, 4=Health, 5=Success
+  // NO PARQ:   1=ClientInfo, 2=Health, 3=Payment, 4=Success (skip PARQ, health before payment)
+
   const nextStep = () => {
     if (currentStep === 1 && !validateStep1()) return;
     
-    // Skip PARQ step if no PARQ questions for this package
-    if (currentStep === 1 && parqQuestions.length === 0) {
-      setCurrentStep(3); // Go directly to payment
-      return;
+    if (hasParq) {
+      // Flow WITH PARQ: ClientInfo -> PARQ -> Payment -> Health -> Success
+      if (currentStep === 2 && !validateStep2()) return;
+      if (currentStep === 3) {
+        handlePayment();
+        return;
+      }
+      if (currentStep === 4) {
+        handleFinalSubmit();
+        return;
+      }
+      setCurrentStep(prev => prev + 1);
+    } else {
+      // Flow WITHOUT PARQ: ClientInfo -> Health -> Payment -> Success
+      if (currentStep === 1) {
+        setCurrentStep(2); // Go to Health Questions
+        return;
+      }
+      if (currentStep === 2) {
+        // Validate health questions before moving to payment
+        setCurrentStep(3);
+        return;
+      }
+      if (currentStep === 3) {
+        handlePayment();
+        return;
+      }
+      if (currentStep === 4) {
+        handleFinalSubmit();
+        return;
+      }
+      setCurrentStep(prev => prev + 1);
     }
-    
-    if (currentStep === 2 && !validateStep2()) return;
-    if (currentStep === 3) {
-      handlePayment();
-      return;
-    }
-    if (currentStep === 4) {
-      handleFinalSubmit();
-      return;
-    }
-    setCurrentStep(prev => prev + 1);
   };
 
   const prevStep = () => {
-    // Skip back over PARQ step if no PARQ questions
-    if (currentStep === 3 && parqQuestions.length === 0) {
-      setCurrentStep(1);
-      return;
+    if (hasParq) {
+      // Flow WITH PARQ
+      setCurrentStep(prev => prev - 1);
+    } else {
+      // Flow WITHOUT PARQ
+      if (currentStep === 3) {
+        setCurrentStep(2); // Back to Health
+        return;
+      }
+      if (currentStep === 2) {
+        setCurrentStep(1); // Back to Client Info
+        return;
+      }
+      setCurrentStep(prev => prev - 1);
     }
-    setCurrentStep(prev => prev - 1);
   };
 
   if (loading) {

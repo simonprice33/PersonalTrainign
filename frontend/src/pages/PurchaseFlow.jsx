@@ -263,8 +263,9 @@ const PurchaseFlowContent = () => {
   const nextStep = () => {
     if (currentStep === 1 && !validateStep1()) return;
     
-    // Skip PARQ step if no PARQ questions for this package
-    if (currentStep === 1 && parqQuestions.length === 0) {
+    // Skip PARQ step if no PARQ questions for this package OR if it's nutrition-only
+    const shouldSkipParq = parqQuestions.length === 0 || packageId === 'nutrition-only';
+    if (currentStep === 1 && shouldSkipParq) {
       setCurrentStep(3); // Go directly to payment
       return;
     }
@@ -282,8 +283,9 @@ const PurchaseFlowContent = () => {
   };
 
   const prevStep = () => {
-    // Skip back over PARQ step if no PARQ questions
-    if (currentStep === 3 && parqQuestions.length === 0) {
+    // Skip back over PARQ step if no PARQ questions OR if it's nutrition-only
+    const shouldSkipParq = parqQuestions.length === 0 || packageId === 'nutrition-only';
+    if (currentStep === 3 && shouldSkipParq) {
       setCurrentStep(1);
       return;
     }

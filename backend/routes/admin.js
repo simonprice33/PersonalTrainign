@@ -105,6 +105,33 @@ function createAdminRoutes(dependencies) {
   // Create Stripe portal session for a client
   router.post('/create-portal-session', authenticate, (req, res) => controller.createPortalSession(req, res));
 
+  // Migrate PARQ questions to set applicable_packages for PT only
+  router.post('/migrate-parq-to-pt-only', authenticate, async (req, res) => {
+    try {
+      const result = await dependencies.collections.parqQuestions.updateMany(
+        { applicable_packages: { $exists: false } },
+        { $set: { applicable_packages: ['pt-with-nutrition'] } }
+      );
+      
+      const result2 = await dependencies.collections.parqQuestions.updateMany(
+        { applicable_packages: { $size: 0 } },
+        { $set: { applicable_packages: ['pt-with-nutrition'] } }
+      );
+      
+      res.json({
+        success: true,
+        message: `Updated ${result.modifiedCount + result2.modifiedCount} PARQ questions to PT with Nutrition only`,
+        details: {
+          noFieldUpdated: result.modifiedCount,
+          emptyArrayUpdated: result2.modifiedCount
+        }
+      });
+    } catch (error) {
+      console.error('Migration error:', error);
+      res.status(500).json({ success: false, message: 'Migration failed' });
+    }
+  });
+
   // ============================================================================
   // CLIENT USER MANAGEMENT
   // ============================================================================

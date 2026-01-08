@@ -378,17 +378,19 @@ const PurchaseFlowContent = () => {
             <div className="flex items-center justify-between mb-12 overflow-x-auto">
               {(() => {
                 // Dynamic steps based on whether PARQ is required
-                const hasParq = parqQuestions.length > 0;
+                // WITH PARQ: ClientInfo -> PARQ -> Payment -> Health
+                // NO PARQ: ClientInfo -> Health -> Payment
                 const steps = hasParq 
                   ? ['Client Info', 'PARQ', 'Payment', 'Health Questions']
-                  : ['Client Info', 'Payment', 'Health Questions'];
+                  : ['Client Info', 'Health Questions', 'Payment'];
                 
                 // Map current step to display step
                 const getDisplayStep = () => {
                   if (!hasParq) {
+                    // No PARQ flow: 1=ClientInfo, 2=Health, 3=Payment
                     if (currentStep === 1) return 1;
-                    if (currentStep === 3) return 2; // Payment is step 2 when no PARQ
-                    if (currentStep === 4) return 3; // Health is step 3 when no PARQ
+                    if (currentStep === 2) return 2; // Health is step 2
+                    if (currentStep === 3) return 3; // Payment is step 3
                   }
                   return currentStep;
                 };

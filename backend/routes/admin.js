@@ -105,7 +105,7 @@ function createAdminRoutes(dependencies) {
   // Create Stripe portal session for a client
   router.post('/create-portal-session', authenticate, (req, res) => controller.createPortalSession(req, res));
 
-  // Migrate PARQ questions to set applicable_packages for PT only
+  // Migrate PARQ questions to set applicable_packages for PT only (POST)
   router.post('/migrate-parq-to-pt-only', authenticate, async (req, res) => {
     try {
       // Force update ALL PARQ questions to only apply to PT with Nutrition
@@ -120,6 +120,32 @@ function createAdminRoutes(dependencies) {
         question: q.question?.substring(0, 30),
         applicable_packages: q.applicable_packages
       })));
+      
+      res.json({
+        success: true,
+        message: `Updated ${result.modifiedCount} PARQ questions to PT with Nutrition only`,
+        totalQuestions: allQuestions.length,
+        questions: allQuestions.map(q => ({
+          id: q.id,
+          question: q.question?.substring(0, 50),
+          applicable_packages: q.applicable_packages
+        }))
+      });
+    } catch (error) {
+      console.error('Migration error:', error);
+      res.status(500).json({ success: false, message: 'Migration failed: ' + error.message });
+    }
+  });
+
+  // GET version - just visit this URL in browser while logged in
+  router.get('/migrate-parq-to-pt-only', authenticate, async (req, res) => {
+    try {
+      const result = await dependencies.collections.parqQuestions.updateMany(
+        {},
+        { $set: { applicable_packages: ['pt-with-nutrition'] } }
+      );
+      
+      const allQuestions = await dependencies.collections.parqQuestions.find({}).toArray();
       
       res.json({
         success: true,

@@ -390,33 +390,29 @@ class EmailService {
           body: {
             contentType: 'HTML',
             content: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2>Complete Your Subscription Setup</h2>
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #1a1a2e;">Complete Your Subscription Setup</h2>
                 <p>Hi ${name},</p>
                 <p>Welcome to Simon Price PT! I'm excited to start working with you.</p>
                 
                 <p>To complete your subscription setup, please click the button below to add your payment details securely:</p>
                 
-                <div style="text-align: center; margin: 30px 0;">
-                  <a href="${paymentLink}" 
-                     style="background: linear-gradient(135deg, #d3ff62 0%, #a8d946 100%); 
-                            color: #1a1a2e; 
-                            padding: 15px 40px; 
-                            text-decoration: none; 
-                            border-radius: 30px; 
-                            font-weight: bold;
-                            display: inline-block;">
-                    Complete Setup
-                  </a>
-                </div>
+                <table cellpadding="0" cellspacing="0" border="0" style="margin: 30px auto;">
+                  <tr>
+                    <td align="center" bgcolor="#22c55e" style="border-radius: 8px;">
+                      <a href="${paymentLink}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; border-radius: 8px;">
+                        Complete Setup
+                      </a>
+                    </td>
+                  </tr>
+                </table>
 
                 <p>Once completed, you'll receive another email to set up your client portal password where you can manage your subscription and account details.</p>
                 
                 <p style="margin-top: 30px;">
                   Looking forward to working with you!<br>
                   <strong>Simon Price</strong><br>
-                  Personal Trainer<br>
-                  📧 simon.price@simonprice-pt.co.uk
+                  Personal Trainer
                 </p>
               </div>
             `

@@ -126,6 +126,18 @@ class ClientController {
 
       const { token, paymentMethodId, ...clientData } = req.body;
 
+      // Debug log to see what data we're receiving
+      console.log('📝 Complete onboarding received:', {
+        hasToken: !!token,
+        hasPaymentMethodId: !!paymentMethodId,
+        clientData: {
+          firstName: clientData.firstName,
+          lastName: clientData.lastName,
+          dateOfBirth: clientData.dateOfBirth,
+          addressLine1: clientData.addressLine1
+        }
+      });
+
       // Verify token and extract email
       let decoded;
       try {

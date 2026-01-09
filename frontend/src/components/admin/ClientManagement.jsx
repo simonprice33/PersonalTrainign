@@ -521,7 +521,7 @@ const ClientManagement = () => {
                               </button>
                             )}
                             <button
-                              onClick={() => handleManageBilling(client.stripe_customer_id)}
+                              onClick={() => handleManageBilling(client.stripe_customer_id || client.customer_id)}
                               className="flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors text-sm"
                             >
                               <ExternalLink size={16} />
@@ -529,7 +529,7 @@ const ClientManagement = () => {
                             </button>
                             {client.subscription_status === 'active' && !client.cancel_at_period_end && (
                               <button
-                                onClick={() => handleCancelSubscription(client.stripe_customer_id, client.name)}
+                                onClick={() => handleCancelSubscription(client.stripe_customer_id || client.customer_id, client.name)}
                                 className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-sm"
                               >
                                 <XCircle size={16} />

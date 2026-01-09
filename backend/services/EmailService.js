@@ -323,22 +323,21 @@ class EmailService {
           body: {
             contentType: 'HTML',
             content: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2>${title}</h2>
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #1a1a2e;">${title}</h2>
                 <p>You requested to reset your password.</p>
                 <p>Click the button below to reset your password:</p>
-                <div style="text-align: center; margin: 30px 0;">
-                  <a href="${resetLink}" 
-                     style="background: linear-gradient(135deg, #d3ff62 0%, #a8d946 100%); 
-                            color: #1a1a2e; 
-                            padding: 12px 30px; 
-                            text-decoration: none; 
-                            border-radius: 25px; 
-                            font-weight: bold;
-                            display: inline-block;">
-                    Reset Password
-                  </a>
-                </div>
+                
+                <table cellpadding="0" cellspacing="0" border="0" style="margin: 30px auto;">
+                  <tr>
+                    <td align="center" bgcolor="#22c55e" style="border-radius: 8px;">
+                      <a href="${resetLink}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; border-radius: 8px;">
+                        Reset Password
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+                
                 <p><strong>This link will expire in 1 hour.</strong></p>
                 <p>If you didn't request this reset, please ignore this email and your password will remain unchanged.</p>
                 <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">

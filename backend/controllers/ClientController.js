@@ -176,6 +176,8 @@ class ClientController {
         ? `${clientData.firstName} ${clientData.lastName}`.trim()
         : (clientData.firstName || clientData.lastName || client.name || '');
 
+      console.log('📝 Updating Stripe customer with name:', fullName);
+
       // Update Stripe customer with default payment method AND updated name
       await this.stripe.customers.update(client.customer_id, {
         name: fullName,
@@ -187,6 +189,8 @@ class ClientController {
           last_name: clientData.lastName || ''
         }
       });
+
+      console.log('✅ Stripe customer updated with name:', fullName);
 
       // Create subscription with dynamic pricing (like original working code)
       const today = new Date();

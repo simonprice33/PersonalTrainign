@@ -49,9 +49,10 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - [x] Client Portal with profile endpoint
 - [x] Password Reset flow
 - [x] Admin Billing Portal endpoint fixed
-- [x] **Removed "Simon Price PT" text from purchase flow header**
-- [x] **Added First Name / Last Name editable fields to Client Onboarding form**
-- [x] **Backend updated to save first/last name and update client record**
+- [x] Removed "Simon Price PT" text from purchase flow header
+- [x] **Admin "Create Payment Link" form now has First Name & Last Name fields**
+- [x] **Backend stores first_name/last_name and sends full name to Stripe**
+- [x] **Client Onboarding form shows editable First/Last Name (pre-populated from admin entry)**
 
 ### Known Issues
 1. **P1 - Data inconsistency in Admin "Edit Client" modal**: Legacy vs. new client data formats cause display issues. Needs a normalization utility.

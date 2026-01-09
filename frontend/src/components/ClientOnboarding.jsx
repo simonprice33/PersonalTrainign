@@ -536,6 +536,44 @@ const OnboardingForm = () => {
           <div className="mb-8">
             <h3 className="text-xl font-bold text-white mb-4">Personal Details</h3>
             <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-gray-300 text-sm font-medium mb-2">
+                    First Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    name="firstName"
+                    autoComplete="given-name"
+                    data-lpignore="true"
+                    data-form-type="other"
+                    data-testid="first-name-input"
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                    placeholder="John"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-sm font-medium mb-2">
+                    Last Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    name="lastName"
+                    autoComplete="family-name"
+                    data-lpignore="true"
+                    data-form-type="other"
+                    data-testid="last-name-input"
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                    placeholder="Smith"
+                  />
+                </div>
+              </div>
               <div>
                 <label className="block text-gray-300 text-sm font-medium mb-2">
                   Date of Birth *

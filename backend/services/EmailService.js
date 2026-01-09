@@ -266,23 +266,20 @@ class EmailService {
           body: {
             contentType: 'HTML',
             content: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2>Set Up Your Client Portal</h2>
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #1a1a2e;">Set Up Your Client Portal</h2>
                 <p>Hi there,</p>
                 <p>Welcome! You now have access to your personal client portal where you can manage your subscription, update your information, and more.</p>
                 
-                <div style="text-align: center; margin: 30px 0;">
-                  <a href="${passwordLink}" 
-                     style="background: linear-gradient(135deg, #d3ff62 0%, #a8d946 100%); 
-                            color: #1a1a2e; 
-                            padding: 15px 40px; 
-                            text-decoration: none; 
-                            border-radius: 30px; 
-                            font-weight: bold;
-                            display: inline-block;">
-                    Create Your Password
-                  </a>
-                </div>
+                <table cellpadding="0" cellspacing="0" border="0" style="margin: 30px auto;">
+                  <tr>
+                    <td align="center" bgcolor="#22c55e" style="border-radius: 8px;">
+                      <a href="${passwordLink}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; border-radius: 8px;">
+                        Create Your Password
+                      </a>
+                    </td>
+                  </tr>
+                </table>
 
                 <p><strong>What you can do in the portal:</strong></p>
                 <ul>
@@ -297,8 +294,7 @@ class EmailService {
                 <p style="margin-top: 30px;">
                   Best regards,<br>
                   <strong>Simon Price</strong><br>
-                  Personal Trainer<br>
-                  📧 simon.price@simonprice-pt.co.uk
+                  Personal Trainer
                 </p>
               </div>
             `

@@ -580,7 +580,7 @@ const ClientManagement = () => {
             <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-6">
               <h3 className="text-white font-medium mb-2">Subscription Details:</h3>
               <ul className="text-sm text-blue-300 space-y-1">
-                <li>• Client: {formData.name}</li>
+                <li>• Client: {formData.firstName} {formData.lastName}</li>
                 <li>• Monthly Price: £{formData.price}</li>
                 <li>• Billing Day: {formData.billingDay}{formData.billingDay === 1 ? 'st' : formData.billingDay === 2 ? 'nd' : formData.billingDay === 3 ? 'rd' : 'th'} of each month</li>
                 <li>• Proration: {formData.prorate ? 'Enabled (prorated first charge)' : 'Disabled (full charge immediately)'}</li>

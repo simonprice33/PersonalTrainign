@@ -451,7 +451,12 @@ class AdminController {
         });
       }
 
-      const { name, email, phone, telephone, address, billingDay, price } = req.body;
+      const { firstName, lastName, name, email, phone, telephone, address, billingDay, price } = req.body;
+      
+      // Build full name from firstName + lastName, or use provided name
+      const fullName = (firstName && lastName) 
+        ? `${firstName} ${lastName}`.trim()
+        : name || '';
       
       // Frontend sends 'telephone', backend uses 'phone'
       const phoneNumber = phone || telephone || null;
@@ -469,14 +474,16 @@ class AdminController {
         });
       }
 
-      // Create Stripe customer (use exact email as entered)
+      // Create Stripe customer with first/last name for proper billing
       const customer = await this.stripe.customers.create({
-        name,
+        name: fullName,
         email,
         phone: phoneNumber || undefined,
         address: address || undefined,
         metadata: {
-          source: 'admin_created'
+          source: 'admin_created',
+          first_name: firstName || '',
+          last_name: lastName || ''
         }
       });
 
@@ -484,10 +491,12 @@ class AdminController {
       const paymentToken = this.authService.generatePasswordSetupToken(email, 'client_onboarding');
       const paymentLink = `${this.config.frontendUrl}/client-onboarding?token=${paymentToken}`;
 
-      // Store client in database (use exact email as entered)
+      // Store client in database with first/last name
       const clientData = {
         customer_id: customer.id,
-        name,
+        name: fullName,
+        first_name: firstName || '',
+        last_name: lastName || '',
         email,
         phone: phoneNumber,
         address: address || null,
@@ -503,7 +512,7 @@ class AdminController {
       await this.collections.clients.insertOne(clientData);
 
       // Send payment link email
-      await this.emailService.sendPaymentLinkEmail(email, name, paymentLink);
+      await this.emailService.sendPaymentLinkEmail(email, fullName, paymentLink);
 
       console.log(`✅ Payment link created and sent to: ${email}`);
 

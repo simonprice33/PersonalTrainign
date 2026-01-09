@@ -268,6 +268,7 @@ class ClientController {
         updateData.name = fullName;
         updateData.first_name = clientData.firstName || '';
         updateData.last_name = clientData.lastName || '';
+        console.log('📝 Will update DB with name:', fullName, 'first:', clientData.firstName, 'last:', clientData.lastName);
       }
 
       // Update address if provided

@@ -159,10 +159,20 @@ class ClientController {
         customer: client.customer_id
       });
 
-      // Set as default payment method
+      // Build the full name from form data (client can correct/update their name)
+      const fullName = (clientData.firstName && clientData.lastName) 
+        ? `${clientData.firstName} ${clientData.lastName}`.trim()
+        : (clientData.firstName || clientData.lastName || client.name || '');
+
+      // Update Stripe customer with default payment method AND updated name
       await this.stripe.customers.update(client.customer_id, {
+        name: fullName,
         invoice_settings: {
           default_payment_method: paymentMethodId
+        },
+        metadata: {
+          first_name: clientData.firstName || '',
+          last_name: clientData.lastName || ''
         }
       });
 

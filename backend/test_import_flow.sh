@@ -4,7 +4,7 @@ echo "=== Testing Import Customers Endpoints ==="
 echo ""
 
 # Use the actual backend URL
-BACKEND_URL="https://healthsub.preview.emergentagent.com"
+BACKEND_URL="https://join-flow.preview.emergentagent.com"
 echo "Backend URL: $BACKEND_URL"
 echo ""
 

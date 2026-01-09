@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://healthsub.preview.emergentagent.com/api"
+BASE_URL = "https://join-flow.preview.emergentagent.com/api"
 ADMIN_EMAIL = "simon.price@simonprice-pt.co.uk"
 ADMIN_PASSWORD = "Qwerty1234!!!"
 

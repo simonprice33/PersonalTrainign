@@ -339,9 +339,10 @@ const OnboardingForm = () => {
         cleanedPostcode = cleanedPostcode.slice(0, -3) + ' ' + cleanedPostcode.slice(-3); // Add space before last 3
       }
 
-      // Build billing details object
+      // Build billing details object - use updated name from form
+      const fullName = [formData.firstName, formData.lastName].filter(Boolean).join(' ') || prefilledData.name;
       const billingDetails = {
-        name: prefilledData.name,
+        name: fullName,
         email: prefilledData.email,
         phone: prefilledData.telephone,
         address: {

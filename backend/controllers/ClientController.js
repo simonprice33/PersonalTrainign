@@ -297,10 +297,12 @@ class ClientController {
       }
 
       // Update client record
-      await this.collections.clients.updateOne(
+      console.log('📝 Updating DB with:', JSON.stringify(updateData, null, 2));
+      const dbResult = await this.collections.clients.updateOne(
         { email },
         { $set: updateData }
       );
+      console.log('✅ DB update result:', { matchedCount: dbResult.matchedCount, modifiedCount: dbResult.modifiedCount });
 
       // Create client user if doesn't exist
       const existingUser = await this.collections.clientUsers.findOne({ email });

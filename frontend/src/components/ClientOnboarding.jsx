@@ -50,6 +50,8 @@ const OnboardingForm = () => {
   const [clientSecret, setClientSecret] = useState('');
 
   const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
     dateOfBirth: '',
     addressLine1: '',
     addressLine2: '',
@@ -278,6 +280,13 @@ const OnboardingForm = () => {
 
       if (response.data.success) {
         setPrefilledData(response.data.data);
+        // Pre-populate first/last name from existing name
+        const nameParts = (response.data.data.name || '').trim().split(' ');
+        setFormData(prev => ({
+          ...prev,
+          firstName: nameParts[0] || '',
+          lastName: nameParts.slice(1).join(' ') || ''
+        }));
         // Initialize Stripe AFTER we have the email
         await initializeStripe(response.data.data.email);
         setLoading(false);

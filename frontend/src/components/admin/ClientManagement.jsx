@@ -64,7 +64,8 @@ const ClientManagement = () => {
   };
 
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     telephone: '',
     price: 125,
@@ -148,7 +149,8 @@ const ClientManagement = () => {
     setError('');
     setPaymentLink('');
     setFormData({
-      name: '',
+      firstName: '',
+      lastName: '',
       email: '',
       telephone: '',
       price: 125,

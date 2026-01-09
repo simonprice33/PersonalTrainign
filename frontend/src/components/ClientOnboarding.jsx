@@ -402,7 +402,13 @@ const OnboardingForm = () => {
         token: token ? 'EXISTS' : 'MISSING',
         paymentMethodId: setupIntent.payment_method || 'MISSING',
         email: prefilledData.email,
-        setupIntentFull: setupIntent
+        setupIntentFull: setupIntent,
+        formData: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          dateOfBirth: formData.dateOfBirth,
+          addressLine1: formData.addressLine1
+        }
       });
 
       const response = await axios.post(`${BACKEND_URL}/api/client/complete-onboarding`, {

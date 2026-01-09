@@ -227,18 +227,52 @@ class ClientController {
         expand: ['latest_invoice.payment_intent']
       });
 
-      // Update client status
+      // Build update object with client data from form
+      const updateData = {
+        status: 'active',
+        subscription_status: subscription.status,
+        subscription_id: subscription.id,
+        onboarded_at: new Date(),
+        updated_at: new Date()
+      };
+
+      // Update name if first/last name provided
+      if (clientData.firstName || clientData.lastName) {
+        const fullName = [clientData.firstName, clientData.lastName].filter(Boolean).join(' ');
+        updateData.name = fullName;
+        updateData.first_name = clientData.firstName || '';
+        updateData.last_name = clientData.lastName || '';
+      }
+
+      // Update address if provided
+      if (clientData.addressLine1) {
+        updateData.address = {
+          line1: clientData.addressLine1,
+          line2: clientData.addressLine2 || '',
+          city: clientData.city || '',
+          postcode: clientData.postcode || '',
+          country: clientData.country || 'GB'
+        };
+      }
+
+      // Update date of birth if provided
+      if (clientData.dateOfBirth) {
+        updateData.date_of_birth = clientData.dateOfBirth;
+      }
+
+      // Update emergency contact if provided
+      if (clientData.emergencyContactName) {
+        updateData.emergency_contact = {
+          name: clientData.emergencyContactName,
+          phone: clientData.emergencyContactNumber || '',
+          relationship: clientData.emergencyContactRelationship || ''
+        };
+      }
+
+      // Update client record
       await this.collections.clients.updateOne(
         { email },
-        {
-          $set: {
-            status: 'active',
-            subscription_status: subscription.status,
-            subscription_id: subscription.id,
-            onboarded_at: new Date(),
-            updated_at: new Date()
-          }
-        }
+        { $set: updateData }
       );
 
       // Create client user if doesn't exist

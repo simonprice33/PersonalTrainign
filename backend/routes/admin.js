@@ -79,8 +79,7 @@ function createAdminRoutes(dependencies) {
 
   // Create payment link for new client
   router.post('/create-payment-link', authenticate, [
-    body('firstName').notEmpty().withMessage('First name is required'),
-    body('lastName').notEmpty().withMessage('Last name is required'),
+    body('name').notEmpty().withMessage('Name is required'),
     body('email').isEmail({ allow_utf8_local_part: true }).withMessage('Valid email required')
   ], (req, res) => controller.createPaymentLink(req, res));
 

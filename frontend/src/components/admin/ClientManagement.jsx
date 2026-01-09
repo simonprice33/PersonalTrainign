@@ -49,9 +49,10 @@ const ClientManagement = () => {
           </span>
         );
       case 'pending':
+      case 'pending_payment':
         return (
           <span className="inline-block px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">
-            ⏳ Subscription Pending
+            ⏳ Awaiting Payment
           </span>
         );
       default:

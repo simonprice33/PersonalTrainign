@@ -23,6 +23,9 @@ import ClientManagement from "./components/admin/ClientManagement";
 import ClientUserManagement from "./components/admin/ClientUserManagement";
 import ImportCustomers from "./components/admin/ImportCustomers";
 import ContentManagement from "./components/admin/ContentManagement";
+import BlogManagement from "./components/admin/BlogManagement";
+import BlogEditor from "./components/admin/BlogEditor";
+import BlogCategories from "./components/admin/BlogCategories";
 
 // Client Portal Components
 import ClientLogin from "./components/client/ClientLogin";
@@ -32,6 +35,10 @@ import ClientResetPassword from "./components/client/ClientResetPassword";
 import ClientPortal from "./components/client/ClientPortal";
 import JoinNow from "./pages/JoinNow";
 import PurchaseFlow from "./pages/PurchaseFlow";
+
+// Blog Components
+import BlogListing from "./pages/BlogListing";
+import BlogPost from "./pages/BlogPost";
 
 function App() {
   return (

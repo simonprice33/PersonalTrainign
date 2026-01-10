@@ -146,6 +146,10 @@ async function startServer() {
     // Package routes (public + admin)
     app.use('/api', createPackageRoutes(routeDependencies));
 
+    // Blog routes (public + admin)
+    const blogController = new BlogController(collections, config);
+    app.use('/api/blog', createBlogRoutes(blogController, authMiddleware.authenticate));
+
     // Portal session endpoint (can be used by both admin and client)
     app.post('/api/create-portal-session', authMiddleware.authenticate, async (req, res) => {
       try {

@@ -55,7 +55,10 @@ class DatabaseConfig {
         clientUsers: this.db.collection('client_users'),
         packages: this.db.collection('packages'),
         parqQuestions: this.db.collection('parq_questions'),
-        healthQuestions: this.db.collection('health_questions')
+        healthQuestions: this.db.collection('health_questions'),
+        blogPosts: this.db.collection('blog_posts'),
+        blogCategories: this.db.collection('blog_categories'),
+        blogTags: this.db.collection('blog_tags')
       };
 
       // Create indexes for better performance

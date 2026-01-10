@@ -50,9 +50,22 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - [x] Password Reset flow
 - [x] Admin Billing Portal endpoint fixed
 - [x] Removed "Simon Price PT" text from purchase flow header
-- [x] **Admin "Create Payment Link" form now has First Name & Last Name fields**
-- [x] **Backend stores first_name/last_name and sends full name to Stripe**
-- [x] **Client Onboarding form shows editable First/Last Name (pre-populated from admin entry)**
+- [x] Admin "Create Payment Link" form now has First Name & Last Name fields
+- [x] Backend stores first_name/last_name and sends full name to Stripe
+- [x] Client Onboarding form shows editable First/Last Name (pre-populated from admin entry)
+- [x] **Full Blog System with:**
+  - Public blog listing (`/blog`) with pagination (12 posts per page)
+  - Single blog post view (`/blog/:slug`) with hero header image
+  - Category sidebar (desktop) / dropdown (mobile)
+  - Tag-based filtering
+  - Title search (partial match)
+  - Admin blog management (`/admin/blog`)
+  - Blog editor with markdown support and live preview
+  - Drag & drop image upload with positioning (left, right, square, full)
+  - Category & tag management (`/admin/blog/categories`)
+  - SEO fields (title, description)
+  - Draft/Published/Scheduled/Hidden status
+  - Scheduled publishing (show from date/time)
 
 ### Known Issues
 1. **P1 - Data inconsistency in Admin "Edit Client" modal**: Legacy vs. new client data formats cause display issues. Needs a normalization utility.

@@ -374,6 +374,7 @@ class PublicController {
       const subscriber = {
         email,
         name: name || null,
+        opted_in: true,
         subscribed_at: new Date(),
         status: 'active',
         source: 'newsletter_form'

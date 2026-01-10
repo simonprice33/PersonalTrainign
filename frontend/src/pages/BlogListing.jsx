@@ -197,7 +197,6 @@ const BlogListing = () => {
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3">
               <img src="/logo.png" alt="Logo" className="h-10 w-10 object-contain" />
-              <span className="text-xl font-bold text-white">Simon Price PT</span>
             </Link>
             <nav className="hidden md:flex items-center gap-6">
               <Link to="/" className="text-gray-300 hover:text-white transition-colors">Home</Link>

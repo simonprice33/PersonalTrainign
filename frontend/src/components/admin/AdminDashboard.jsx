@@ -183,6 +183,28 @@ const AdminDashboard = () => {
             </div>
           </Link>
 
+          {/* Blog Management Card */}
+          <Link
+            to="/admin/blog"
+            className="bg-gray-800 rounded-xl p-8 border border-pink-500/20 hover:border-pink-500/50 transition-all hover:shadow-lg hover:shadow-pink-500/20 group"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-pink-500/10 rounded-lg group-hover:bg-pink-500/20 transition-colors">
+                <FileText className="text-pink-500" size={32} />
+              </div>
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">Blog Management</h2>
+            <p className="text-gray-400 text-sm">
+              Create and manage blog posts, categories, and tags.
+            </p>
+            <div className="mt-6 flex items-center text-pink-500 text-sm font-medium">
+              Manage Blog
+              <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+
           {/* Change Password Card */}
           <Link
             to="/admin/change-password"

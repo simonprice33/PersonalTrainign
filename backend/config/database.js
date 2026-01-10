@@ -116,6 +116,21 @@ class DatabaseConfig {
       await this.collections.healthQuestions.createIndex({ order: 1 });
       console.log('✅ Health questions indexes created');
 
+      // Blog posts collection indexes
+      await this.collections.blogPosts.createIndex({ slug: 1 }, { unique: true });
+      await this.collections.blogPosts.createIndex({ status: 1, publish_date: -1 });
+      await this.collections.blogPosts.createIndex({ category_slug: 1 });
+      await this.collections.blogPosts.createIndex({ tags: 1 });
+      console.log('✅ Blog posts indexes created');
+
+      // Blog categories collection indexes
+      await this.collections.blogCategories.createIndex({ slug: 1 }, { unique: true });
+      console.log('✅ Blog categories indexes created');
+
+      // Blog tags collection indexes
+      await this.collections.blogTags.createIndex({ slug: 1 }, { unique: true });
+      console.log('✅ Blog tags indexes created');
+
       // Seed initial data
       await this._seedInitialData();
 

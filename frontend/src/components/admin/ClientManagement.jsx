@@ -510,6 +510,25 @@ const ClientManagement = () => {
                               <Edit size={16} />
                               Edit
                             </button>
+                            {(client.status === 'pending_payment' || client.subscription_status === 'pending') && (
+                              <button
+                                onClick={() => handleResendLink(client.email)}
+                                disabled={resendingEmail === client.email}
+                                className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                              >
+                                {resendingEmail === client.email ? (
+                                  <>
+                                    <RefreshCw size={16} className="animate-spin" />
+                                    Sending...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Send size={16} />
+                                    Resend Payment Link
+                                  </>
+                                )}
+                              </button>
+                            )}
                             {client.imported_at && (
                               <button
                                 onClick={() => handleSyncStatus(client.email, client.name)}

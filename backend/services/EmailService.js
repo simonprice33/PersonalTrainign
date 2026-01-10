@@ -368,32 +368,47 @@ class EmailService {
           body: {
             contentType: 'HTML',
             content: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <h2 style="color: #1a1a2e;">${title}</h2>
-                <p>You requested to reset your password.</p>
-                <p>Click the button below to reset your password:</p>
-                
-                <table cellpadding="0" cellspacing="0" border="0" style="margin: 30px auto;">
-                  <tr>
-                    <td align="center" bgcolor="#22c55e" style="border-radius: 8px;">
-                      <a href="${resetLink}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; border-radius: 8px;">
-                        Reset Password
-                      </a>
-                    </td>
-                  </tr>
-                </table>
-                
-                <p><strong>This link will expire in 1 hour.</strong></p>
-                <p>If you didn't request this reset, please ignore this email and your password will remain unchanged.</p>
-                <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-                <p style="color: #888; font-size: 12px;">
-                  For security reasons, this link can only be used once. If you need another reset link, please request a new one.
-                </p>
-                <p style="color: #888; font-size: 12px;">
-                  Simon Price Personal Training<br>
-                  Bognor Regis, West Sussex, UK
-                </p>
-              </div>
+              <!DOCTYPE html>
+              <html>
+              <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              </head>
+              <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+                  <div style="background-color: #ffffff; border-radius: 12px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h2 style="color: #1a1a2e; margin: 0 0 20px 0; font-size: 24px;">${title}</h2>
+                    <p style="color: #333; line-height: 1.6; margin: 0 0 15px 0;">You requested to reset your password.</p>
+                    <p style="color: #333; line-height: 1.6; margin: 0 0 30px 0;">Click the button below to reset your password:</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                      <!--[if mso]>
+                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${resetLink}" style="height:50px;v-text-anchor:middle;width:200px;" arcsize="10%" strokecolor="#22c55e" fillcolor="#22c55e">
+                        <w:anchorlock/>
+                        <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Reset Password</center>
+                      </v:roundrect>
+                      <![endif]-->
+                      <!--[if !mso]><!-->
+                      <a href="${resetLink}" style="background-color: #22c55e; color: #ffffff; padding: 15px 35px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; mso-hide: all;">Reset Password</a>
+                      <!--<![endif]-->
+                    </div>
+                    
+                    <p style="color: #333; line-height: 1.6; margin: 20px 0 15px 0;"><strong>This link will expire in 1 hour.</strong></p>
+                    <p style="color: #333; line-height: 1.6; margin: 0 0 20px 0;">If you didn't request this reset, please ignore this email and your password will remain unchanged.</p>
+                    
+                    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                    
+                    <p style="color: #888; font-size: 12px; margin: 0 0 10px 0;">
+                      For security reasons, this link can only be used once. If you need another reset link, please request a new one.
+                    </p>
+                    <p style="color: #888; font-size: 12px; margin: 0;">
+                      Simon Price Personal Training<br>
+                      Bognor Regis, West Sussex, UK
+                    </p>
+                  </div>
+                </div>
+              </body>
+              </html>
             `
           },
           toRecipients: [{

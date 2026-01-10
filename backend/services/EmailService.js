@@ -151,39 +151,54 @@ class EmailService {
           body: {
             contentType: 'HTML',
             content: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <h2 style="color: #1a1a2e;">Password Setup Reminder</h2>
-                <p>Hi ${clientName || 'there'},</p>
-                <p>This is a reminder to set up your password for your Simon Price PT client portal.</p>
-                
-                <table cellpadding="0" cellspacing="0" border="0" style="margin: 30px auto;">
-                  <tr>
-                    <td align="center" bgcolor="#22c55e" style="border-radius: 8px;">
-                      <a href="${passwordSetupLink}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; border-radius: 8px;">
-                        Create Your Password
-                      </a>
-                    </td>
-                  </tr>
-                </table>
+              <!DOCTYPE html>
+              <html>
+              <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              </head>
+              <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+                  <div style="background-color: #ffffff; border-radius: 12px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h2 style="color: #1a1a2e; margin: 0 0 20px 0; font-size: 24px;">Password Setup Reminder</h2>
+                    <p style="color: #333; line-height: 1.6; margin: 0 0 15px 0;">Hi ${clientName || 'there'},</p>
+                    <p style="color: #333; line-height: 1.6; margin: 0 0 30px 0;">This is a reminder to set up your password for your Simon Price PT client portal.</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                      <!--[if mso]>
+                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${passwordSetupLink}" style="height:50px;v-text-anchor:middle;width:220px;" arcsize="10%" strokecolor="#22c55e" fillcolor="#22c55e">
+                        <w:anchorlock/>
+                        <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Create Your Password</center>
+                      </v:roundrect>
+                      <![endif]-->
+                      <!--[if !mso]><!-->
+                      <a href="${passwordSetupLink}" style="background-color: #22c55e; color: #ffffff; padding: 15px 35px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; mso-hide: all;">Create Your Password</a>
+                      <!--<![endif]-->
+                    </div>
 
-                <p><strong>What you can do once logged in:</strong></p>
-                <ul>
-                  <li>View your subscription details</li>
-                  <li>Update payment method</li>
-                  <li>Update your address</li>
-                  <li>Manage your account</li>
-                </ul>
+                    <p style="color: #333; line-height: 1.6; margin: 20px 0 10px 0;"><strong>What you can do once logged in:</strong></p>
+                    <ul style="color: #555; line-height: 1.8; margin: 0 0 20px 0; padding-left: 20px;">
+                      <li>View your subscription details</li>
+                      <li>Update payment method</li>
+                      <li>Update your address</li>
+                      <li>Manage your account</li>
+                    </ul>
 
-                <p style="color: #888; font-size: 14px; margin-top: 30px;">
-                  This link will expire in 7 days. If you need help, please contact us.
-                </p>
-                
-                <p style="margin-top: 30px;">
-                  Best regards,<br>
-                  <strong>Simon Price</strong><br>
-                  Personal Trainer
-                </p>
-              </div>
+                    <p style="color: #888; font-size: 14px; margin: 30px 0 0 0;">
+                      This link will expire in 7 days. If you need help, please contact us.
+                    </p>
+                    
+                    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                    
+                    <p style="color: #333; margin: 0;">
+                      Best regards,<br>
+                      <strong>Simon Price</strong><br>
+                      <span style="color: #666;">Personal Trainer</span>
+                    </p>
+                  </div>
+                </div>
+              </body>
+              </html>
             `
           },
           toRecipients: [{

@@ -249,7 +249,7 @@ const EmailManagement = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-300">{email.phone || '-'}</td>
-                      <td className="px-6 py-4 text-sm text-gray-400">{formatDate(email.last_updated)}</td>
+                      <td className="px-6 py-4 text-sm text-gray-400">{formatDate(email.last_updated || email.subscribed_at || email.created_at)}</td>
                     </tr>
                   ))
                 )}

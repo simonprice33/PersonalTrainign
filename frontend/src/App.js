@@ -79,6 +79,14 @@ function App() {
           <Route path="/admin/import-customers" element={<ImportCustomers />} />
           <Route path="/admin/content" element={<ContentManagement />} />
           <Route path="/admin/change-password" element={<ChangePassword />} />
+          <Route path="/admin/blog" element={<BlogManagement />} />
+          <Route path="/admin/blog/new" element={<BlogEditor />} />
+          <Route path="/admin/blog/edit/:slug" element={<BlogEditor />} />
+          <Route path="/admin/blog/categories" element={<BlogCategories />} />
+          
+          {/* Public Blog Routes */}
+          <Route path="/blog" element={<BlogListing />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           
           {/* Main Website Route */}
           <Route path="/" element={

@@ -396,31 +396,45 @@ class EmailService {
           body: {
             contentType: 'HTML',
             content: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <h2 style="color: #1a1a2e;">Complete Your Subscription Setup</h2>
-                <p>Hi ${name},</p>
-                <p>Welcome to Simon Price PT! I'm excited to start working with you.</p>
-                
-                <p>To complete your subscription setup, please click the button below to add your payment details securely:</p>
-                
-                <table cellpadding="0" cellspacing="0" border="0" style="margin: 30px auto;">
-                  <tr>
-                    <td align="center" bgcolor="#22c55e" style="border-radius: 8px;">
-                      <a href="${paymentLink}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; border-radius: 8px;">
-                        Complete Setup
-                      </a>
-                    </td>
-                  </tr>
-                </table>
+              <!DOCTYPE html>
+              <html>
+              <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              </head>
+              <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+                  <div style="background-color: #ffffff; border-radius: 12px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h2 style="color: #1a1a2e; margin: 0 0 20px 0; font-size: 24px;">Complete Your Subscription Setup</h2>
+                    <p style="color: #333; line-height: 1.6; margin: 0 0 15px 0;">Hi ${name},</p>
+                    <p style="color: #333; line-height: 1.6; margin: 0 0 15px 0;">Welcome to Simon Price PT! I'm excited to start working with you.</p>
+                    <p style="color: #333; line-height: 1.6; margin: 0 0 30px 0;">To complete your subscription setup, please click the button below to add your payment details securely:</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                      <!--[if mso]>
+                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${paymentLink}" style="height:50px;v-text-anchor:middle;width:200px;" arcsize="10%" strokecolor="#22c55e" fillcolor="#22c55e">
+                        <w:anchorlock/>
+                        <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Complete Setup</center>
+                      </v:roundrect>
+                      <![endif]-->
+                      <!--[if !mso]><!-->
+                      <a href="${paymentLink}" style="background-color: #22c55e; color: #ffffff; padding: 15px 35px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; mso-hide: all;">Complete Setup</a>
+                      <!--<![endif]-->
+                    </div>
 
-                <p>Once completed, you'll receive another email to set up your client portal password where you can manage your subscription and account details.</p>
-                
-                <p style="margin-top: 30px;">
-                  Looking forward to working with you!<br>
-                  <strong>Simon Price</strong><br>
-                  Personal Trainer
-                </p>
-              </div>
+                    <p style="color: #333; line-height: 1.6; margin: 20px 0 0 0;">Once completed, you'll receive another email to set up your client portal password where you can manage your subscription and account details.</p>
+                    
+                    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                    
+                    <p style="color: #333; margin: 0;">
+                      Looking forward to working with you!<br>
+                      <strong>Simon Price</strong><br>
+                      <span style="color: #666;">Personal Trainer</span>
+                    </p>
+                  </div>
+                </div>
+              </body>
+              </html>
             `
           },
           toRecipients: [{

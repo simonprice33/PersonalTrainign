@@ -86,7 +86,7 @@ class EmailService {
                     
                     <div style="text-align: center; margin: 30px 0;">
                       <!--[if mso]>
-                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${passwordSetupLink}" style="height:50px;v-text-anchor:middle;width:220px;" arcsize="10%" strokecolor="#22c55e" fillcolor="#22c55e">
+                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${passwordSetupLink}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="20%" strokecolor="#22c55e" fillcolor="#22c55e">
                         <w:anchorlock/>
                         <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Create Your Password</center>
                       </v:roundrect>
@@ -166,7 +166,7 @@ class EmailService {
                     
                     <div style="text-align: center; margin: 30px 0;">
                       <!--[if mso]>
-                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${passwordSetupLink}" style="height:50px;v-text-anchor:middle;width:220px;" arcsize="10%" strokecolor="#22c55e" fillcolor="#22c55e">
+                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${passwordSetupLink}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="20%" strokecolor="#22c55e" fillcolor="#22c55e">
                         <w:anchorlock/>
                         <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Create Your Password</center>
                       </v:roundrect>
@@ -303,7 +303,7 @@ class EmailService {
                     
                     <div style="text-align: center; margin: 30px 0;">
                       <!--[if mso]>
-                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${passwordLink}" style="height:50px;v-text-anchor:middle;width:220px;" arcsize="10%" strokecolor="#22c55e" fillcolor="#22c55e">
+                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${passwordLink}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="20%" strokecolor="#22c55e" fillcolor="#22c55e">
                         <w:anchorlock/>
                         <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Create Your Password</center>
                       </v:roundrect>
@@ -383,7 +383,7 @@ class EmailService {
                     
                     <div style="text-align: center; margin: 30px 0;">
                       <!--[if mso]>
-                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${resetLink}" style="height:50px;v-text-anchor:middle;width:200px;" arcsize="10%" strokecolor="#22c55e" fillcolor="#22c55e">
+                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${resetLink}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="20%" strokecolor="#22c55e" fillcolor="#22c55e">
                         <w:anchorlock/>
                         <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Reset Password</center>
                       </v:roundrect>
@@ -457,7 +457,7 @@ class EmailService {
                     
                     <div style="text-align: center; margin: 30px 0;">
                       <!--[if mso]>
-                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${paymentLink}" style="height:50px;v-text-anchor:middle;width:200px;" arcsize="10%" strokecolor="#22c55e" fillcolor="#22c55e">
+                      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${paymentLink}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="20%" strokecolor="#22c55e" fillcolor="#22c55e">
                         <w:anchorlock/>
                         <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Complete Setup</center>
                       </v:roundrect>

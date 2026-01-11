@@ -6,7 +6,7 @@ Quick verification test to check data persistence
 import requests
 import json
 
-BASE_URL = "https://join-flow.preview.emergentagent.com/api"
+BASE_URL = "https://cms-refresh.preview.emergentagent.com/api"
 ADMIN_EMAIL = "simon.price@simonprice-pt.co.uk"
 ADMIN_PASSWORD = "Qwerty1234!!!"
 

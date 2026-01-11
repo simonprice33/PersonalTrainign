@@ -162,13 +162,13 @@ printjson(db.client_users.findOne({email: email}));
 ### Step 2: Test Backend Endpoint Directly
 ```bash
 # Get admin token
-TOKEN=$(curl -s -X POST "https://join-flow.preview.emergentagent.com/api/admin/login" \
+TOKEN=$(curl -s -X POST "https://cms-refresh.preview.emergentagent.com/api/admin/login" \
   -H "Content-Type: application/json" \
   -d '{"email":"simon.price@simonprice-pt.co.uk","password":"Qwerty1234!!!"}' \
   | python3 -c "import sys,json;print(json.load(sys.stdin)['accessToken'])")
 
 # Try to update status
-curl -X PUT "https://join-flow.preview.emergentagent.com/api/admin/client-users/CLIENT_EMAIL/status" \
+curl -X PUT "https://cms-refresh.preview.emergentagent.com/api/admin/client-users/CLIENT_EMAIL/status" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"status":"active"}' | python3 -m json.tool

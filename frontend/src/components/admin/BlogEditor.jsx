@@ -129,10 +129,10 @@ const BlogEditor = () => {
       const formData = new FormData();
       formData.append('image', file);
 
+      // Don't set Content-Type header - axios will set it automatically with boundary
       const response = await axiosInstance.post(
         `${BACKEND_URL}/api/blog/admin/upload`,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
+        formData
       );
 
       if (response.data.success) {
@@ -142,8 +142,8 @@ const BlogEditor = () => {
       console.error('Error uploading image:', error);
       setAlertModal({
         show: true,
-        title: 'Error',
-        message: 'Failed to upload image',
+        title: 'Upload Error',
+        message: error.response?.data?.message || 'Failed to upload image. Please try again.',
         type: 'error'
       });
     } finally {

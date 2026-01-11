@@ -422,16 +422,30 @@ const BlogEditor = () => {
                   </button>
                 </div>
               ) : (
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-gray-700 rounded-xl p-12 text-center cursor-pointer hover:border-cyan-500 transition-colors"
+                <label
+                  htmlFor="header-image-input"
+                  className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors block ${
+                    uploading 
+                      ? 'border-cyan-500 bg-cyan-500/10' 
+                      : 'border-gray-700 hover:border-cyan-500'
+                  }`}
                 >
-                  <Image size={48} className="mx-auto text-gray-500 mb-4" />
-                  <p className="text-gray-400">Click to upload header image</p>
-                  <p className="text-sm text-gray-500 mt-2">Recommended size: 1200x600</p>
-                </div>
+                  {uploading ? (
+                    <>
+                      <Upload size={48} className="mx-auto text-cyan-500 mb-4 animate-pulse" />
+                      <p className="text-cyan-400">Uploading...</p>
+                    </>
+                  ) : (
+                    <>
+                      <Image size={48} className="mx-auto text-gray-500 mb-4" />
+                      <p className="text-gray-400">Click to upload header image</p>
+                      <p className="text-sm text-gray-500 mt-2">Recommended size: 1200x600</p>
+                    </>
+                  )}
+                </label>
               )}
               <input
+                id="header-image-input"
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"

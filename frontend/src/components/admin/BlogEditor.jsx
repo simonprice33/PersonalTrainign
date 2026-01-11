@@ -460,15 +460,16 @@ const BlogEditor = () => {
                     </>
                   ) : (
                     <>
-                      <Image size={48} className="mx-auto text-gray-500 mb-4" />
-                      <p className="text-gray-400 mb-4">Drag & drop an image here, or</p>
-                      <label
-                        htmlFor="header-image-upload"
+                      <Image size={48} className="mx-auto text-gray-500 mb-4 pointer-events-none" />
+                      <p className="text-gray-400 mb-4 pointer-events-none">Drag & drop an image here, or</p>
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
                         className="inline-block px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors font-medium cursor-pointer"
                       >
                         Choose File
-                      </label>
-                      <p className="text-sm text-gray-500 mt-4">Recommended size: 1200x600</p>
+                      </button>
+                      <p className="text-sm text-gray-500 mt-4 pointer-events-none">Recommended size: 1200x600</p>
                     </>
                   )}
                 </div>

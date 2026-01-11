@@ -1125,9 +1125,16 @@ class AdminController {
    */
   async cancelSubscription(req, res) {
     try {
-      const { id: email } = req.params;
+      const { id: customerId } = req.params;
 
-      const client = await this.collections.clients.findOne({ email }, { _id: 0 });
+      // Look up client by stripe_customer_id or customer_id
+      const client = await this.collections.clients.findOne({
+        $or: [
+          { stripe_customer_id: customerId },
+          { customer_id: customerId }
+        ]
+      }, { projection: { _id: 0 } });
+      
       if (!client) {
         return res.status(404).json({
           success: false,
@@ -1135,7 +1142,10 @@ class AdminController {
         });
       }
 
-      if (!client.customer_id) {
+      // Use whichever customer ID field exists
+      const stripeCustomerId = client.stripe_customer_id || client.customer_id;
+      
+      if (!stripeCustomerId) {
         return res.status(400).json({
           success: false,
           message: 'No Stripe customer associated with this client'
@@ -1144,17 +1154,21 @@ class AdminController {
 
       // Cancel all active subscriptions
       const subscriptions = await this.stripe.subscriptions.list({
-        customer: client.customer_id,
+        customer: stripeCustomerId,
         status: 'active'
       });
 
+      let endsAt = null;
       for (const subscription of subscriptions.data) {
-        await this.stripe.subscriptions.cancel(subscription.id);
+        const cancelled = await this.stripe.subscriptions.update(subscription.id, {
+          cancel_at_period_end: true
+        });
+        endsAt = new Date(cancelled.current_period_end * 1000);
       }
 
       // Update client status
       await this.collections.clients.updateOne(
-        { email },
+        { $or: [{ stripe_customer_id: customerId }, { customer_id: customerId }] },
         {
           $set: {
             status: 'cancelled',
@@ -1165,11 +1179,12 @@ class AdminController {
         }
       );
 
-      console.log(`❌ Subscription cancelled for: ${email}`);
+      console.log(`❌ Subscription cancelled for: ${client.email}`);
 
       res.status(200).json({
         success: true,
-        message: 'Subscription cancelled successfully'
+        message: 'Subscription cancelled successfully',
+        endsAt: endsAt
       });
 
     } catch (error) {

@@ -181,8 +181,8 @@ const BlogPost = () => {
       {/* Main Site Header */}
       <Header />
 
-      {/* Hero Image */}
-      <div className="relative h-[50vh] min-h-[400px] max-h-[600px]">
+      {/* Hero Image - add padding-top for fixed header */}
+      <div className="relative h-[50vh] min-h-[400px] max-h-[600px] mt-20">
         <img
           src={post.header_image}
           alt={post.title}

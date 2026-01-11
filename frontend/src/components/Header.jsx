@@ -81,6 +81,16 @@ const Header = () => {
             >
               TDEE Calculator
             </button>
+            <Link 
+              to="/blog"
+              className={`network-nav-link px-4 py-2 rounded-full transition-all duration-200 ${
+                isOnBlogPage 
+                  ? 'bg-white bg-opacity-20 text-white' 
+                  : 'text-white hover:bg-white hover:bg-opacity-10'
+              }`}
+            >
+              Blog
+            </Link>
             <button 
               onClick={() => scrollToSection('about')}
               className="network-nav-link text-white hover:bg-white hover:bg-opacity-10 px-4 py-2 rounded-full transition-all duration-200"

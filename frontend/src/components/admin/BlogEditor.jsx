@@ -412,7 +412,8 @@ const BlogEditor = () => {
                 type="file"
                 accept="image/*"
                 onChange={handleHeaderImageUpload}
-                style={{ position: 'absolute', left: '-9999px' }}
+                className="hidden"
+                id="header-image-upload"
               />
               {post.header_image ? (
                 <div className="relative rounded-xl overflow-hidden">
@@ -422,6 +423,7 @@ const BlogEditor = () => {
                     className="w-full h-64 object-cover"
                   />
                   <button
+                    type="button"
                     onClick={() => setPost(p => ({ ...p, header_image: '' }))}
                     className="absolute top-4 right-4 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
                   >
@@ -430,25 +432,6 @@ const BlogEditor = () => {
                 </div>
               ) : (
                 <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (fileInputRef.current) {
-                      fileInputRef.current.value = '';
-                      fileInputRef.current.click();
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      if (fileInputRef.current) {
-                        fileInputRef.current.value = '';
-                        fileInputRef.current.click();
-                      }
-                    }
-                  }}
                   onDrop={async (e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -457,6 +440,40 @@ const BlogEditor = () => {
                       const url = await handleImageUpload(files[0]);
                       if (url) {
                         setPost(p => ({ ...p, header_image: url }));
+                      }
+                    }
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors ${
+                    uploading 
+                      ? 'border-cyan-500 bg-cyan-500/10' 
+                      : 'border-gray-700 hover:border-cyan-500 hover:bg-gray-800/50'
+                  }`}
+                >
+                  {uploading ? (
+                    <>
+                      <Upload size={48} className="mx-auto text-cyan-500 mb-4 animate-pulse" />
+                      <p className="text-cyan-400">Uploading...</p>
+                    </>
+                  ) : (
+                    <>
+                      <Image size={48} className="mx-auto text-gray-500 mb-4" />
+                      <p className="text-gray-400 mb-4">Drag & drop an image here, or</p>
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors font-medium"
+                      >
+                        Choose File
+                      </button>
+                      <p className="text-sm text-gray-500 mt-4">Recommended size: 1200x600</p>
+                    </>
+                  )}
+                </div>
+              )}
                       }
                     }
                   }}

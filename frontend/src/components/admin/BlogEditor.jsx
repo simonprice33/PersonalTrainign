@@ -407,6 +407,13 @@ const BlogEditor = () => {
             {/* Header Image */}
             <div>
               <label className="block text-sm text-gray-400 mb-2">Header Image *</label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleHeaderImageUpload}
+                style={{ position: 'absolute', left: '-9999px' }}
+              />
               {post.header_image ? (
                 <div className="relative rounded-xl overflow-hidden">
                   <img 
@@ -423,9 +430,24 @@ const BlogEditor = () => {
                 </div>
               ) : (
                 <div
-                  onClick={() => {
-                    const input = document.getElementById('header-image-input');
-                    if (input) input.click();
+                  role="button"
+                  tabIndex={0}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = '';
+                      fileInputRef.current.click();
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = '';
+                        fileInputRef.current.click();
+                      }
+                    }
                   }}
                   onDrop={async (e) => {
                     e.preventDefault();
@@ -442,7 +464,7 @@ const BlogEditor = () => {
                     e.preventDefault();
                     e.stopPropagation();
                   }}
-                  className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors ${
+                  className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors select-none ${
                     uploading 
                       ? 'border-cyan-500 bg-cyan-500/10' 
                       : 'border-gray-700 hover:border-cyan-500 hover:bg-gray-800/50'
@@ -455,20 +477,13 @@ const BlogEditor = () => {
                     </>
                   ) : (
                     <>
-                      <Image size={48} className="mx-auto text-gray-500 mb-4" />
-                      <p className="text-gray-400">Click or drag & drop to upload header image</p>
-                      <p className="text-sm text-gray-500 mt-2">Recommended size: 1200x600</p>
+                      <Image size={48} className="mx-auto text-gray-500 mb-4 pointer-events-none" />
+                      <p className="text-gray-400 pointer-events-none">Click or drag & drop to upload header image</p>
+                      <p className="text-sm text-gray-500 mt-2 pointer-events-none">Recommended size: 1200x600</p>
                     </>
                   )}
                 </div>
               )}
-              <input
-                id="header-image-input"
-                type="file"
-                accept="image/*"
-                onChange={handleHeaderImageUpload}
-                style={{ display: 'none' }}
-              />
             </div>
 
             {/* Content Editor / Preview */}

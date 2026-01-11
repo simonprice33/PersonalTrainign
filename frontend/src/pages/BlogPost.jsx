@@ -4,6 +4,8 @@ import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Calendar, User, Tag, ArrowLeft, Clock, Share2, Facebook, Twitter, Linkedin } from 'lucide-react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 

@@ -297,7 +297,7 @@ const BlogPost = () => {
           )}
 
           {/* Back to Blog */}
-          <div className="mt-12 pt-8 border-t border-gray-700 text-center">
+          <div className="mt-12 pt-8 border-t border-gray-700 text-center" style={{ marginBottom: '15px' }}>
             <Link
               to="/blog"
               className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors"
@@ -310,7 +310,9 @@ const BlogPost = () => {
       </article>
       
       {/* Footer */}
-      <Footer />
+      <div style={{ marginTop: '15px' }}>
+        <Footer />
+      </div>
     </div>
   );
 };

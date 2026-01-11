@@ -193,23 +193,11 @@ const BlogListing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-      {/* Header */}
-      <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3">
-              <img src="/logo.png" alt="Logo" className="h-10 w-10 object-contain" />
-            </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link to="/" className="text-gray-300 hover:text-white transition-colors">Home</Link>
-              <Link to="/blog" className="text-cyan-400 font-medium">Blog</Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      {/* Main Site Header */}
+      <Header />
 
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-cyan-900/50 to-blue-900/50 py-16">
+      {/* Hero Section - add padding-top for fixed header */}
+      <div className="bg-gradient-to-r from-cyan-900/50 to-blue-900/50 py-16 pt-32">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Fitness Blog</h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
@@ -237,6 +225,9 @@ const BlogListing = () => {
           </form>
         </div>
       </div>
+
+      {/* Spacing between hero and content */}
+      <div style={{ height: '5px' }}></div>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12">

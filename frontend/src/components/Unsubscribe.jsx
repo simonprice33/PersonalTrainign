@@ -154,8 +154,8 @@ const Unsubscribe = () => {
               <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
                 <p className="text-yellow-300 text-sm">
                   If you continue to have issues, please contact us directly at{' '}
-                  <a href="mailto:simon@simonpricept.com" className="underline">
-                    simon@simonpricept.com
+                  <a href="mailto:simon.price@simonpricept.com" className="underline">
+                    simon.price@simonpricept.com
                   </a>
                 </p>
               </div>
@@ -200,8 +200,8 @@ const Unsubscribe = () => {
               <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
                 <p className="text-yellow-300 text-sm">
                   Please use the unsubscribe link from the email you received, or contact us at{' '}
-                  <a href="mailto:simon@simonpricept.com" className="underline">
-                    simon@simonpricept.com
+                  <a href="mailto:simon.price@simonpricept.com" className="underline">
+                    simon.price@simonpricept.com
                   </a>
                 </p>
               </div>

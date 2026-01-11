@@ -63,22 +63,22 @@ export const testimonials = [
   }
 ];
 
-export const aboutStats = {
-  experience: "5+ Years",
-  clients: "500+",
-  successRate: "95%",
-  rating: "4.9/5",
-  certifications: [
-    "NASM Certified Personal Trainer",
-    "Precision Nutrition Coach",
-    "Functional Movement Screen Specialist", 
-    "Mental Performance Coach"
-  ]
-};
+// export const aboutStats = {
+//   experience: "5+ Years",
+//   clients: "500+",
+//   successRate: "95%",
+//   rating: "4.9/5",
+//   certifications: [
+//     "NASM Certified Personal Trainer",
+//     "Precision Nutrition Coach",
+//     "Functional Movement Screen Specialist", 
+//     "Mental Performance Coach"
+//   ]
+// };
 
 export const contactInfo = {
   phone: "+44 7471 931 170",
-  email: "simon@simonpricept.com",
+  email: "simon.price@simonpricept.com",
   location: "Bognor Regis, West Sussex, UK",
   socialMedia: {
     instagram: "@simonprice.fatlosscoach",

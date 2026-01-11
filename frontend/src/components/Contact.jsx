@@ -380,7 +380,7 @@ const Contact = () => {
                       Proven Results
                     </div>
                     <div className="text-xs" style={{ color: 'var(--text-light)' }}>
-                      95% success rate with 500+ happy clients
+                      Huge success rate with happy clients
                     </div>
                   </div>
                 </div>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Award, Users, Target, Star, CheckCircle } from 'lucide-react';
-import { aboutStats } from '../mock/mockData';
 
 const About = () => {
   return (

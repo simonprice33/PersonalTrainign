@@ -474,33 +474,6 @@ const BlogEditor = () => {
                   )}
                 </div>
               )}
-                      }
-                    }
-                  }}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors select-none ${
-                    uploading 
-                      ? 'border-cyan-500 bg-cyan-500/10' 
-                      : 'border-gray-700 hover:border-cyan-500 hover:bg-gray-800/50'
-                  }`}
-                >
-                  {uploading ? (
-                    <>
-                      <Upload size={48} className="mx-auto text-cyan-500 mb-4 animate-pulse" />
-                      <p className="text-cyan-400">Uploading...</p>
-                    </>
-                  ) : (
-                    <>
-                      <Image size={48} className="mx-auto text-gray-500 mb-4 pointer-events-none" />
-                      <p className="text-gray-400 pointer-events-none">Click or drag & drop to upload header image</p>
-                      <p className="text-sm text-gray-500 mt-2 pointer-events-none">Recommended size: 1200x600</p>
-                    </>
-                  )}
-                </div>
-              )}
             </div>
 
             {/* Content Editor / Preview */}

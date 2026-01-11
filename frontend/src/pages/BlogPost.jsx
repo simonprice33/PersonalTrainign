@@ -178,20 +178,8 @@ const BlogPost = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-      {/* Header */}
-      <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3">
-              <img src="/logo.png" alt="Logo" className="h-10 w-10 object-contain" />
-            </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link to="/" className="text-gray-300 hover:text-white transition-colors">Home</Link>
-              <Link to="/blog" className="text-cyan-400 font-medium">Blog</Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      {/* Main Site Header */}
+      <Header />
 
       {/* Hero Image */}
       <div className="relative h-[50vh] min-h-[400px] max-h-[600px]">

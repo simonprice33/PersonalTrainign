@@ -422,12 +422,30 @@ const BlogEditor = () => {
                   </button>
                 </div>
               ) : (
-                <label
-                  htmlFor="header-image-input"
-                  className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors block ${
+                <div
+                  onClick={() => {
+                    const input = document.getElementById('header-image-input');
+                    if (input) input.click();
+                  }}
+                  onDrop={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const files = e.dataTransfer?.files;
+                    if (files && files.length > 0 && files[0].type.startsWith('image/')) {
+                      const url = await handleImageUpload(files[0]);
+                      if (url) {
+                        setPost(p => ({ ...p, header_image: url }));
+                      }
+                    }
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors ${
                     uploading 
                       ? 'border-cyan-500 bg-cyan-500/10' 
-                      : 'border-gray-700 hover:border-cyan-500'
+                      : 'border-gray-700 hover:border-cyan-500 hover:bg-gray-800/50'
                   }`}
                 >
                   {uploading ? (
@@ -438,19 +456,18 @@ const BlogEditor = () => {
                   ) : (
                     <>
                       <Image size={48} className="mx-auto text-gray-500 mb-4" />
-                      <p className="text-gray-400">Click to upload header image</p>
+                      <p className="text-gray-400">Click or drag & drop to upload header image</p>
                       <p className="text-sm text-gray-500 mt-2">Recommended size: 1200x600</p>
                     </>
                   )}
-                </label>
+                </div>
               )}
               <input
                 id="header-image-input"
-                ref={fileInputRef}
                 type="file"
                 accept="image/*"
                 onChange={handleHeaderImageUpload}
-                className="hidden"
+                style={{ display: 'none' }}
               />
             </div>
 

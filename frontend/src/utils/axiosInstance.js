@@ -44,12 +44,19 @@ axiosInstance.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
+    const status = error.response?.status;
 
-    console.log('🔴 Axios interceptor caught error:', error.response?.status, error.config?.url);
+    console.log('🔴 Axios interceptor caught error:', status, error.config?.url);
 
-    // If error is 401 and we haven't tried to refresh yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      console.log('🔄 Token expired, attempting refresh...');
+    // Skip refresh for refresh endpoint itself to prevent infinite loop
+    if (originalRequest.url?.includes('/api/admin/refresh')) {
+      return Promise.reject(error);
+    }
+
+    // Handle both 401 (Unauthorized) and 403 (Forbidden/expired token) errors
+    // Backend returns 403 when token is invalid or expired
+    if ((status === 401 || status === 403) && !originalRequest._retry) {
+      console.log('🔄 Token expired or invalid, attempting refresh...');
       
       if (isRefreshing) {
         // If already refreshing, queue this request

@@ -408,10 +408,11 @@ const BlogEditor = () => {
             <div>
               <label className="block text-sm text-gray-400 mb-2">Header Image *</label>
               <input
+                ref={fileInputRef}
                 type="file"
                 accept="image/*"
                 onChange={handleHeaderImageUpload}
-                className="sr-only"
+                style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: 0 }}
                 id="header-image-upload"
               />
               {post.header_image ? (

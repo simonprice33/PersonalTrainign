@@ -395,6 +395,9 @@ const BlogListing = () => {
           </main>
         </div>
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

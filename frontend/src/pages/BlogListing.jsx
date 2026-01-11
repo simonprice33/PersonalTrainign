@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { Search, ChevronLeft, ChevronRight, Calendar, User, Tag, FolderOpen, ChevronDown, ChevronUp } from 'lucide-react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 

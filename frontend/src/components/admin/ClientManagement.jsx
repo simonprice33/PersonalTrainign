@@ -548,7 +548,7 @@ const ClientManagement = () => {
                             </button>
                             {client.subscription_status === 'active' && !client.cancel_at_period_end && (
                               <button
-                                onClick={() => handleCancelSubscription(client.email, client.name)}
+                                onClick={() => handleCancelSubscription(client.stripe_customer_id || client.customer_id, client.name)}
                                 className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-sm"
                               >
                                 <XCircle size={16} />

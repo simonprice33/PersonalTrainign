@@ -606,7 +606,7 @@ class BlogController {
       // Get post count for each tag
       for (let tag of tags) {
         const count = await this.collections.blogPosts.countDocuments({
-          tags: tag.slug,
+          tags: { $in: [tag.slug] },
           status: 'published'
         });
         tag.post_count = count;

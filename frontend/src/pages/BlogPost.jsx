@@ -214,11 +214,10 @@ const BlogPost = () => {
         <div className="absolute top-6 left-6">
           <button
             onClick={handleBackClick}
-            disabled={isNavigating}
-            className="flex items-center gap-2 px-4 py-2 bg-black/50 hover:bg-black/70 text-white rounded-lg backdrop-blur-sm transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-black/50 hover:bg-black/70 text-white rounded-lg backdrop-blur-sm transition-colors"
           >
             <ArrowLeft size={20} />
-            {isNavigating ? 'Loading...' : 'Back to Blog'}
+            Back to Blog
           </button>
         </div>
 

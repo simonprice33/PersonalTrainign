@@ -1,13 +1,25 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { Calendar, User, Tag, ArrowLeft, Clock, Share2, Facebook, Twitter, Linkedin } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+// Lazy load ReactMarkdown to prevent ResizeObserver issues
+const LazyMarkdown = lazy(() => import('react-markdown'));
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+
+// Loading skeleton for markdown content
+const MarkdownSkeleton = () => (
+  <div className="animate-pulse space-y-4">
+    <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+    <div className="h-4 bg-gray-700 rounded w-full"></div>
+    <div className="h-4 bg-gray-700 rounded w-5/6"></div>
+    <div className="h-4 bg-gray-700 rounded w-full"></div>
+    <div className="h-4 bg-gray-700 rounded w-2/3"></div>
+  </div>
+);
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -31,19 +43,16 @@ const BlogPost = () => {
     };
   }, [slug]);
 
-  // Defer markdown rendering with double RAF to prevent ResizeObserver issues
+  // Defer markdown rendering with setTimeout to ensure DOM is fully ready
   useEffect(() => {
     if (post && !loading && mountedRef.current) {
-      // Double requestAnimationFrame ensures we're past the initial layout phase
-      const rafId1 = requestAnimationFrame(() => {
-        const rafId2 = requestAnimationFrame(() => {
-          if (mountedRef.current) {
-            setContentReady(true);
-          }
-        });
-        return () => cancelAnimationFrame(rafId2);
-      });
-      return () => cancelAnimationFrame(rafId1);
+      // Use setTimeout instead of RAF for more reliable deferral
+      const timeoutId = setTimeout(() => {
+        if (mountedRef.current) {
+          setContentReady(true);
+        }
+      }, 100);
+      return () => clearTimeout(timeoutId);
     }
   }, [post, loading]);
 
@@ -51,10 +60,10 @@ const BlogPost = () => {
   const handleBackClick = useCallback((e) => {
     e.preventDefault();
     setContentReady(false); // Hide markdown before navigating
-    // Small delay to allow unmount
-    requestAnimationFrame(() => {
+    // Use setTimeout for navigation to ensure clean unmount
+    setTimeout(() => {
       navigate('/blog');
-    });
+    }, 50);
   }, [navigate]);
 
   const fetchPost = async () => {

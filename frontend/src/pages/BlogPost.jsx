@@ -288,13 +288,20 @@ const BlogPost = () => {
 
           {/* Markdown Content */}
           <div className="prose prose-invert prose-lg max-w-none blog-content">
-            {!isNavigating && (
+            {contentReady ? (
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={MarkdownComponents}
               >
                 {post.content}
               </ReactMarkdown>
+            ) : (
+              <div className="animate-pulse space-y-4">
+                <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-700 rounded w-full"></div>
+                <div className="h-4 bg-gray-700 rounded w-5/6"></div>
+                <div className="h-4 bg-gray-700 rounded w-full"></div>
+              </div>
             )}
           </div>
 

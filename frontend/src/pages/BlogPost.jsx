@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
@@ -16,6 +16,22 @@ const BlogPost = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [categories, setCategories] = useState([]);
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  useEffect(() => {
+    fetchPost();
+    fetchCategories();
+  }, [slug]);
+
+  // Handle navigation with cleanup to prevent ResizeObserver issues
+  const handleBackClick = useCallback((e) => {
+    e.preventDefault();
+    setIsNavigating(true);
+    // Small delay to allow state update before navigation
+    setTimeout(() => {
+      navigate('/blog');
+    }, 10);
+  }, [navigate]);
 
   useEffect(() => {
     fetchPost();

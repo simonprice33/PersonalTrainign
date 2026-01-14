@@ -3,23 +3,40 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 
-// Suppress ResizeObserver loop error (benign warning in React)
-const resizeObserverError = window.onerror;
-window.onerror = function(message, source, lineno, colno, error) {
-  if (message && message.includes && message.includes('ResizeObserver loop')) {
-    return true; // Suppress the error
-  }
-  if (resizeObserverError) {
-    return resizeObserverError(message, source, lineno, colno, error);
-  }
-  return false;
+// Suppress ResizeObserver loop errors (benign warning in React development)
+// This error occurs when ResizeObserver cannot deliver all observations in a single animation frame
+const suppressResizeObserverError = () => {
+  const resizeObserverErr = window.ResizeObserver;
+  window.ResizeObserver = class ResizeObserver extends resizeObserverErr {
+    constructor(callback) {
+      super((entries, observer) => {
+        // Wrap callback in requestAnimationFrame to prevent loop errors
+        window.requestAnimationFrame(() => {
+          callback(entries, observer);
+        });
+      });
+    }
+  };
 };
 
-// Also handle unhandled promise rejections for ResizeObserver
+// Apply the fix
+suppressResizeObserverError();
+
+// Also suppress the error in console
+const originalError = console.error;
+console.error = (...args) => {
+  if (args[0] && typeof args[0] === 'string' && args[0].includes('ResizeObserver loop')) {
+    return;
+  }
+  originalError.apply(console, args);
+};
+
+// Suppress window error events for ResizeObserver
 window.addEventListener('error', (e) => {
   if (e.message && e.message.includes('ResizeObserver loop')) {
-    e.stopPropagation();
+    e.stopImmediatePropagation();
     e.preventDefault();
+    return true;
   }
 });
 

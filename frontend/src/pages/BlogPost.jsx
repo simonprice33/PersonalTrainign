@@ -314,13 +314,14 @@ const BlogPost = () => {
 
           {/* Back to Blog */}
           <div className="mt-12 pt-8 border-t border-gray-700 text-center mb-8">
-            <Link
-              to="/blog"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors"
+            <button
+              onClick={handleBackClick}
+              disabled={isNavigating}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors disabled:opacity-50"
             >
               <ArrowLeft size={20} />
-              Back to All Posts
-            </Link>
+              {isNavigating ? 'Loading...' : 'Back to All Posts'}
+            </button>
           </div>
         </div>
       </article>

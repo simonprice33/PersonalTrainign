@@ -16,21 +16,30 @@ const BlogPost = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [categories, setCategories] = useState([]);
-  const [isNavigating, setIsNavigating] = useState(false);
+  const [contentReady, setContentReady] = useState(false);
 
   useEffect(() => {
+    // Reset content ready state on slug change
+    setContentReady(false);
     fetchPost();
     fetchCategories();
   }, [slug]);
 
-  // Handle navigation with cleanup to prevent ResizeObserver issues
+  // Defer markdown rendering to prevent ResizeObserver issues
+  useEffect(() => {
+    if (post && !loading) {
+      // Use requestAnimationFrame to defer rendering after layout
+      const rafId = requestAnimationFrame(() => {
+        setContentReady(true);
+      });
+      return () => cancelAnimationFrame(rafId);
+    }
+  }, [post, loading]);
+
+  // Handle navigation
   const handleBackClick = useCallback((e) => {
     e.preventDefault();
-    setIsNavigating(true);
-    // Small delay to allow state update before navigation
-    setTimeout(() => {
-      navigate('/blog');
-    }, 10);
+    navigate('/blog');
   }, [navigate]);
 
   const fetchPost = async () => {

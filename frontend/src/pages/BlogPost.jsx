@@ -209,11 +209,12 @@ const BlogPost = () => {
         {/* Back Button */}
         <div className="absolute top-6 left-6">
           <button
-            onClick={() => navigate('/blog')}
-            className="flex items-center gap-2 px-4 py-2 bg-black/50 hover:bg-black/70 text-white rounded-lg backdrop-blur-sm transition-colors"
+            onClick={handleBackClick}
+            disabled={isNavigating}
+            className="flex items-center gap-2 px-4 py-2 bg-black/50 hover:bg-black/70 text-white rounded-lg backdrop-blur-sm transition-colors disabled:opacity-50"
           >
             <ArrowLeft size={20} />
-            Back to Blog
+            {isNavigating ? 'Loading...' : 'Back to Blog'}
           </button>
         </div>
 

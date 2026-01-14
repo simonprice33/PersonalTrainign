@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
@@ -17,29 +17,44 @@ const BlogPost = () => {
   const [error, setError] = useState('');
   const [categories, setCategories] = useState([]);
   const [contentReady, setContentReady] = useState(false);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
+    mountedRef.current = true;
     // Reset content ready state on slug change
     setContentReady(false);
     fetchPost();
     fetchCategories();
+    
+    return () => {
+      mountedRef.current = false;
+    };
   }, [slug]);
 
-  // Defer markdown rendering to prevent ResizeObserver issues
+  // Defer markdown rendering with double RAF to prevent ResizeObserver issues
   useEffect(() => {
-    if (post && !loading) {
-      // Use requestAnimationFrame to defer rendering after layout
-      const rafId = requestAnimationFrame(() => {
-        setContentReady(true);
+    if (post && !loading && mountedRef.current) {
+      // Double requestAnimationFrame ensures we're past the initial layout phase
+      const rafId1 = requestAnimationFrame(() => {
+        const rafId2 = requestAnimationFrame(() => {
+          if (mountedRef.current) {
+            setContentReady(true);
+          }
+        });
+        return () => cancelAnimationFrame(rafId2);
       });
-      return () => cancelAnimationFrame(rafId);
+      return () => cancelAnimationFrame(rafId1);
     }
   }, [post, loading]);
 
   // Handle navigation
   const handleBackClick = useCallback((e) => {
     e.preventDefault();
-    navigate('/blog');
+    setContentReady(false); // Hide markdown before navigating
+    // Small delay to allow unmount
+    requestAnimationFrame(() => {
+      navigate('/blog');
+    });
   }, [navigate]);
 
   const fetchPost = async () => {

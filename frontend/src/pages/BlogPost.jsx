@@ -284,12 +284,14 @@ const BlogPost = () => {
 
           {/* Markdown Content */}
           <div className="prose prose-invert prose-lg max-w-none blog-content">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              components={MarkdownComponents}
-            >
-              {post.content}
-            </ReactMarkdown>
+            {!isNavigating && (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={MarkdownComponents}
+              >
+                {post.content}
+              </ReactMarkdown>
+            )}
           </div>
 
           {/* Clear floats */}

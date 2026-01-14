@@ -40,7 +40,7 @@ const Header = () => {
   };
 
   return (
-    <header className="network-header fixed top-0 w-full z-50" style={{ background: 'rgba(10, 10, 10, 0.95)', backdropFilter: 'blur(10px)' }}>
+    <header className="network-header fixed top-0 w-full z-50" style={{ background: 'rgba(10, 10, 10, 0.98)' }}>
       <div className="container">
         <div className="nav-wrapper" style={{
           background: 'var(--brand-dark)',

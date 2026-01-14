@@ -30,6 +30,29 @@
         -->
         <script src="https://unpkg.com/rrweb@latest/dist/rrweb.min.js"></script>
         <script src="https://d2adkz2s9zrlge.cloudfront.net/rrweb-recorder-20250919-1.js"></script>
+        
+        <!-- Suppress ResizeObserver loop errors (must run before React loads) -->
+        <script>
+            // This suppresses the benign ResizeObserver loop error in development
+            (function() {
+                var origError = window.onerror;
+                window.onerror = function(message, source, lineno, colno, error) {
+                    if (message && message.indexOf && message.indexOf('ResizeObserver loop') > -1) {
+                        return true;
+                    }
+                    if (origError) return origError(message, source, lineno, colno, error);
+                    return false;
+                };
+                
+                // Also catch it at the event level
+                window.addEventListener('error', function(e) {
+                    if (e.message && e.message.indexOf('ResizeObserver loop') > -1) {
+                        e.stopImmediatePropagation();
+                        e.preventDefault();
+                    }
+                }, true);
+            })();
+        </script>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>

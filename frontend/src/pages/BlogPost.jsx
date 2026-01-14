@@ -7,8 +7,28 @@ import Footer from '../components/Footer';
 
 // Lazy load ReactMarkdown to prevent ResizeObserver issues
 const LazyMarkdown = lazy(() => import('react-markdown'));
+const LazyRemarkGfm = lazy(() => import('remark-gfm').then(m => ({ default: m.default })));
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+
+// Wrapper component for lazy loaded markdown
+const LazyMarkdownRenderer = ({ content, components }) => {
+  const [remarkGfm, setRemarkGfm] = useState(null);
+  
+  useEffect(() => {
+    import('remark-gfm').then(m => setRemarkGfm(() => m.default));
+  }, []);
+  
+  if (!remarkGfm) return null;
+  
+  return (
+    <Suspense fallback={null}>
+      <LazyMarkdown remarkPlugins={[remarkGfm]} components={components}>
+        {content}
+      </LazyMarkdown>
+    </Suspense>
+  );
+};
 
 // Loading skeleton for markdown content
 const MarkdownSkeleton = () => (

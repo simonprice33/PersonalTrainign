@@ -7,30 +7,10 @@ import Footer from '../components/Footer';
 
 // Lazy load ReactMarkdown to prevent ResizeObserver issues
 const LazyMarkdown = lazy(() => import('react-markdown'));
-const LazyRemarkGfm = lazy(() => import('remark-gfm').then(m => ({ default: m.default })));
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
-// Wrapper component for lazy loaded markdown
-const LazyMarkdownRenderer = ({ content, components }) => {
-  const [remarkGfm, setRemarkGfm] = useState(null);
-  
-  useEffect(() => {
-    import('remark-gfm').then(m => setRemarkGfm(() => m.default));
-  }, []);
-  
-  if (!remarkGfm) return null;
-  
-  return (
-    <Suspense fallback={null}>
-      <LazyMarkdown remarkPlugins={[remarkGfm]} components={components}>
-        {content}
-      </LazyMarkdown>
-    </Suspense>
-  );
-};
-
-// Loading skeleton for markdown content
+// Loading skeleton for markdown content - defined outside component
 const MarkdownSkeleton = () => (
   <div className="animate-pulse space-y-4">
     <div className="h-4 bg-gray-700 rounded w-3/4"></div>
@@ -40,6 +20,86 @@ const MarkdownSkeleton = () => (
     <div className="h-4 bg-gray-700 rounded w-2/3"></div>
   </div>
 );
+
+// Custom markdown components - defined OUTSIDE the component to prevent re-creation
+const markdownComponents = {
+  img: (props) => {
+    const alt = props.alt || '';
+    const [description, position] = alt.split('|');
+    
+    let containerClass = 'my-6';
+    let imgClass = 'rounded-lg max-w-full h-auto';
+    
+    switch (position?.trim()) {
+      case 'left':
+        containerClass = 'float-left mr-6 mb-4 max-w-[50%]';
+        break;
+      case 'right':
+        containerClass = 'float-right ml-6 mb-4 max-w-[50%]';
+        break;
+      case 'square':
+        containerClass = 'my-6 mx-auto';
+        imgClass += ' aspect-square object-cover max-w-md';
+        break;
+      default:
+        containerClass = 'my-6';
+        imgClass += ' w-full';
+    }
+    
+    return (
+      <figure className={containerClass}>
+        <img src={props.src} alt={description} className={imgClass} />
+        {description && (
+          <figcaption className="text-center text-sm text-gray-400 mt-2 italic">
+            {description}
+          </figcaption>
+        )}
+      </figure>
+    );
+  },
+  h1: (props) => <h1 className="text-3xl font-bold text-white mt-8 mb-4">{props.children}</h1>,
+  h2: (props) => <h2 className="text-2xl font-bold text-white mt-8 mb-4">{props.children}</h2>,
+  h3: (props) => <h3 className="text-xl font-bold text-white mt-6 mb-3">{props.children}</h3>,
+  p: (props) => <p className="text-gray-300 leading-relaxed mb-4">{props.children}</p>,
+  ul: (props) => <ul className="list-disc list-inside text-gray-300 mb-4 space-y-2">{props.children}</ul>,
+  ol: (props) => <ol className="list-decimal list-inside text-gray-300 mb-4 space-y-2">{props.children}</ol>,
+  li: (props) => <li className="text-gray-300">{props.children}</li>,
+  blockquote: (props) => (
+    <blockquote className="border-l-4 border-cyan-500 pl-4 py-2 my-6 bg-gray-800/50 rounded-r-lg italic text-gray-300">
+      {props.children}
+    </blockquote>
+  ),
+  code: (props) => {
+    if (props.inline) {
+      return <code className="bg-gray-800 px-2 py-1 rounded text-cyan-400 text-sm">{props.children}</code>;
+    }
+    return <code className="block bg-gray-800 p-4 rounded-lg overflow-x-auto text-sm text-gray-300">{props.children}</code>;
+  },
+  a: (props) => <a href={props.href} className="text-cyan-400 hover:text-cyan-300 underline">{props.children}</a>,
+  strong: (props) => <strong className="font-bold text-white">{props.children}</strong>,
+  hr: () => <hr className="my-8 border-gray-700" />,
+};
+
+// Markdown renderer component - defined outside to prevent re-creation
+const MarkdownRenderer = ({ content }) => {
+  const [remarkGfm, setRemarkGfm] = useState(null);
+  
+  useEffect(() => {
+    let mounted = true;
+    import('remark-gfm').then(m => {
+      if (mounted) setRemarkGfm(() => m.default);
+    });
+    return () => { mounted = false; };
+  }, []);
+  
+  if (!remarkGfm) return <MarkdownSkeleton />;
+  
+  return (
+    <LazyMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+      {content}
+    </LazyMarkdown>
+  );
+};
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -51,53 +111,17 @@ const BlogPost = () => {
   const [contentReady, setContentReady] = useState(false);
   const mountedRef = useRef(true);
 
-  useEffect(() => {
-    mountedRef.current = true;
-    // Reset content ready state on slug change
-    setContentReady(false);
-    fetchPost();
-    fetchCategories();
-    
-    return () => {
-      mountedRef.current = false;
-    };
-  }, [slug]);
-
-  // Defer markdown rendering with setTimeout to ensure DOM is fully ready
-  useEffect(() => {
-    if (post && !loading && mountedRef.current) {
-      // Use setTimeout instead of RAF for more reliable deferral
-      const timeoutId = setTimeout(() => {
-        if (mountedRef.current) {
-          setContentReady(true);
-        }
-      }, 100);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [post, loading]);
-
-  // Handle navigation
-  const handleBackClick = useCallback((e) => {
-    e.preventDefault();
-    setContentReady(false); // Hide markdown before navigating
-    // Use setTimeout for navigation to ensure clean unmount
-    setTimeout(() => {
-      navigate('/blog');
-    }, 50);
-  }, [navigate]);
-
-  const fetchPost = async () => {
+  const fetchPost = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(`${BACKEND_URL}/api/blog/posts/${slug}`);
       if (response.data.success) {
         setPost(response.data.post);
-        // Update page title for SEO
         document.title = response.data.post.seo_title || response.data.post.title;
       }
-    } catch (error) {
-      console.error('Error fetching post:', error);
-      if (error.response?.status === 404) {
+    } catch (err) {
+      console.error('Error fetching post:', err);
+      if (err.response?.status === 404) {
         setError('Post not found');
       } else {
         setError('Failed to load post');
@@ -105,18 +129,50 @@ const BlogPost = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug]);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/api/blog/categories`);
       if (response.data.success) {
         setCategories(response.data.categories);
       }
-    } catch (error) {
-      console.error('Error fetching categories:', error);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    setContentReady(false);
+    fetchPost();
+    fetchCategories();
+    
+    return () => {
+      mountedRef.current = false;
+    };
+  }, [slug, fetchPost, fetchCategories]);
+
+  // Defer markdown rendering with setTimeout to ensure DOM is fully ready
+  useEffect(() => {
+    if (post && !loading && mountedRef.current) {
+      const timeoutId = setTimeout(() => {
+        if (mountedRef.current) {
+          setContentReady(true);
+        }
+      }, 150);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [post, loading]);
+
+  // Handle navigation
+  const handleBackClick = useCallback((e) => {
+    e.preventDefault();
+    setContentReady(false);
+    setTimeout(() => {
+      navigate('/blog');
+    }, 50);
+  }, [navigate]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-GB', {
@@ -156,63 +212,6 @@ const BlogPost = () => {
     window.open(url, '_blank', 'width=600,height=400');
   };
 
-  // Custom components for ReactMarkdown to handle image positioning
-  const MarkdownComponents = {
-    img: ({ node, ...props }) => {
-      // Check for position class in alt text (e.g., "image description|left")
-      const alt = props.alt || '';
-      const [description, position] = alt.split('|');
-      
-      let containerClass = 'my-6';
-      let imgClass = 'rounded-lg max-w-full h-auto';
-      
-      switch (position?.trim()) {
-        case 'left':
-          containerClass = 'float-left mr-6 mb-4 max-w-[50%]';
-          break;
-        case 'right':
-          containerClass = 'float-right ml-6 mb-4 max-w-[50%]';
-          break;
-        case 'square':
-          containerClass = 'my-6 mx-auto';
-          imgClass += ' aspect-square object-cover max-w-md';
-          break;
-        default:
-          containerClass = 'my-6';
-          imgClass += ' w-full';
-      }
-      
-      return (
-        <figure className={containerClass}>
-          <img {...props} alt={description} className={imgClass} />
-          {description && (
-            <figcaption className="text-center text-sm text-gray-400 mt-2 italic">
-              {description}
-            </figcaption>
-          )}
-        </figure>
-      );
-    },
-    h1: ({ node, ...props }) => <h1 className="text-3xl font-bold text-white mt-8 mb-4" {...props} />,
-    h2: ({ node, ...props }) => <h2 className="text-2xl font-bold text-white mt-8 mb-4" {...props} />,
-    h3: ({ node, ...props }) => <h3 className="text-xl font-bold text-white mt-6 mb-3" {...props} />,
-    p: ({ node, ...props }) => <p className="text-gray-300 leading-relaxed mb-4" {...props} />,
-    ul: ({ node, ...props }) => <ul className="list-disc list-inside text-gray-300 mb-4 space-y-2" {...props} />,
-    ol: ({ node, ...props }) => <ol className="list-decimal list-inside text-gray-300 mb-4 space-y-2" {...props} />,
-    li: ({ node, ...props }) => <li className="text-gray-300" {...props} />,
-    blockquote: ({ node, ...props }) => (
-      <blockquote className="border-l-4 border-cyan-500 pl-4 py-2 my-6 bg-gray-800/50 rounded-r-lg italic text-gray-300" {...props} />
-    ),
-    code: ({ node, inline, ...props }) => (
-      inline 
-        ? <code className="bg-gray-800 px-2 py-1 rounded text-cyan-400 text-sm" {...props} />
-        : <code className="block bg-gray-800 p-4 rounded-lg overflow-x-auto text-sm text-gray-300" {...props} />
-    ),
-    a: ({ node, ...props }) => <a className="text-cyan-400 hover:text-cyan-300 underline" {...props} />,
-    strong: ({ node, ...props }) => <strong className="font-bold text-white" {...props} />,
-    hr: ({ node, ...props }) => <hr className="my-8 border-gray-700" {...props} />,
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
@@ -227,7 +226,7 @@ const BlogPost = () => {
         <div className="text-center">
           <div className="text-6xl mb-4">😕</div>
           <h1 className="text-2xl font-bold text-white mb-2">{error}</h1>
-          <p className="text-gray-400 mb-6">The post you're looking for doesn't exist or has been removed.</p>
+          <p className="text-gray-400 mb-6">The post you are looking for does not exist or has been removed.</p>
           <Link
             to="/blog"
             className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors"
@@ -240,12 +239,13 @@ const BlogPost = () => {
     );
   }
 
+  if (!post) return null;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-      {/* Main Site Header */}
       <Header />
 
-      {/* Hero Image - add padding-top for fixed header */}
+      {/* Hero Image */}
       <div className="relative h-[50vh] min-h-[400px] max-h-[600px] mt-20">
         <img
           src={post.header_image}
@@ -333,7 +333,7 @@ const BlogPost = () => {
           <div className="prose prose-invert prose-lg max-w-none blog-content">
             {contentReady ? (
               <Suspense fallback={<MarkdownSkeleton />}>
-                <LazyMarkdownRenderer content={post.content} components={MarkdownComponents} />
+                <MarkdownRenderer content={post.content} />
               </Suspense>
             ) : (
               <MarkdownSkeleton />

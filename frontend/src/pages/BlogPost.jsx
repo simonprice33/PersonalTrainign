@@ -33,11 +33,6 @@ const BlogPost = () => {
     }, 10);
   }, [navigate]);
 
-  useEffect(() => {
-    fetchPost();
-    fetchCategories();
-  }, [slug]);
-
   const fetchPost = async () => {
     setLoading(true);
     try {

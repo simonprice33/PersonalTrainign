@@ -149,9 +149,7 @@ const BlogPost = () => {
   useEffect(() => {
     if (post && !loading && mountedRef.current) {
       const timeoutId = setTimeout(() => {
-        if (mountedRef.current) {
-          setContentReady(true);
-        }
+        if (mountedRef.current) setContentReady(true);
       }, 150);
       return () => clearTimeout(timeoutId);
     }
@@ -159,8 +157,16 @@ const BlogPost = () => {
 
   const handleBackClick = (e) => {
     e.preventDefault();
+
+    // Store the originating post so the listing can scroll back to it
+    try {
+      sessionStorage.setItem('blog:lastViewedSlug', slug);
+    } catch {
+      // ignore
+    }
+
     setContentReady(false);
-    setTimeout(() => navigate('/blog'), 50);
+    navigate('/blog');
   };
 
   const formatDate = (dateString) =>
@@ -275,7 +281,7 @@ const BlogPost = () => {
           <div className="prose prose-invert prose-lg max-w-none blog-content">
             {contentReady && post.content ? (
               <ReactMarkdown
-                key={slug} // ✅ force remount
+                key={slug}
                 remarkPlugins={[remarkGfm]}
                 components={markdownComponents}
               >

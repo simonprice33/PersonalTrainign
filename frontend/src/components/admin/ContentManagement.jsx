@@ -99,11 +99,17 @@ const ContentManagement = () => {
   // Package handlers
   const handleAddPackage = async () => {
     try {
+      // If this package is marked as popular, clear others first
+      if (packageForm.is_popular) {
+        await axiosInstance.post(`${BACKEND_URL}/api/admin/packages/clear-popular`);
+      }
+      
       const response = await axiosInstance.post(`${BACKEND_URL}/api/admin/packages`, {
         name: packageForm.name,
         price: parseFloat(packageForm.price),
         description: packageForm.description,
-        features: packageForm.features.filter(f => f.trim())
+        features: packageForm.features.filter(f => f.trim()),
+        is_popular: packageForm.is_popular
       });
       
       if (response.data.success) {
@@ -119,11 +125,17 @@ const ContentManagement = () => {
 
   const handleUpdatePackage = async () => {
     try {
+      // If this package is marked as popular, clear others first
+      if (packageForm.is_popular) {
+        await axiosInstance.post(`${BACKEND_URL}/api/admin/packages/clear-popular`);
+      }
+      
       const response = await axiosInstance.put(`${BACKEND_URL}/api/admin/packages/${editingItem.id}`, {
         name: packageForm.name,
         price: parseFloat(packageForm.price),
         description: packageForm.description,
         features: packageForm.features.filter(f => f.trim()),
+        is_popular: packageForm.is_popular,
         active: editingItem.active
       });
       

@@ -83,42 +83,63 @@ const JoinNow = () => {
 
       {/* Packages */}
       <section className="container mx-auto px-4 py-12 pb-20">
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className={`grid gap-6 max-w-6xl mx-auto ${
+          packages.length === 1 ? 'md:grid-cols-1 max-w-md' : 
+          packages.length === 2 ? 'md:grid-cols-2 max-w-3xl' : 
+          'md:grid-cols-3'
+        }`}>
           {packages.map((pkg) => (
             <div
               key={pkg.id}
-              className="bg-gray-800 rounded-2xl border border-cyan-500/30 p-8 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/20"
+              className={`relative bg-gray-800 rounded-2xl border p-6 hover:shadow-xl transition-all duration-300 ${
+                pkg.is_popular 
+                  ? 'border-yellow-500 hover:shadow-yellow-500/20 scale-105' 
+                  : 'border-cyan-500/30 hover:border-cyan-500/50 hover:shadow-cyan-500/20'
+              }`}
             >
-              <h3 className="text-3xl font-bold mb-4 text-cyan-400">{pkg.name}</h3>
-              <div className="text-5xl font-bold mb-6">
-                £{pkg.price}
-                <span className="text-lg text-gray-400">/month</span>
-              </div>
-              <p className="text-gray-300 mb-6">{pkg.description}</p>
+              {/* Most Popular Banner */}
+              {pkg.is_popular && (
+                <div className="absolute -top-3 -right-3 z-10">
+                  <div className="bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    Most Popular
+                  </div>
+                </div>
+              )}
               
-              <div className="space-y-3 mb-8">
+              <h3 className="text-2xl font-bold mb-3 text-cyan-400">{pkg.name}</h3>
+              <div className="text-4xl font-bold mb-4">
+                £{pkg.price}
+                <span className="text-base text-gray-400">/month</span>
+              </div>
+              <p className="text-gray-300 mb-4 text-sm">{pkg.description}</p>
+              
+              <div className="space-y-2 mb-6">
                 {pkg.features.map((feature, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <Check className="text-cyan-400 flex-shrink-0 mt-1" size={20} />
-                    <span className="text-gray-300">{feature}</span>
+                  <div key={index} className="flex items-start gap-2">
+                    <Check className="text-cyan-400 flex-shrink-0 mt-0.5" size={16} />
+                    <span className="text-gray-300 text-sm">{feature}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <button
                   onClick={() => handleBuyNow(pkg)}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg transition-all"
+                  className={`w-full flex items-center justify-center gap-2 px-4 py-3 font-semibold rounded-lg transition-all ${
+                    pkg.is_popular
+                      ? 'bg-yellow-500 hover:bg-yellow-600 text-black'
+                      : 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white'
+                  }`}
                 >
                   Buy Now
-                  <ArrowRight size={20} />
+                  <ArrowRight size={18} />
                 </button>
                 
                 <button
                   onClick={handleBookCall}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-all"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-all"
                 >
-                  <Calendar size={20} />
+                  <Calendar size={18} />
                   Book a Call
                 </button>
               </div>

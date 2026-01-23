@@ -82,7 +82,7 @@ const JoinNow = () => {
       </section>
 
       {/* Packages */}
-      <section className="container mx-auto px-4 pt-12 pb-48 mb-8">
+      <section className="container mx-auto px-4 pt-12 pb-24">
         <div className={`grid gap-8 max-w-6xl mx-auto items-start ${
           packages.length === 1 ? 'md:grid-cols-1 max-w-md' : 
           packages.length === 2 ? 'md:grid-cols-2 max-w-3xl' : 
@@ -91,9 +91,9 @@ const JoinNow = () => {
           {packages.map((pkg) => (
             <div
               key={pkg.id}
-              className={`relative bg-gray-800 rounded-2xl border p-6 hover:shadow-xl transition-all duration-300 flex flex-col ${
+              className={`relative bg-gray-800 rounded-2xl border-2 p-6 hover:shadow-xl transition-all duration-300 flex flex-col ${
                 pkg.is_popular 
-                  ? 'border-yellow-500 hover:shadow-yellow-500/20 md:scale-105 z-10' 
+                  ? 'border-yellow-500 hover:shadow-yellow-500/30 shadow-lg shadow-yellow-500/20' 
                   : 'border-cyan-500/30 hover:border-cyan-500/50 hover:shadow-cyan-500/20'
               }`}
             >

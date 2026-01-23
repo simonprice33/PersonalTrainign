@@ -43,7 +43,8 @@ const ContentManagement = () => {
     name: '',
     price: '',
     description: '',
-    features: ['']
+    features: [''],
+    is_popular: false
   });
   
   const [parqForm, setParqForm] = useState({

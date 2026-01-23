@@ -278,7 +278,8 @@ const BlogPost = () => {
             <button onClick={() => handleShare('linkedin')} className="p-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg"><Linkedin size={20} /></button>
           </div>
 
-          <div className="prose prose-invert prose-lg max-w-none blog-content">
+          <div className="blog-content space-y-6">
+
             {contentReady && post.content ? (
               <ReactMarkdown
                 key={slug}

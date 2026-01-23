@@ -986,6 +986,18 @@ const ContentManagement = () => {
                     rows={3}
                   />
                 </div>
+                <div className="flex items-center gap-3 py-3 px-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                  <input
+                    type="checkbox"
+                    id="isPopularEdit"
+                    checked={packageForm.is_popular}
+                    onChange={(e) => setPackageForm({ ...packageForm, is_popular: e.target.checked })}
+                    className="w-5 h-5 rounded border-gray-700 text-yellow-500 focus:ring-yellow-500"
+                  />
+                  <label htmlFor="isPopularEdit" className="text-yellow-400 text-sm font-medium cursor-pointer">
+                    Mark as "Most Popular" (displays a banner on the package)
+                  </label>
+                </div>
                 <div>
                   <label className="block text-gray-300 text-sm mb-2">Features</label>
                   {packageForm.features.map((feature, index) => (

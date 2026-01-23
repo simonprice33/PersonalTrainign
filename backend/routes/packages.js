@@ -87,6 +87,16 @@ function createPackageRoutes(dependencies) {
   ], (req, res) => controller.createPackage(req, res));
   router.put('/admin/packages/:id', authenticate, (req, res) => controller.updatePackage(req, res));
   router.delete('/admin/packages/:id', authenticate, (req, res) => controller.deletePackage(req, res));
+  
+  // Clear "Most Popular" flag from all packages
+  router.post('/admin/packages/clear-popular', authenticate, async (req, res) => {
+    try {
+      await collections.packages.updateMany({}, { $set: { is_popular: false } });
+      res.json({ success: true, message: 'Cleared popular flag from all packages' });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  });
 
   // Admin routes - PARQ Questions
   router.get('/admin/parq-questions', authenticate, (req, res) => controller.getAllParqQuestions(req, res));

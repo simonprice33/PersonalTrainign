@@ -82,8 +82,8 @@ const JoinNow = () => {
       </section>
 
       {/* Packages */}
-      <section className="container mx-auto px-4 pt-12 pb-32">
-        <div className={`grid gap-8 max-w-6xl mx-auto ${
+      <section className="container mx-auto px-4 pt-12 pb-40">
+        <div className={`grid gap-8 max-w-6xl mx-auto items-stretch ${
           packages.length === 1 ? 'md:grid-cols-1 max-w-md' : 
           packages.length === 2 ? 'md:grid-cols-2 max-w-3xl' : 
           'md:grid-cols-3'
@@ -91,9 +91,9 @@ const JoinNow = () => {
           {packages.map((pkg) => (
             <div
               key={pkg.id}
-              className={`relative bg-gray-800 rounded-2xl border p-6 hover:shadow-xl transition-all duration-300 ${
+              className={`relative bg-gray-800 rounded-2xl border p-6 hover:shadow-xl transition-all duration-300 flex flex-col ${
                 pkg.is_popular 
-                  ? 'border-yellow-500 hover:shadow-yellow-500/20 scale-105 z-10' 
+                  ? 'border-yellow-500 hover:shadow-yellow-500/20 scale-105 z-10 md:-mt-4 md:mb-4' 
                   : 'border-cyan-500/30 hover:border-cyan-500/50 hover:shadow-cyan-500/20'
               }`}
             >
@@ -113,7 +113,7 @@ const JoinNow = () => {
               </div>
               <p className="text-gray-300 mb-4 text-sm">{pkg.description}</p>
               
-              <div className="space-y-2 mb-6">
+              <div className="space-y-2 mb-6 flex-grow">
                 {pkg.features.map((feature, index) => (
                   <div key={index} className="flex items-start gap-2">
                     <Check className="text-cyan-400 flex-shrink-0 mt-0.5" size={16} />
@@ -122,7 +122,7 @@ const JoinNow = () => {
                 ))}
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 mt-auto">
                 <button
                   onClick={() => handleBuyNow(pkg)}
                   className={`w-full flex items-center justify-center gap-2 px-4 py-3 font-semibold rounded-lg transition-all ${

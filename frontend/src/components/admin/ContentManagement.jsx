@@ -521,7 +521,7 @@ const ContentManagement = () => {
             {packages.map(pkg => (
               <div 
                 key={pkg.id}
-                className={`bg-gray-800 rounded-xl p-6 border ${pkg.active ? 'border-cyan-500/30' : 'border-gray-700 opacity-60'}`}
+                className={`bg-gray-800 rounded-xl p-6 border ${pkg.active ? 'border-cyan-500/30' : 'border-gray-700 opacity-60'} ${pkg.is_popular ? 'ring-2 ring-yellow-500' : ''}`}
               >
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
@@ -530,6 +530,11 @@ const ContentManagement = () => {
                       <span className={`px-2 py-1 rounded text-xs ${pkg.active ? 'bg-green-500/20 text-green-400' : 'bg-gray-600/20 text-gray-400'}`}>
                         {pkg.active ? 'Active' : 'Inactive'}
                       </span>
+                      {pkg.is_popular && (
+                        <span className="px-2 py-1 rounded text-xs bg-yellow-500/20 text-yellow-400 font-bold">
+                          Most Popular
+                        </span>
+                      )}
                     </div>
                     <p className="text-cyan-400 text-2xl font-bold mb-2">£{pkg.price}/month</p>
                     <p className="text-gray-400 text-sm mb-3">{pkg.description}</p>

@@ -308,7 +308,7 @@ const ContentManagement = () => {
 
   // Form reset functions
   const resetPackageForm = () => {
-    setPackageForm({ name: '', price: '', description: '', features: [''] });
+    setPackageForm({ name: '', price: '', description: '', features: [''], is_popular: false });
   };
 
   const resetParqForm = () => {
@@ -326,7 +326,8 @@ const ContentManagement = () => {
       name: pkg.name,
       price: pkg.price.toString(),
       description: pkg.description || '',
-      features: pkg.features?.length ? pkg.features : ['']
+      features: pkg.features?.length ? pkg.features : [''],
+      is_popular: pkg.is_popular || false
     });
     setShowEditModal(true);
   };

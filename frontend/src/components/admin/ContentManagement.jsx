@@ -769,6 +769,18 @@ const ContentManagement = () => {
                     + Add Feature
                   </button>
                 </div>
+                <div className="flex items-center gap-3 pt-2 border-t border-gray-700">
+                  <input
+                    type="checkbox"
+                    id="isPopular"
+                    checked={packageForm.is_popular}
+                    onChange={(e) => setPackageForm({ ...packageForm, is_popular: e.target.checked })}
+                    className="w-4 h-4 rounded border-gray-700 text-cyan-500 focus:ring-cyan-500"
+                  />
+                  <label htmlFor="isPopular" className="text-gray-300 text-sm">
+                    Mark as "Most Popular" (displays a banner on the package)
+                  </label>
+                </div>
               </div>
             )}
 

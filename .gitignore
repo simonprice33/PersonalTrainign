@@ -829,7 +829,11 @@ frontend/node_modules/.cache/default-development/11.pack
 # Environment files
 *.env
 *.env.*
+<<<<<<< HEAD
 -e 
 # Environment files
 *.env
 *.env.*
+=======
+frontend/public/images/blog-images/
+>>>>>>> f8ea092a4eeae02f4252c1fa3a741ec21d593b00

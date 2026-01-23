@@ -62,7 +62,7 @@ class PackageController {
    */
   async createPackage(req, res) {
     try {
-      const { name, price, description, features } = req.body;
+      const { name, price, description, features, is_popular } = req.body;
 
       const packageData = {
         id: name.toLowerCase().replace(/\s+/g, '-'),
@@ -70,6 +70,7 @@ class PackageController {
         price: parseFloat(price),
         description,
         features: Array.isArray(features) ? features : [],
+        is_popular: is_popular || false,
         active: true,
         created_at: new Date()
       };
@@ -96,7 +97,7 @@ class PackageController {
   async updatePackage(req, res) {
     try {
       const { id } = req.params;
-      const { name, price, description, features, active } = req.body;
+      const { name, price, description, features, active, is_popular } = req.body;
 
       const updateData = {
         ...(name && { name }),
@@ -104,6 +105,7 @@ class PackageController {
         ...(description && { description }),
         ...(features && { features: Array.isArray(features) ? features : [] }),
         ...(active !== undefined && { active }),
+        ...(is_popular !== undefined && { is_popular }),
         updated_at: new Date()
       };
 

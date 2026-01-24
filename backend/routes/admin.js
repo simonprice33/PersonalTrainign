@@ -212,14 +212,17 @@ function createAdminRoutes(dependencies) {
   // Create a new section
   router.post('/cancellation-policy/sections', authenticate, (req, res) => controller.createPolicySection(req, res));
   
+  // Reorder sections (MUST be before :sectionId route)
+  router.put('/cancellation-policy/sections/reorder', authenticate, (req, res) => controller.reorderPolicySections(req, res));
+  
   // Update a section
   router.put('/cancellation-policy/sections/:sectionId', authenticate, (req, res) => controller.updatePolicySection(req, res));
   
   // Delete a section
   router.delete('/cancellation-policy/sections/:sectionId', authenticate, (req, res) => controller.deletePolicySection(req, res));
   
-  // Reorder sections
-  router.put('/cancellation-policy/sections/reorder', authenticate, (req, res) => controller.reorderPolicySections(req, res));
+  // Reorder items within section (MUST be before :itemId route)
+  router.put('/cancellation-policy/sections/:sectionId/items/reorder', authenticate, (req, res) => controller.reorderPolicyItems(req, res));
   
   // Add item to section
   router.post('/cancellation-policy/sections/:sectionId/items', authenticate, (req, res) => controller.addPolicyItem(req, res));
@@ -229,9 +232,6 @@ function createAdminRoutes(dependencies) {
   
   // Delete item from section
   router.delete('/cancellation-policy/sections/:sectionId/items/:itemId', authenticate, (req, res) => controller.deletePolicyItem(req, res));
-  
-  // Reorder items within section
-  router.put('/cancellation-policy/sections/:sectionId/items/reorder', authenticate, (req, res) => controller.reorderPolicyItems(req, res));
 
   return router;
 }

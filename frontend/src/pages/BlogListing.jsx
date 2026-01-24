@@ -231,9 +231,29 @@ const BlogListing = () => {
       {/* Hero */}
       <div className="bg-gradient-to-r from-cyan-900/50 to-blue-900/50 py-16 pt-32 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Fitness Blog</h1>
-        <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+        <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-8">
           Expert tips, workout guides, and nutrition advice to help you achieve your fitness goals.
         </p>
+        
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} className="max-w-xl mx-auto px-4">
+          <div className="relative">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search articles..."
+              className="w-full px-6 py-4 pl-14 bg-gray-800/80 border border-gray-600 rounded-full text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20"
+            />
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <button
+              type="submit"
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-full transition-colors font-medium"
+            >
+              Search
+            </button>
+          </div>
+        </form>
       </div>
 
       <div className="container mx-auto px-4 py-12 flex flex-col lg:flex-row gap-8">

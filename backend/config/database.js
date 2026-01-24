@@ -132,6 +132,10 @@ class DatabaseConfig {
       await this.collections.blogTags.createIndex({ slug: 1 }, { unique: true });
       console.log('✅ Blog tags indexes created');
 
+      // Cancellation policy collection indexes
+      await this.collections.cancellationPolicy.createIndex({ order: 1 });
+      console.log('✅ Cancellation policy indexes created');
+
       // Seed initial data
       await this._seedInitialData();
 

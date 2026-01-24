@@ -1228,6 +1228,110 @@ class AdminController {
       });
     }
   }
+
+  /**
+   * Normalize all client data to a consistent format
+   * Standardizes: stripe_customer_id, address object format
+   */
+  async normalizeClientData(req, res) {
+    try {
+      const clients = await this.collections.clients.find({}).toArray();
+      let normalizedCount = 0;
+      let errors = [];
+
+      for (const client of clients) {
+        try {
+          const updates = {};
+          let needsUpdate = false;
+
+          // Normalize Stripe Customer ID
+          // Prefer stripe_customer_id, fallback to customer_id
+          if (!client.stripe_customer_id && client.customer_id) {
+            updates.stripe_customer_id = client.customer_id;
+            needsUpdate = true;
+          } else if (client.stripe_customer_id && !client.customer_id) {
+            updates.customer_id = client.stripe_customer_id;
+            needsUpdate = true;
+          }
+
+          // Normalize Address - convert flat fields to address object
+          if (!client.address && (client.address_line_1 || client.city || client.postcode)) {
+            updates.address = {
+              line1: client.address_line_1 || '',
+              line2: client.address_line_2 || '',
+              city: client.city || '',
+              postal_code: client.postcode || client.postal_code || '',
+              country: client.country || 'GB'
+            };
+            needsUpdate = true;
+          }
+          
+          // If address exists as object, ensure flat fields also exist for backwards compatibility
+          if (client.address && typeof client.address === 'object') {
+            if (!client.address_line_1 && client.address.line1) {
+              updates.address_line_1 = client.address.line1;
+              needsUpdate = true;
+            }
+            if (!client.address_line_2 && client.address.line2) {
+              updates.address_line_2 = client.address.line2;
+              needsUpdate = true;
+            }
+            if (!client.city && client.address.city) {
+              updates.city = client.address.city;
+              needsUpdate = true;
+            }
+            if (!client.postcode && (client.address.postal_code || client.address.postcode)) {
+              updates.postcode = client.address.postal_code || client.address.postcode;
+              needsUpdate = true;
+            }
+          }
+
+          // Normalize name fields
+          if (!client.name && (client.first_name || client.last_name)) {
+            updates.name = `${client.first_name || ''} ${client.last_name || ''}`.trim();
+            needsUpdate = true;
+          }
+          if (client.name && !client.first_name && !client.last_name) {
+            const nameParts = client.name.split(' ');
+            updates.first_name = nameParts[0] || '';
+            updates.last_name = nameParts.slice(1).join(' ') || '';
+            needsUpdate = true;
+          }
+
+          // Add updated_at timestamp
+          if (needsUpdate) {
+            updates.updated_at = new Date();
+            updates.normalized_at = new Date();
+            
+            await this.collections.clients.updateOne(
+              { _id: client._id },
+              { $set: updates }
+            );
+            normalizedCount++;
+          }
+        } catch (clientError) {
+          errors.push({ email: client.email, error: clientError.message });
+        }
+      }
+
+      console.log(`✅ Normalized ${normalizedCount} client records`);
+
+      res.status(200).json({
+        success: true,
+        message: `Successfully normalized ${normalizedCount} client records`,
+        totalClients: clients.length,
+        normalizedCount,
+        errors: errors.length > 0 ? errors : undefined
+      });
+
+    } catch (error) {
+      console.error('❌ Normalize client data error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to normalize client data'
+      });
+    }
+  }
 }
 
 module.exports = AdminController;

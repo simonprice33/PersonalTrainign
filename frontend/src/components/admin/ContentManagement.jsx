@@ -87,15 +87,17 @@ const ContentManagement = () => {
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      const [packagesRes, parqRes, healthRes] = await Promise.all([
+      const [packagesRes, parqRes, healthRes, policyRes] = await Promise.all([
         axiosInstance.get(`${BACKEND_URL}/api/admin/packages`),
         axiosInstance.get(`${BACKEND_URL}/api/admin/parq-questions`),
-        axiosInstance.get(`${BACKEND_URL}/api/admin/health-questions`)
+        axiosInstance.get(`${BACKEND_URL}/api/admin/health-questions`),
+        axiosInstance.get(`${BACKEND_URL}/api/admin/cancellation-policy`)
       ]);
       
       setPackages(packagesRes.data.packages || []);
       setParqQuestions(parqRes.data.questions || []);
       setHealthQuestions(healthRes.data.questions || []);
+      setPolicySections(policyRes.data.sections || []);
     } catch (err) {
       if (err.response?.status === 401) {
         navigate('/admin');

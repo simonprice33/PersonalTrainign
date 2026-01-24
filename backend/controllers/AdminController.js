@@ -1232,6 +1232,7 @@ class AdminController {
   /**
    * Normalize all client data to a consistent format
    * Standardizes: stripe_customer_id, address object format
+   * Removes duplicate/legacy fields after normalization
    */
   async normalizeClientData(req, res) {
     try {
@@ -1242,20 +1243,29 @@ class AdminController {
       for (const client of clients) {
         try {
           const updates = {};
+          const fieldsToRemove = {};
           let needsUpdate = false;
 
-          // Normalize Stripe Customer ID
-          // Prefer stripe_customer_id, fallback to customer_id
+          // Normalize Stripe Customer ID - use stripe_customer_id as the standard
           if (!client.stripe_customer_id && client.customer_id) {
             updates.stripe_customer_id = client.customer_id;
             needsUpdate = true;
-          } else if (client.stripe_customer_id && !client.customer_id) {
-            updates.customer_id = client.stripe_customer_id;
-            needsUpdate = true;
+          }
+          // Remove legacy customer_id field if stripe_customer_id exists
+          if (client.customer_id && client.stripe_customer_id) {
+            fieldsToRemove.customer_id = "";
+          }
+          // Also remove client_id if it's a duplicate
+          if (client.client_id && (client.stripe_customer_id || client.customer_id)) {
+            fieldsToRemove.client_id = "";
           }
 
           // Normalize Address - convert flat fields to address object
-          if (!client.address && (client.address_line_1 || client.city || client.postcode)) {
+          const hasFlat = client.address_line_1 || client.city || client.postcode;
+          const hasNested = client.address && typeof client.address === 'object';
+          
+          if (hasFlat && !hasNested) {
+            // Create nested address from flat fields
             updates.address = {
               line1: client.address_line_1 || '',
               line2: client.address_line_2 || '',
@@ -1265,28 +1275,18 @@ class AdminController {
             };
             needsUpdate = true;
           }
-          
-          // If address exists as object, ensure flat fields also exist for backwards compatibility
-          if (client.address && typeof client.address === 'object') {
-            if (!client.address_line_1 && client.address.line1) {
-              updates.address_line_1 = client.address.line1;
-              needsUpdate = true;
-            }
-            if (!client.address_line_2 && client.address.line2) {
-              updates.address_line_2 = client.address.line2;
-              needsUpdate = true;
-            }
-            if (!client.city && client.address.city) {
-              updates.city = client.address.city;
-              needsUpdate = true;
-            }
-            if (!client.postcode && (client.address.postal_code || client.address.postcode)) {
-              updates.postcode = client.address.postal_code || client.address.postcode;
-              needsUpdate = true;
-            }
+
+          // Remove flat address fields if nested address exists (after creating it above or if it already exists)
+          if (hasNested || updates.address) {
+            if (client.address_line_1) fieldsToRemove.address_line_1 = "";
+            if (client.address_line_2) fieldsToRemove.address_line_2 = "";
+            if (client.city) fieldsToRemove.city = "";
+            if (client.postcode) fieldsToRemove.postcode = "";
+            if (client.postal_code) fieldsToRemove.postal_code = "";
+            if (client.country) fieldsToRemove.country = "";
           }
 
-          // Normalize name fields
+          // Normalize name fields - use 'name' as the standard, keep first_name/last_name
           if (!client.name && (client.first_name || client.last_name)) {
             updates.name = `${client.first_name || ''} ${client.last_name || ''}`.trim();
             needsUpdate = true;
@@ -1298,14 +1298,22 @@ class AdminController {
             needsUpdate = true;
           }
 
+          // Check if we have fields to remove
+          const hasFieldsToRemove = Object.keys(fieldsToRemove).length > 0;
+
           // Add updated_at timestamp
-          if (needsUpdate) {
+          if (needsUpdate || hasFieldsToRemove) {
             updates.updated_at = new Date();
             updates.normalized_at = new Date();
             
+            const updateOperation = { $set: updates };
+            if (hasFieldsToRemove) {
+              updateOperation.$unset = fieldsToRemove;
+            }
+            
             await this.collections.clients.updateOne(
               { _id: client._id },
-              { $set: updates }
+              updateOperation
             );
             normalizedCount++;
           }

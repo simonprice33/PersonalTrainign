@@ -23,6 +23,7 @@ const ClientManagement = () => {
   const [editFormData, setEditFormData] = useState({});
   const [alertModal, setAlertModal] = useState({ show: false, title: '', message: '', type: 'info' });
   const [confirmModal, setConfirmModal] = useState({ show: false, title: '', message: '', onConfirm: null });
+  const [normalizing, setNormalizing] = useState(false);
   
   // Helper function to get status badge
   const getStatusBadge = (status, subscriptionStatus) => {

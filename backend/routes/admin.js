@@ -195,6 +195,13 @@ function createAdminRoutes(dependencies) {
   // Sync client status from Stripe
   router.post('/clients/:email/sync-status', authenticate, (req, res) => controller.syncClientStatusFromStripe(req, res));
 
+  // ============================================================================
+  // DATA NORMALIZATION
+  // ============================================================================
+
+  // Normalize all client data to consistent format
+  router.post('/normalize-data', authenticate, (req, res) => controller.normalizeClientData(req, res));
+
   return router;
 }
 

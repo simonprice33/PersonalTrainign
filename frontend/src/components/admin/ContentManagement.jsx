@@ -895,6 +895,164 @@ const ContentManagement = () => {
             )}
           </div>
         )}
+
+        {/* Cancellation Policy Tab */}
+        {activeTab === 'policy' && (
+          <div className="space-y-6">
+            {/* Add New Section */}
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-lg font-bold text-white mb-4">Add New Section</h3>
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  value={policyForm.sectionTitle}
+                  onChange={(e) => setPolicyForm({ ...policyForm, sectionTitle: e.target.value })}
+                  placeholder="Section title (e.g., 'Cancellation Terms')"
+                  className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-orange-500"
+                />
+                <button
+                  onClick={handleAddSection}
+                  className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <Plus size={18} />
+                  Add Section
+                </button>
+              </div>
+            </div>
+
+            {/* Policy Sections */}
+            {policySections.map((section, sectionIndex) => (
+              <div key={section.id} className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+                {/* Section Header */}
+                <div className="p-4 bg-gray-700/50 flex items-center justify-between">
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="flex flex-col gap-1">
+                      <button
+                        onClick={() => handleMoveSectionUp(sectionIndex)}
+                        disabled={sectionIndex === 0}
+                        className="p-1 hover:bg-gray-600 rounded disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronUp size={16} className="text-gray-400" />
+                      </button>
+                      <button
+                        onClick={() => handleMoveSectionDown(sectionIndex)}
+                        disabled={sectionIndex === policySections.length - 1}
+                        className="p-1 hover:bg-gray-600 rounded disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronDown size={16} className="text-gray-400" />
+                      </button>
+                    </div>
+                    
+                    {editingSectionId === section.id ? (
+                      <input
+                        type="text"
+                        defaultValue={section.title}
+                        onBlur={(e) => handleUpdateSection(section.id, e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleUpdateSection(section.id, e.target.value)}
+                        className="flex-1 px-3 py-1 bg-gray-900 border border-orange-500 rounded text-white focus:outline-none"
+                        autoFocus
+                      />
+                    ) : (
+                      <h3 className="text-lg font-bold text-white">{section.title}</h3>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditingSectionId(editingSectionId === section.id ? null : section.id)}
+                      className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-colors"
+                    >
+                      <Edit size={16} className="text-blue-400" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteSection(section)}
+                      className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={16} className="text-red-400" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Section Items */}
+                <div className="p-4 space-y-2">
+                  {(section.items || []).map((item, itemIndex) => (
+                    <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-lg group">
+                      <div className="flex flex-col gap-0.5">
+                        <button
+                          onClick={() => handleMoveItemUp(section.id, itemIndex)}
+                          disabled={itemIndex === 0}
+                          className="p-0.5 hover:bg-gray-700 rounded disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          <ChevronUp size={14} className="text-gray-500" />
+                        </button>
+                        <button
+                          onClick={() => handleMoveItemDown(section.id, itemIndex)}
+                          disabled={itemIndex === section.items.length - 1}
+                          className="p-0.5 hover:bg-gray-700 rounded disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          <ChevronDown size={14} className="text-gray-500" />
+                        </button>
+                      </div>
+                      
+                      {editingItemId === item.id ? (
+                        <input
+                          type="text"
+                          defaultValue={item.text}
+                          onBlur={(e) => handleUpdateItem(section.id, item.id, e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleUpdateItem(section.id, item.id, e.target.value)}
+                          className="flex-1 px-3 py-1 bg-gray-800 border border-orange-500 rounded text-white focus:outline-none"
+                          autoFocus
+                        />
+                      ) : (
+                        <span className="flex-1 text-gray-300">• {item.text}</span>
+                      )}
+                      
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => setEditingItemId(editingItemId === item.id ? null : item.id)}
+                          className="p-1.5 hover:bg-gray-700 rounded"
+                        >
+                          <Edit size={14} className="text-blue-400" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteItem(section.id, item.id)}
+                          className="p-1.5 hover:bg-gray-700 rounded"
+                        >
+                          <Trash2 size={14} className="text-red-400" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add Item Input */}
+                  <div className="flex gap-2 mt-3 pt-3 border-t border-gray-700">
+                    <input
+                      type="text"
+                      value={policyForm.itemText}
+                      onChange={(e) => setPolicyForm({ ...policyForm, itemText: e.target.value })}
+                      placeholder="Add new item..."
+                      className="flex-1 px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500"
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddItem(section.id)}
+                    />
+                    <button
+                      onClick={() => handleAddItem(section.id)}
+                      className="px-3 py-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 rounded-lg transition-colors"
+                    >
+                      <Plus size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {policySections.length === 0 && (
+              <div className="text-center py-12 text-gray-400 bg-gray-800/50 rounded-xl border border-gray-700">
+                <FileText size={48} className="mx-auto mb-4 opacity-50" />
+                <p>No policy sections yet. Add your first section above.</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Add Modal */}

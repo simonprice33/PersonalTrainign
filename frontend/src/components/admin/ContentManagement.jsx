@@ -685,6 +685,17 @@ const ContentManagement = () => {
             <Heart size={18} />
             Health Questions
           </button>
+          <button
+            onClick={() => setActiveTab('policy')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              activeTab === 'policy' 
+                ? 'bg-orange-500 text-white' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            <FileText size={18} />
+            Cancellation Policy
+          </button>
         </div>
 
         {error && (

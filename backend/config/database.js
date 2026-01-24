@@ -58,7 +58,8 @@ class DatabaseConfig {
         healthQuestions: this.db.collection('health_questions'),
         blogPosts: this.db.collection('blog_posts'),
         blogCategories: this.db.collection('blog_categories'),
-        blogTags: this.db.collection('blog_tags')
+        blogTags: this.db.collection('blog_tags'),
+        cancellationPolicy: this.db.collection('cancellation_policy')
       };
 
       // Create indexes for better performance

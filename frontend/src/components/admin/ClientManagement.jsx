@@ -452,14 +452,25 @@ const ClientManagement = () => {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold text-white">Client List</h2>
-              <button
-                onClick={fetchClients}
-                disabled={loadingClients}
-                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-                title="Refresh"
-              >
-                <RefreshCw size={18} className={`text-gray-400 ${loadingClients ? 'animate-spin' : ''}`} />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleNormalizeData}
+                  disabled={normalizing || loadingClients}
+                  className="flex items-center gap-2 px-3 py-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 rounded-lg transition-colors disabled:opacity-50"
+                  title="Normalize client data formats"
+                >
+                  <RefreshCw size={16} className={normalizing ? 'animate-spin' : ''} />
+                  {normalizing ? 'Normalizing...' : 'Normalize Data'}
+                </button>
+                <button
+                  onClick={fetchClients}
+                  disabled={loadingClients}
+                  className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                  title="Refresh"
+                >
+                  <RefreshCw size={18} className={`text-gray-400 ${loadingClients ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
             </div>
 
             {loadingClients ? (

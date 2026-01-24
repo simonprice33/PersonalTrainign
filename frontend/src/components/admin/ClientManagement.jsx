@@ -370,6 +370,46 @@ const ClientManagement = () => {
     }
   };
 
+  const handleNormalizeData = async () => {
+    setConfirmModal({
+      show: true,
+      title: 'Normalize Client Data',
+      message: 'This will standardize all client data formats (addresses, customer IDs, names). This is safe to run multiple times. Continue?',
+      onConfirm: executeNormalizeData
+    });
+  };
+
+  const executeNormalizeData = async () => {
+    setConfirmModal({ show: false, title: '', message: '', onConfirm: null });
+    setNormalizing(true);
+    
+    try {
+      const response = await axiosInstance.post(
+        `${BACKEND_URL}/api/admin/normalize-data`,
+        {}
+      );
+
+      if (response.data.success) {
+        setAlertModal({
+          show: true,
+          title: 'Data Normalized',
+          message: `Successfully normalized ${response.data.normalizedCount} of ${response.data.totalClients} client records.`,
+          type: 'success'
+        });
+        fetchClients(); // Refresh the list
+      }
+    } catch (err) {
+      setAlertModal({
+        show: true,
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to normalize data',
+        type: 'error'
+      });
+    } finally {
+      setNormalizing(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       {/* Header */}

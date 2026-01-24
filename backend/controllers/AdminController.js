@@ -1340,6 +1340,323 @@ class AdminController {
       });
     }
   }
+
+  // ============================================================================
+  // CANCELLATION POLICY MANAGEMENT
+  // ============================================================================
+
+  /**
+   * Get all cancellation policy sections with items
+   */
+  async getCancellationPolicy(req, res) {
+    try {
+      const sections = await this.collections.cancellationPolicy
+        .find({})
+        .sort({ order: 1 })
+        .toArray();
+
+      // Sort items within each section
+      const sortedSections = sections.map(section => ({
+        ...section,
+        _id: undefined,
+        items: (section.items || []).sort((a, b) => a.order - b.order)
+      }));
+
+      res.status(200).json({
+        success: true,
+        sections: sortedSections
+      });
+    } catch (error) {
+      console.error('❌ Get cancellation policy error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch cancellation policy'
+      });
+    }
+  }
+
+  /**
+   * Create a new policy section
+   */
+  async createPolicySection(req, res) {
+    try {
+      const { title } = req.body;
+
+      if (!title) {
+        return res.status(400).json({
+          success: false,
+          message: 'Section title is required'
+        });
+      }
+
+      // Get max order
+      const maxOrderDoc = await this.collections.cancellationPolicy
+        .find({})
+        .sort({ order: -1 })
+        .limit(1)
+        .toArray();
+      
+      const newOrder = maxOrderDoc.length > 0 ? (maxOrderDoc[0].order || 0) + 1 : 1;
+
+      const section = {
+        id: `section-${Date.now()}`,
+        title,
+        order: newOrder,
+        items: [],
+        created_at: new Date()
+      };
+
+      await this.collections.cancellationPolicy.insertOne(section);
+
+      res.status(201).json({
+        success: true,
+        message: 'Section created successfully',
+        section: { ...section, _id: undefined }
+      });
+    } catch (error) {
+      console.error('❌ Create policy section error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to create section'
+      });
+    }
+  }
+
+  /**
+   * Update a policy section
+   */
+  async updatePolicySection(req, res) {
+    try {
+      const { sectionId } = req.params;
+      const { title } = req.body;
+
+      await this.collections.cancellationPolicy.updateOne(
+        { id: sectionId },
+        { $set: { title, updated_at: new Date() } }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Section updated successfully'
+      });
+    } catch (error) {
+      console.error('❌ Update policy section error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to update section'
+      });
+    }
+  }
+
+  /**
+   * Delete a policy section
+   */
+  async deletePolicySection(req, res) {
+    try {
+      const { sectionId } = req.params;
+
+      await this.collections.cancellationPolicy.deleteOne({ id: sectionId });
+
+      res.status(200).json({
+        success: true,
+        message: 'Section deleted successfully'
+      });
+    } catch (error) {
+      console.error('❌ Delete policy section error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to delete section'
+      });
+    }
+  }
+
+  /**
+   * Reorder policy sections
+   */
+  async reorderPolicySections(req, res) {
+    try {
+      const { sectionIds } = req.body;
+
+      if (!Array.isArray(sectionIds)) {
+        return res.status(400).json({
+          success: false,
+          message: 'sectionIds must be an array'
+        });
+      }
+
+      // Update order for each section
+      for (let i = 0; i < sectionIds.length; i++) {
+        await this.collections.cancellationPolicy.updateOne(
+          { id: sectionIds[i] },
+          { $set: { order: i + 1 } }
+        );
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Sections reordered successfully'
+      });
+    } catch (error) {
+      console.error('❌ Reorder policy sections error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to reorder sections'
+      });
+    }
+  }
+
+  /**
+   * Add item to a policy section
+   */
+  async addPolicyItem(req, res) {
+    try {
+      const { sectionId } = req.params;
+      const { text } = req.body;
+
+      if (!text) {
+        return res.status(400).json({
+          success: false,
+          message: 'Item text is required'
+        });
+      }
+
+      const section = await this.collections.cancellationPolicy.findOne({ id: sectionId });
+      if (!section) {
+        return res.status(404).json({
+          success: false,
+          message: 'Section not found'
+        });
+      }
+
+      const items = section.items || [];
+      const maxOrder = items.length > 0 ? Math.max(...items.map(i => i.order || 0)) : 0;
+
+      const newItem = {
+        id: `item-${Date.now()}`,
+        text,
+        order: maxOrder + 1,
+        created_at: new Date()
+      };
+
+      await this.collections.cancellationPolicy.updateOne(
+        { id: sectionId },
+        { $push: { items: newItem } }
+      );
+
+      res.status(201).json({
+        success: true,
+        message: 'Item added successfully',
+        item: newItem
+      });
+    } catch (error) {
+      console.error('❌ Add policy item error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to add item'
+      });
+    }
+  }
+
+  /**
+   * Update item in a policy section
+   */
+  async updatePolicyItem(req, res) {
+    try {
+      const { sectionId, itemId } = req.params;
+      const { text } = req.body;
+
+      await this.collections.cancellationPolicy.updateOne(
+        { id: sectionId, 'items.id': itemId },
+        { $set: { 'items.$.text': text, 'items.$.updated_at': new Date() } }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Item updated successfully'
+      });
+    } catch (error) {
+      console.error('❌ Update policy item error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to update item'
+      });
+    }
+  }
+
+  /**
+   * Delete item from a policy section
+   */
+  async deletePolicyItem(req, res) {
+    try {
+      const { sectionId, itemId } = req.params;
+
+      await this.collections.cancellationPolicy.updateOne(
+        { id: sectionId },
+        { $pull: { items: { id: itemId } } }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Item deleted successfully'
+      });
+    } catch (error) {
+      console.error('❌ Delete policy item error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to delete item'
+      });
+    }
+  }
+
+  /**
+   * Reorder items within a policy section
+   */
+  async reorderPolicyItems(req, res) {
+    try {
+      const { sectionId } = req.params;
+      const { itemIds } = req.body;
+
+      if (!Array.isArray(itemIds)) {
+        return res.status(400).json({
+          success: false,
+          message: 'itemIds must be an array'
+        });
+      }
+
+      const section = await this.collections.cancellationPolicy.findOne({ id: sectionId });
+      if (!section) {
+        return res.status(404).json({
+          success: false,
+          message: 'Section not found'
+        });
+      }
+
+      // Update order for each item
+      const updatedItems = (section.items || []).map(item => {
+        const newOrder = itemIds.indexOf(item.id);
+        return {
+          ...item,
+          order: newOrder >= 0 ? newOrder + 1 : item.order
+        };
+      });
+
+      await this.collections.cancellationPolicy.updateOne(
+        { id: sectionId },
+        { $set: { items: updatedItems } }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Items reordered successfully'
+      });
+    } catch (error) {
+      console.error('❌ Reorder policy items error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to reorder items'
+      });
+    }
+  }
 }
 
 module.exports = AdminController;

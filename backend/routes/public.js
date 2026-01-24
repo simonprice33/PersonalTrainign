@@ -63,6 +63,38 @@ function createPublicRoutes(dependencies) {
     body('healthResponses').isArray().withMessage('Health responses required')
   ], (req, res) => controller.handlePurchase(req, res));
 
+  // Get cancellation policy (public)
+  router.get('/cancellation-policy', async (req, res) => {
+    try {
+      const sections = await collections.cancellationPolicy
+        .find({})
+        .sort({ order: 1 })
+        .toArray();
+
+      const sortedSections = sections.map(section => ({
+        id: section.id,
+        title: section.title,
+        order: section.order,
+        items: (section.items || []).sort((a, b) => a.order - b.order).map(item => ({
+          id: item.id,
+          text: item.text,
+          order: item.order
+        }))
+      }));
+
+      res.status(200).json({
+        success: true,
+        sections: sortedSections
+      });
+    } catch (error) {
+      console.error('❌ Get public cancellation policy error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch cancellation policy'
+      });
+    }
+  });
+
   return router;
 }
 

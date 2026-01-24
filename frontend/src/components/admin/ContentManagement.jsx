@@ -12,7 +12,10 @@ import {
   ArrowLeft,
   Check,
   AlertCircle,
-  GripVertical
+  GripVertical,
+  FileText,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 import axiosInstance from '../../utils/axiosInstance';
 import AlertModal from '../AlertModal';
@@ -30,6 +33,7 @@ const ContentManagement = () => {
   const [packages, setPackages] = useState([]);
   const [parqQuestions, setParqQuestions] = useState([]);
   const [healthQuestions, setHealthQuestions] = useState([]);
+  const [policySections, setPolicySections] = useState([]);
   
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -63,6 +67,13 @@ const ContentManagement = () => {
     applicable_packages: [],
     category: 'general'
   });
+
+  const [policyForm, setPolicyForm] = useState({
+    sectionTitle: '',
+    itemText: ''
+  });
+  const [editingSectionId, setEditingSectionId] = useState(null);
+  const [editingItemId, setEditingItemId] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('adminAccessToken');

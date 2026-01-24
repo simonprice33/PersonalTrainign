@@ -257,17 +257,90 @@ const BlogListing = () => {
       </div>
 
       <div className="container mx-auto px-4 py-12 flex flex-col lg:flex-row gap-8">
-        <aside className="hidden lg:block w-72">
+        {/* Mobile Filter Toggle */}
+        <div className="lg:hidden mb-4">
+          <button
+            onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+            className="w-full flex items-center justify-between px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white"
+          >
+            <span className="flex items-center gap-2">
+              <FolderOpen size={18} />
+              Filters & Categories
+            </span>
+            {mobileFiltersOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          </button>
+          
+          {mobileFiltersOpen && (
+            <div className="mt-2 bg-gray-800/50 rounded-xl border border-gray-700 p-4">
+              <Sidebar isMobile={true} />
+            </div>
+          )}
+        </div>
+
+        {/* Desktop Sidebar */}
+        <aside className="hidden lg:block w-72 flex-shrink-0">
           <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
             <Sidebar />
           </div>
         </aside>
 
         <main className="flex-1">
+          {/* Active Filters Display */}
+          {(selectedCategory || selectedTag || searchTerm) && (
+            <div className="mb-6 flex flex-wrap items-center gap-2">
+              <span className="text-gray-400 text-sm">Active filters:</span>
+              {searchTerm && (
+                <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-sm flex items-center gap-2">
+                  Search: "{searchTerm}"
+                  <button onClick={() => { setSearchTerm(''); updateFilters({ search: '' }); }} className="hover:text-white">×</button>
+                </span>
+              )}
+              {selectedCategory && (
+                <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-sm flex items-center gap-2">
+                  Category: {categories.find(c => c.slug === selectedCategory)?.name || selectedCategory}
+                  <button onClick={() => handleCategorySelect('')} className="hover:text-white">×</button>
+                </span>
+              )}
+              {selectedTag && (
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm flex items-center gap-2">
+                  Tag: #{selectedTag}
+                  <button onClick={() => handleTagSelect('')} className="hover:text-white">×</button>
+                </span>
+              )}
+              <button onClick={clearFilters} className="text-gray-400 hover:text-white text-sm underline">
+                Clear all
+              </button>
+            </div>
+          )}
+
           {loading ? (
-            <div className="text-center text-gray-400">Loading…</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 animate-pulse">
+                  <div className="h-48 bg-gray-700"></div>
+                  <div className="p-6 space-y-3">
+                    <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+                    <div className="h-6 bg-gray-700 rounded w-3/4"></div>
+                    <div className="h-4 bg-gray-700 rounded w-full"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : posts.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">No posts found</div>
+            <div className="text-center py-16">
+              <div className="text-6xl mb-4">📝</div>
+              <h3 className="text-xl font-bold text-white mb-2">No posts found</h3>
+              <p className="text-gray-400 mb-4">
+                {searchTerm || selectedCategory || selectedTag 
+                  ? "Try adjusting your filters or search term" 
+                  : "Check back soon for new content!"}
+              </p>
+              {(searchTerm || selectedCategory || selectedTag) && (
+                <button onClick={clearFilters} className="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors">
+                  Clear Filters
+                </button>
+              )}
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {posts.map((post) => (

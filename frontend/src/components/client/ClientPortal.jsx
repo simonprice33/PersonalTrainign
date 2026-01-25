@@ -364,13 +364,13 @@ const ClientPortal = () => {
                   Dashboard
                 </button>
                 <button
-                  onClick={() => setActiveTab('address')}
+                  onClick={() => setActiveTab('profile')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                    activeTab === 'address' ? 'bg-cyan-500 text-white' : 'text-gray-300 hover:bg-gray-700'
+                    activeTab === 'profile' ? 'bg-cyan-500 text-white' : 'text-gray-300 hover:bg-gray-700'
                   }`}
                 >
-                  <MapPin size={20} />
-                  Address
+                  <Edit size={20} />
+                  My Details
                 </button>
                 <button
                   onClick={() => setActiveTab('password')}

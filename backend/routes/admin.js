@@ -233,6 +233,37 @@ function createAdminRoutes(dependencies) {
   // Delete item from section
   router.delete('/cancellation-policy/sections/:sectionId/items/:itemId', authenticate, (req, res) => controller.deletePolicyItem(req, res));
 
+  // ============================================================================
+  // GENERIC POLICY MANAGEMENT (Terms, Privacy, Cookie)
+  // ============================================================================
+
+  // Get policy by type
+  router.get('/policies/:policyType', authenticate, (req, res) => controller.getPolicy(req, res));
+  
+  // Create a new section
+  router.post('/policies/:policyType/sections', authenticate, (req, res) => controller.createGenericPolicySection(req, res));
+  
+  // Reorder sections (MUST be before :sectionId route)
+  router.put('/policies/:policyType/sections/reorder', authenticate, (req, res) => controller.reorderGenericPolicySections(req, res));
+  
+  // Update a section
+  router.put('/policies/:policyType/sections/:sectionId', authenticate, (req, res) => controller.updateGenericPolicySection(req, res));
+  
+  // Delete a section
+  router.delete('/policies/:policyType/sections/:sectionId', authenticate, (req, res) => controller.deleteGenericPolicySection(req, res));
+  
+  // Reorder items within section (MUST be before :itemId route)
+  router.put('/policies/:policyType/sections/:sectionId/items/reorder', authenticate, (req, res) => controller.reorderGenericPolicyItems(req, res));
+  
+  // Add item to section
+  router.post('/policies/:policyType/sections/:sectionId/items', authenticate, (req, res) => controller.addGenericPolicyItem(req, res));
+  
+  // Update item in section
+  router.put('/policies/:policyType/sections/:sectionId/items/:itemId', authenticate, (req, res) => controller.updateGenericPolicyItem(req, res));
+  
+  // Delete item from section
+  router.delete('/policies/:policyType/sections/:sectionId/items/:itemId', authenticate, (req, res) => controller.deleteGenericPolicyItem(req, res));
+
   return router;
 }
 

@@ -535,6 +535,68 @@ class ClientController {
   }
 
   /**
+   * Update client profile
+   */
+  async updateProfile(req, res) {
+    try {
+      const userEmail = req.user.email;
+      const { name, telephone, address, emergency_contact_name, emergency_contact_number, emergency_contact_relationship } = req.body;
+
+      const client = await this.collections.clients.findOne({ email: userEmail });
+      if (!client) {
+        return res.status(404).json({
+          success: false,
+          message: 'Client not found'
+        });
+      }
+
+      // Build update object
+      const updateData = {
+        updated_at: new Date()
+      };
+
+      if (name) updateData.name = name;
+      if (telephone !== undefined) updateData.telephone = telephone;
+      if (address) {
+        updateData.address = {
+          line1: address.line1 || '',
+          line2: address.line2 || '',
+          city: address.city || '',
+          postcode: address.postcode || '',
+          country: address.country || 'GB'
+        };
+      }
+      if (emergency_contact_name !== undefined) updateData.emergency_contact_name = emergency_contact_name;
+      if (emergency_contact_number !== undefined) updateData.emergency_contact_number = emergency_contact_number;
+      if (emergency_contact_relationship !== undefined) updateData.emergency_contact_relationship = emergency_contact_relationship;
+
+      await this.collections.clients.updateOne(
+        { email: userEmail },
+        { $set: updateData }
+      );
+
+      // Return updated client
+      const updatedClient = await this.collections.clients.findOne(
+        { email: userEmail },
+        { projection: { _id: 0 } }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Profile updated successfully',
+        client: updatedClient
+      });
+
+    } catch (error) {
+      console.error('❌ Update profile error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to update profile'
+      });
+    }
+  }
+
+  /**
    * Manage billing - Create Customer Portal session
    */
   async manageBilling(req, res) {

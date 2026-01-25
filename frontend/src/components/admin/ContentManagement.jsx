@@ -359,18 +359,47 @@ const ContentManagement = () => {
     setHealthForm({ question: '', type: 'text', order: healthQuestions.length + 1, options: [''], applicable_packages: [], category: 'general' });
   };
 
-  // Cancellation Policy handlers
+  // Helper function to get API endpoint based on active policy type
+  const getPolicyEndpoint = () => {
+    if (activePolicyType === 'cancellation') {
+      return `${BACKEND_URL}/api/admin/cancellation-policy`;
+    }
+    const policyConfig = POLICY_TYPES.find(p => p.id === activePolicyType);
+    return `${BACKEND_URL}/api/admin/policies/${policyConfig?.endpoint}`;
+  };
+
+  // Helper function to get current policy sections
+  const getCurrentPolicySections = () => {
+    if (activePolicyType === 'cancellation') {
+      return policySections;
+    }
+    return genericPolicySections[activePolicyType] || [];
+  };
+
+  // Helper function to update current policy sections
+  const setCurrentPolicySections = (sections) => {
+    if (activePolicyType === 'cancellation') {
+      setPolicySections(sections);
+    } else {
+      setGenericPolicySections({
+        ...genericPolicySections,
+        [activePolicyType]: sections
+      });
+    }
+  };
+
+  // Policy handlers (generic for all policy types)
   const handleAddSection = async () => {
     if (!policyForm.sectionTitle.trim()) {
       setAlertModal({ show: true, title: 'Error', message: 'Section title is required', type: 'error' });
       return;
     }
     try {
-      const response = await axiosInstance.post(`${BACKEND_URL}/api/admin/cancellation-policy/sections`, {
+      const response = await axiosInstance.post(`${getPolicyEndpoint()}/sections`, {
         title: policyForm.sectionTitle
       });
       if (response.data.success) {
-        setPolicySections([...policySections, response.data.section]);
+        setCurrentPolicySections([...getCurrentPolicySections(), response.data.section]);
         setPolicyForm({ ...policyForm, sectionTitle: '' });
         setAlertModal({ show: true, title: 'Success', message: 'Section added successfully', type: 'success' });
       }
@@ -381,7 +410,7 @@ const ContentManagement = () => {
 
   const handleUpdateSection = async (sectionId, newTitle) => {
     try {
-      await axiosInstance.put(`${BACKEND_URL}/api/admin/cancellation-policy/sections/${sectionId}`, {
+      await axiosInstance.put(`${getPolicyEndpoint()}/sections/${sectionId}`, {
         title: newTitle
       });
       setPolicySections(policySections.map(s => s.id === sectionId ? { ...s, title: newTitle } : s));

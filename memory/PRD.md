@@ -79,6 +79,14 @@ The order and content of the steps in the purchase flow must adapt based on the 
   - Admin CRUD for policy sections and items in Content Management
   - Re-ordering capabilities for sections and items
   - Client portal shows policy modal before cancellation confirmation with acknowledgment checkbox
+- [x] **Full Legal Policy Management System:**
+  - Unified policy page component at `/policies/:policyType`
+  - All 4 policy types: Cancellation Policy, Terms of Service, Privacy Policy, Cookie Policy
+  - Improved dark-themed design matching the site aesthetic
+  - Admin panel "Legal Policies" tab with policy type selector
+  - Full CRUD for all policy types (sections, items, re-ordering)
+  - Footer links to all 4 policy pages
+  - "Content Coming Soon" placeholder for empty policies
 
 ### Known Issues
 1. **P2 - Stripe Billing Portal**: Requires real API keys to function (user reports Stripe is working on their end)

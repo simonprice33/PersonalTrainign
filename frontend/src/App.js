@@ -47,6 +47,7 @@ import PolicyPage from "./pages/PolicyPage";
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="App">
         <Routes>
           {/* Client Contact Form Route - No navigation */}

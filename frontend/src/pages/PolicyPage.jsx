@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, FileText, Shield, Cookie, Scale, ChevronRight } from 'lucide-react';
+import { ArrowLeft, FileText, Shield, Cookie, Scale } from 'lucide-react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 

@@ -92,7 +92,8 @@ function App() {
           <Route path="/blog/:slug" element={<BlogPost />} />
           
           {/* Policy Pages */}
-          <Route path="/cancellation-policy" element={<CancellationPolicy />} />
+          <Route path="/policies/:policyType" element={<PolicyPage />} />
+          <Route path="/cancellation-policy" element={<PolicyPage />} />
           
           {/* Main Website Route */}
           <Route path="/" element={

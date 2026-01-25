@@ -4,6 +4,7 @@ import { ArrowLeft, CreditCard, Plus, X, Send, CheckCircle, RefreshCw, Mail, Cal
 import axiosInstance from '../../utils/axiosInstance';
 import AlertModal from '../AlertModal';
 import ConfirmModal from '../ConfirmModal';
+import { clientToFormData, getStripeCustomerId, getStatusInfo } from '../../utils/clientUtils';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 

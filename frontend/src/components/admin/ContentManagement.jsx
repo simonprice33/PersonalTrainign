@@ -1059,74 +1059,39 @@ const ContentManagement = () => {
                   </div>
                 </div>
 
-                {/* Section Items */}
-                <div className="p-4 space-y-2">
-                  {(section.items || []).map((item, itemIndex) => (
-                    <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-lg group">
-                      <div className="flex flex-col gap-0.5">
-                        <button
-                          onClick={() => handleMoveItemUp(section.id, itemIndex)}
-                          disabled={itemIndex === 0}
-                          className="p-0.5 hover:bg-gray-700 rounded disabled:opacity-30 disabled:cursor-not-allowed"
-                        >
-                          <ChevronUp size={14} className="text-gray-500" />
-                        </button>
-                        <button
-                          onClick={() => handleMoveItemDown(section.id, itemIndex)}
-                          disabled={itemIndex === section.items.length - 1}
-                          className="p-0.5 hover:bg-gray-700 rounded disabled:opacity-30 disabled:cursor-not-allowed"
-                        >
-                          <ChevronDown size={14} className="text-gray-500" />
-                        </button>
-                      </div>
-                      
-                      {editingItemId === item.id ? (
-                        <input
-                          type="text"
-                          defaultValue={item.text}
-                          onBlur={(e) => handleUpdateItem(section.id, item.id, e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleUpdateItem(section.id, item.id, e.target.value)}
-                          className="flex-1 px-3 py-1 bg-gray-800 border border-orange-500 rounded text-white focus:outline-none"
-                          autoFocus
-                        />
-                      ) : (
-                        <span className="flex-1 text-gray-300">• {item.text}</span>
-                      )}
-                      
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => setEditingItemId(editingItemId === item.id ? null : item.id)}
-                          className="p-1.5 hover:bg-gray-700 rounded"
-                        >
-                          <Edit size={14} className="text-blue-400" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteItem(section.id, item.id)}
-                          className="p-1.5 hover:bg-gray-700 rounded"
-                        >
-                          <Trash2 size={14} className="text-red-400" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                {/* Section Content - Markdown Editor */}
+                <div className="p-4">
+                  <label className="block text-sm text-gray-400 mb-2">
+                    Content (Markdown supported - use **bold**, *italic*, - bullet points, 1. numbered lists, ## headers)
+                  </label>
+                  <textarea
+                    value={section.content || ''}
+                    onChange={(e) => handleUpdateSectionContent(section.id, e.target.value)}
+                    placeholder="Enter your policy content here...
 
-                  {/* Add Item Input */}
-                  <div className="flex gap-2 mt-3 pt-3 border-t border-gray-700">
-                    <input
-                      type="text"
-                      value={policyForm.itemText}
-                      onChange={(e) => setPolicyForm({ ...policyForm, itemText: e.target.value })}
-                      placeholder="Add new item..."
-                      className="flex-1 px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500"
-                      onKeyDown={(e) => e.key === 'Enter' && handleAddItem(section.id)}
-                    />
-                    <button
-                      onClick={() => handleAddItem(section.id)}
-                      className="px-3 py-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 rounded-lg transition-colors"
-                    >
-                      <Plus size={18} />
-                    </button>
-                  </div>
+Example:
+- First point
+- Second point
+- Third point
+
+**Important:** This text will be bold.
+
+1. Numbered item one
+2. Numbered item two"
+                    className="w-full h-48 px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500 resize-y font-mono"
+                  />
+                  
+                  {/* Legacy items display (if any exist) */}
+                  {section.items && section.items.length > 0 && !section.content && (
+                    <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                      <p className="text-yellow-400 text-sm mb-2">Legacy items detected. They will display until you add markdown content above:</p>
+                      <ul className="text-gray-400 text-sm space-y-1">
+                        {section.items.map((item, idx) => (
+                          <li key={idx}>• {item.text}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

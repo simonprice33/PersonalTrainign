@@ -143,7 +143,7 @@ const CancellationPolicy = () => {
                 Have Questions?
               </h3>
               <p className="text-gray-600 mb-4">
-                If you have any questions about our cancellation policy, please don't hesitate to get in touch.
+                If you have any questions about our cancellation policy, please do not hesitate to get in touch.
               </p>
               <Link
                 to="/#contact"

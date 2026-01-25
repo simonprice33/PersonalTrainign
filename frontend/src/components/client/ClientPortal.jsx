@@ -71,12 +71,18 @@ const ClientPortal = () => {
       if (response.data.success && response.data.client) {
         const client = response.data.client;
         setClientData(client);
-        setAddressData({
-          addressLine1: client.address_line_1 || client.address?.line1 || '',
-          addressLine2: client.address_line_2 || client.address?.line2 || '',
-          city: client.city || client.address?.city || '',
-          postcode: client.postcode || client.address?.postcode || '',
-          country: client.country || client.address?.country || 'GB'
+        // Populate profile edit form
+        setProfileData({
+          name: client.name || '',
+          telephone: client.telephone || client.phone || '',
+          addressLine1: client.address?.line1 || client.address_line_1 || '',
+          addressLine2: client.address?.line2 || client.address_line_2 || '',
+          city: client.address?.city || client.city || '',
+          postcode: client.address?.postcode || client.postcode || '',
+          country: client.address?.country || client.country || 'GB',
+          emergencyContactName: client.emergency_contact_name || '',
+          emergencyContactNumber: client.emergency_contact_number || '',
+          emergencyContactRelationship: client.emergency_contact_relationship || ''
         });
       }
     } catch (err) {
@@ -87,6 +93,52 @@ const ClientPortal = () => {
       setError('Failed to load client data');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    setProfileSaving(true);
+    try {
+      const token = localStorage.getItem('clientAccessToken');
+      const response = await axios.put(
+        `${BACKEND_URL}/api/client/profile`,
+        {
+          name: profileData.name,
+          telephone: profileData.telephone,
+          address: {
+            line1: profileData.addressLine1,
+            line2: profileData.addressLine2,
+            city: profileData.city,
+            postcode: profileData.postcode,
+            country: profileData.country
+          },
+          emergency_contact_name: profileData.emergencyContactName,
+          emergency_contact_number: profileData.emergencyContactNumber,
+          emergency_contact_relationship: profileData.emergencyContactRelationship
+        },
+        {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }
+      );
+
+      if (response.data.success) {
+        setClientData(response.data.client);
+        setAlertModal({
+          show: true,
+          title: 'Profile Updated',
+          message: 'Your details have been saved successfully.',
+          type: 'success'
+        });
+      }
+    } catch (err) {
+      setAlertModal({
+        show: true,
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to update profile',
+        type: 'error'
+      });
+    } finally {
+      setProfileSaving(false);
     }
   };
 

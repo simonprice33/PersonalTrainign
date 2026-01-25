@@ -93,15 +93,15 @@ The order and content of the steps in the purchase flow must adapt based on the 
 
 ## Key Files Reference
 - `/app/frontend/src/pages/PurchaseFlow.jsx` - Multi-step purchase UI
-- `/app/frontend/src/pages/CancellationPolicy.jsx` - Public cancellation policy page
+- `/app/frontend/src/pages/PolicyPage.jsx` - Unified policy page component for all legal policies
 - `/app/frontend/src/components/ClientOnboarding.jsx` - Admin-sent link onboarding form
-- `/app/frontend/src/components/Footer.jsx` - Site footer with cancellation policy link
+- `/app/frontend/src/components/Footer.jsx` - Site footer with all 4 policy links
 - `/app/frontend/src/components/client/ClientPortal.jsx` - Client portal with cancellation policy modal
 - `/app/frontend/src/utils/clientUtils.js` - Client data normalization utility
 - `/app/backend/controllers/PublicController.js` - Self-service purchase backend
 - `/app/backend/controllers/ClientController.js` - Client authentication & onboarding
 - `/app/frontend/src/components/admin/ClientManagement.jsx` - Admin client management
-- `/app/frontend/src/components/admin/ContentManagement.jsx` - Admin content CRUD (packages, PARQ, health questions, cancellation policy)
+- `/app/frontend/src/components/admin/ContentManagement.jsx` - Admin content CRUD (packages, PARQ, health questions, all legal policies)
 - `/app/backend/controllers/PackageController.js` - Question query logic
 - `/app/backend/config/database.js` - Auto-migration logic
 
@@ -110,7 +110,10 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - **`parq_questions`**: `{ ..., applicable_packages: [String] }`
 - **`health_questions`**: `{ ..., applicable_packages: [String] }`
 - **`packages`**: `{ ..., is_popular: Boolean }` for "Most Popular" badge
-- **`cancellation_policy_sections`**: `{ id, title, order, items: [{ id, text, order }] }`
+- **`cancellation_policy`**: `{ id, title, order, items: [{ id, text, order }] }`
+- **`terms_of_service`**: Same structure as cancellation_policy
+- **`privacy_policy`**: Same structure as cancellation_policy
+- **`cookie_policy`**: Same structure as cancellation_policy
 
 ## API Endpoints
 - `POST /api/purchase` - Create new client and subscription (self-service)
@@ -119,9 +122,9 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - `GET /api/public/health-questions?packageId=<id>` - Get Health questions for package
 - `POST /api/admin/create-portal-session` - Admin Stripe portal session
 - `POST /api/admin/normalize-data` - Normalize client data formats
-- `GET /api/cancellation-policy` - Public cancellation policy content
+- Public Policy Endpoints: `GET /api/cancellation-policy`, `GET /api/terms-of-service`, `GET /api/privacy-policy`, `GET /api/cookie-policy`
+- Admin Policy CRUD: `/api/admin/cancellation-policy/...` and `/api/admin/policies/:policyType/...`
 - CRUD endpoints: `/api/admin/packages`, `/api/admin/parq-questions`, `/api/admin/health-questions`
-- Cancellation Policy CRUD: `/api/admin/cancellation-policy/sections`, `/api/admin/cancellation-policy/sections/:id/items`
 
 ## Backlog (Prioritized)
 

@@ -85,6 +85,14 @@ const ContentManagement = () => {
   });
   const [editingSectionId, setEditingSectionId] = useState(null);
   const [editingItemId, setEditingItemId] = useState(null);
+  const [activePolicyType, setActivePolicyType] = useState('cancellation');
+  
+  // Generic policy sections (for terms, privacy, cookie)
+  const [genericPolicySections, setGenericPolicySections] = useState({
+    terms: [],
+    privacy: [],
+    cookie: []
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('adminAccessToken');

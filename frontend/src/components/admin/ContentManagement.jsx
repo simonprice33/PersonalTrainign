@@ -529,12 +529,12 @@ const ContentManagement = () => {
     const newItems = [...section.items];
     [newItems[itemIndex - 1], newItems[itemIndex]] = [newItems[itemIndex], newItems[itemIndex - 1]];
     
-    setPolicySections(policySections.map(s => 
+    setCurrentPolicySections(currentSections.map(s => 
       s.id === sectionId ? { ...s, items: newItems } : s
     ));
     
     try {
-      await axiosInstance.put(`${BACKEND_URL}/api/admin/cancellation-policy/sections/${sectionId}/items/reorder`, {
+      await axiosInstance.put(`${getPolicyEndpoint()}/sections/${sectionId}/items/reorder`, {
         itemIds: newItems.map(i => i.id)
       });
     } catch (err) {
@@ -543,18 +543,19 @@ const ContentManagement = () => {
   };
 
   const handleMoveItemDown = async (sectionId, itemIndex) => {
-    const section = policySections.find(s => s.id === sectionId);
+    const currentSections = getCurrentPolicySections();
+    const section = currentSections.find(s => s.id === sectionId);
     if (!section || itemIndex === section.items.length - 1) return;
     
     const newItems = [...section.items];
     [newItems[itemIndex], newItems[itemIndex + 1]] = [newItems[itemIndex + 1], newItems[itemIndex]];
     
-    setPolicySections(policySections.map(s => 
+    setCurrentPolicySections(currentSections.map(s => 
       s.id === sectionId ? { ...s, items: newItems } : s
     ));
     
     try {
-      await axiosInstance.put(`${BACKEND_URL}/api/admin/cancellation-policy/sections/${sectionId}/items/reorder`, {
+      await axiosInstance.put(`${getPolicyEndpoint()}/sections/${sectionId}/items/reorder`, {
         itemIds: newItems.map(i => i.id)
       });
     } catch (err) {

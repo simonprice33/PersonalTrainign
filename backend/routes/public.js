@@ -76,6 +76,7 @@ function createPublicRoutes(dependencies) {
         title: section.title,
         order: section.order,
         content: section.content || '',
+        content: section.content || '',
         items: (section.items || []).sort((a, b) => a.order - b.order).map(item => ({
           id: item.id,
           text: item.text,
@@ -108,6 +109,7 @@ function createPublicRoutes(dependencies) {
         id: section.id,
         title: section.title,
         order: section.order,
+        content: section.content || '',
         items: (section.items || []).sort((a, b) => a.order - b.order).map(item => ({
           id: item.id,
           text: item.text,
@@ -140,6 +142,7 @@ function createPublicRoutes(dependencies) {
         id: section.id,
         title: section.title,
         order: section.order,
+        content: section.content || '',
         items: (section.items || []).sort((a, b) => a.order - b.order).map(item => ({
           id: item.id,
           text: item.text,
@@ -172,6 +175,7 @@ function createPublicRoutes(dependencies) {
         id: section.id,
         title: section.title,
         order: section.order,
+        content: section.content || '',
         items: (section.items || []).sort((a, b) => a.order - b.order).map(item => ({
           id: item.id,
           text: item.text,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User, CreditCard, MapPin, Lock, AlertTriangle, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
+import { LogOut, User, CreditCard, MapPin, Lock, AlertTriangle, Calendar, DollarSign, CheckCircle, XCircle, FileText, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 import AlertModal from '../AlertModal';
 import ConfirmModal from '../ConfirmModal';
@@ -35,6 +35,12 @@ const ClientPortal = () => {
   });
   const [addressError, setAddressError] = useState('');
   const [addressSuccess, setAddressSuccess] = useState(false);
+
+  // Cancellation Policy State
+  const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);
+  const [cancellationPolicy, setCancellationPolicy] = useState([]);
+  const [loadingPolicy, setLoadingPolicy] = useState(false);
+  const [policyAcknowledged, setPolicyAcknowledged] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('clientAccessToken');

@@ -4,7 +4,7 @@ echo "=== Testing Import Customers Endpoints ==="
 echo ""
 
 # Use the actual backend URL
-BACKEND_URL="https://cms-refresh.preview.emergentagent.com"
+BACKEND_URL="https://subman-content.preview.emergentagent.com"
 echo "Backend URL: $BACKEND_URL"
 echo ""
 

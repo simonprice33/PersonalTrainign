@@ -487,19 +487,20 @@ const ContentManagement = () => {
     }
   };
 
-  const handleAddItem = async (sectionId) => {
-    if (!policyForm.itemText.trim()) {
+  const handleAddItem = async (sectionId, itemText) => {
+    const text = itemText || policyForm.itemText;
+    if (!text?.trim()) {
       setAlertModal({ show: true, title: 'Error', message: 'Item text is required', type: 'error' });
       return;
     }
     try {
       const response = await axiosInstance.post(`${getPolicyEndpoint()}/sections/${sectionId}/items`, {
-        text: policyForm.itemText
+        text: text.trim()
       });
       if (response.data.success) {
         const currentSections = getCurrentPolicySections();
         setCurrentPolicySections(currentSections.map(s => 
-          s.id === sectionId ? { ...s, items: [...(s.items || []), response.data.item] } : s
+          s.id === sectionId ? { ...s, items: [...(s.items || []), response.data.item], _newItemText: '' } : s
         ));
         setPolicyForm({ ...policyForm, itemText: '' });
       }

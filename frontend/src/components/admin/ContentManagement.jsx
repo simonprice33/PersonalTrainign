@@ -923,12 +923,33 @@ const ContentManagement = () => {
           </div>
         )}
 
-        {/* Cancellation Policy Tab */}
+        {/* Legal Policies Tab */}
         {activeTab === 'policy' && (
           <div className="space-y-6">
+            {/* Policy Type Selector */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              {POLICY_TYPES.map(pType => {
+                const IconComp = pType.icon;
+                return (
+                  <button
+                    key={pType.id}
+                    onClick={() => setActivePolicyType(pType.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                      activePolicyType === pType.id 
+                        ? 'bg-orange-500 text-white' 
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    <IconComp size={16} />
+                    {pType.label}
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Add New Section */}
             <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-bold text-white mb-4">Add New Section</h3>
+              <h3 className="text-lg font-bold text-white mb-4">Add New Section to {POLICY_TYPES.find(p => p.id === activePolicyType)?.label}</h3>
               <div className="flex gap-3">
                 <input
                   type="text"
@@ -948,7 +969,7 @@ const ContentManagement = () => {
             </div>
 
             {/* Policy Sections */}
-            {policySections.map((section, sectionIndex) => (
+            {getCurrentPolicySections().map((section, sectionIndex) => (
               <div key={section.id} className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
                 {/* Section Header */}
                 <div className="p-4 bg-gray-700/50 flex items-center justify-between">

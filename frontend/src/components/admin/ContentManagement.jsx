@@ -106,17 +106,25 @@ const ContentManagement = () => {
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      const [packagesRes, parqRes, healthRes, policyRes] = await Promise.all([
+      const [packagesRes, parqRes, healthRes, policyRes, termsRes, privacyRes, cookieRes] = await Promise.all([
         axiosInstance.get(`${BACKEND_URL}/api/admin/packages`),
         axiosInstance.get(`${BACKEND_URL}/api/admin/parq-questions`),
         axiosInstance.get(`${BACKEND_URL}/api/admin/health-questions`),
-        axiosInstance.get(`${BACKEND_URL}/api/admin/cancellation-policy`)
+        axiosInstance.get(`${BACKEND_URL}/api/admin/cancellation-policy`),
+        axiosInstance.get(`${BACKEND_URL}/api/admin/policies/terms-of-service`).catch(() => ({ data: { sections: [] } })),
+        axiosInstance.get(`${BACKEND_URL}/api/admin/policies/privacy-policy`).catch(() => ({ data: { sections: [] } })),
+        axiosInstance.get(`${BACKEND_URL}/api/admin/policies/cookie-policy`).catch(() => ({ data: { sections: [] } }))
       ]);
       
       setPackages(packagesRes.data.packages || []);
       setParqQuestions(parqRes.data.questions || []);
       setHealthQuestions(healthRes.data.questions || []);
       setPolicySections(policyRes.data.sections || []);
+      setGenericPolicySections({
+        terms: termsRes.data.sections || [],
+        privacy: privacyRes.data.sections || [],
+        cookie: cookieRes.data.sections || []
+      });
     } catch (err) {
       if (err.response?.status === 401) {
         navigate('/admin');

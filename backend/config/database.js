@@ -137,6 +137,9 @@ class DatabaseConfig {
 
       // Cancellation policy collection indexes
       await this.collections.cancellationPolicy.createIndex({ order: 1 });
+      await this.collections.termsOfService.createIndex({ order: 1 });
+      await this.collections.privacyPolicy.createIndex({ order: 1 });
+      await this.collections.cookiePolicy.createIndex({ order: 1 });
       console.log('✅ Cancellation policy indexes created');
 
       // Seed initial data

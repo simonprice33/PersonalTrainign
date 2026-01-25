@@ -1428,11 +1428,15 @@ class AdminController {
   async updatePolicySection(req, res) {
     try {
       const { sectionId } = req.params;
-      const { title } = req.body;
+      const { title, content } = req.body;
+
+      const updateData = { updated_at: new Date() };
+      if (title !== undefined) updateData.title = title;
+      if (content !== undefined) updateData.content = content;
 
       await this.collections.cancellationPolicy.updateOne(
         { id: sectionId },
-        { $set: { title, updated_at: new Date() } }
+        { $set: updateData }
       );
 
       res.status(200).json({

@@ -41,7 +41,7 @@ import BlogListing from "./pages/BlogListing";
 import BlogPost from "./pages/BlogPost";
 
 // Policy Pages
-import CancellationPolicy from "./pages/CancellationPolicy";
+import PolicyPage from "./pages/PolicyPage";
 
 function App() {
   return (

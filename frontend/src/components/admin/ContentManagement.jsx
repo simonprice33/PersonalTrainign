@@ -723,11 +723,6 @@ const ContentManagement = () => {
             <FileText size={18} />
             Legal Policies
           </button>
-            }`}
-          >
-            <FileText size={18} />
-            Cancellation Policy
-          </button>
         </div>
 
         {error && (

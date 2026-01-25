@@ -81,16 +81,19 @@ The order and content of the steps in the purchase flow must adapt based on the 
   - Client portal shows policy modal before cancellation confirmation with acknowledgment checkbox
 
 ### Known Issues
-1. **P1 - Data inconsistency in Admin "Edit Client" modal**: Legacy vs. new client data formats cause display issues. Needs a normalization utility.
-2. **P2 - Stripe Billing Portal**: Requires real API keys to function (placeholder keys in use)
+1. **P2 - Stripe Billing Portal**: Requires real API keys to function (user reports Stripe is working on their end)
 
 ## Key Files Reference
 - `/app/frontend/src/pages/PurchaseFlow.jsx` - Multi-step purchase UI
+- `/app/frontend/src/pages/CancellationPolicy.jsx` - Public cancellation policy page
 - `/app/frontend/src/components/ClientOnboarding.jsx` - Admin-sent link onboarding form
+- `/app/frontend/src/components/Footer.jsx` - Site footer with cancellation policy link
+- `/app/frontend/src/components/client/ClientPortal.jsx` - Client portal with cancellation policy modal
+- `/app/frontend/src/utils/clientUtils.js` - Client data normalization utility
 - `/app/backend/controllers/PublicController.js` - Self-service purchase backend
 - `/app/backend/controllers/ClientController.js` - Client authentication & onboarding
 - `/app/frontend/src/components/admin/ClientManagement.jsx` - Admin client management
-- `/app/frontend/src/components/admin/ContentManagement.jsx` - Admin content CRUD
+- `/app/frontend/src/components/admin/ContentManagement.jsx` - Admin content CRUD (packages, PARQ, health questions, cancellation policy)
 - `/app/backend/controllers/PackageController.js` - Question query logic
 - `/app/backend/config/database.js` - Auto-migration logic
 

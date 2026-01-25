@@ -118,15 +118,14 @@ The order and content of the steps in the purchase flow must adapt based on the 
 ## Backlog (Prioritized)
 
 ### P1 - High Priority
-- [ ] Create client data normalization utility for ClientManagement.jsx
 - [ ] Final end-to-end testing of Join Now purchase flow
+- [ ] Verify Admin blog categories/tags management UI
 
 ### P2 - Medium Priority
-- [ ] Add cancellation policy/terms display before subscription cancellation
-- [ ] Stripe Billing Portal (blocked on real API keys)
+- [ ] Refactor `ContentManagement.jsx` into smaller components (PackageManagement, ParqManagement, PolicyManagement)
+- [ ] Add blog commenting system
 
 ### P3 - Future Enhancements
-- [ ] Refactor client data schema to use consistent format
 - [ ] Add client profile edit capability in portal
 
 ## Third-Party Integrations

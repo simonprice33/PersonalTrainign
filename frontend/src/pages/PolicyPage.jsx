@@ -234,7 +234,16 @@ const PolicyPage = () => {
                                 className="flex-shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full"
                                 style={{ background: 'var(--brand-primary)' }}
                               />
-                              <span className="leading-relaxed">{item.text}</span>
+                              <span className="leading-relaxed prose prose-invert prose-sm max-w-none inline
+                                prose-strong:text-white prose-strong:font-semibold
+                                prose-em:text-gray-200
+                              ">
+                                <ReactMarkdown 
+                                  components={{
+                                    p: ({children}) => <span>{children}</span>
+                                  }}
+                                >{item.text}</ReactMarkdown>
+                              </span>
                             </li>
                           ))}
                         </ul>

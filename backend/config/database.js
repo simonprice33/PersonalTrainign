@@ -59,7 +59,10 @@ class DatabaseConfig {
         blogPosts: this.db.collection('blog_posts'),
         blogCategories: this.db.collection('blog_categories'),
         blogTags: this.db.collection('blog_tags'),
-        cancellationPolicy: this.db.collection('cancellation_policy')
+        cancellationPolicy: this.db.collection('cancellation_policy'),
+        termsOfService: this.db.collection('terms_of_service'),
+        privacyPolicy: this.db.collection('privacy_policy'),
+        cookiePolicy: this.db.collection('cookie_policy')
       };
 
       // Create indexes for better performance

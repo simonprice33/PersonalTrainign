@@ -66,6 +66,19 @@ The order and content of the steps in the purchase flow must adapt based on the 
   - SEO fields (title, description)
   - Draft/Published/Scheduled/Hidden status
   - Scheduled publishing (show from date/time)
+- [x] **"Join Now" Page Enhancements:**
+  - 3-column layout for packages
+  - Admin-selectable "Most Popular" package with banner
+- [x] **Client Data Normalization:**
+  - Backend script (`/api/admin/normalize-data`) to migrate inconsistent client data
+  - Admin button to trigger normalization
+  - Frontend utility (`/app/frontend/src/utils/clientUtils.js`) for consistent client data handling
+- [x] **Cancellation Policy System:**
+  - Public page (`/cancellation-policy`) displaying policy content
+  - Footer link to cancellation policy
+  - Admin CRUD for policy sections and items in Content Management
+  - Re-ordering capabilities for sections and items
+  - Client portal shows policy modal before cancellation confirmation with acknowledgment checkbox
 
 ### Known Issues
 1. **P1 - Data inconsistency in Admin "Edit Client" modal**: Legacy vs. new client data formats cause display issues. Needs a normalization utility.

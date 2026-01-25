@@ -212,17 +212,27 @@ const PolicyPage = () => {
                     
                     {/* Section Content */}
                     <div className="p-6">
-                      {section.items && section.items.length > 0 ? (
-                        <ul className="space-y-4">
+                      {section.content ? (
+                        <div className="prose prose-invert prose-sm max-w-none
+                          prose-headings:text-white prose-headings:font-semibold
+                          prose-p:text-gray-300 prose-p:leading-relaxed
+                          prose-li:text-gray-300 prose-li:marker:text-[var(--brand-primary)]
+                          prose-strong:text-white prose-strong:font-semibold
+                          prose-a:text-[var(--brand-primary)] prose-a:no-underline hover:prose-a:underline
+                          prose-ul:space-y-2 prose-ol:space-y-2
+                        ">
+                          <ReactMarkdown>{section.content}</ReactMarkdown>
+                        </div>
+                      ) : section.items && section.items.length > 0 ? (
+                        <ul className="space-y-3">
                           {section.items.map((item, itemIndex) => (
                             <li 
                               key={item.id || itemIndex}
                               className="flex items-start gap-3 text-gray-300"
                             >
-                              <ChevronRight 
-                                size={20} 
-                                className="flex-shrink-0 mt-0.5"
-                                style={{ color: 'var(--brand-primary)' }}
+                              <span 
+                                className="flex-shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full"
+                                style={{ background: 'var(--brand-primary)' }}
                               />
                               <span className="leading-relaxed">{item.text}</span>
                             </li>

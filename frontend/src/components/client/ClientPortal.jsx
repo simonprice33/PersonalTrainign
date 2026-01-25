@@ -585,6 +585,97 @@ const ClientPortal = () => {
         onClose={() => setConfirmModal({ show: false, title: '', message: '', onConfirm: null })}
         type="danger"
       />
+
+      {/* Cancellation Policy Modal */}
+      {showCancellationPolicy && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="p-6 border-b border-gray-700">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-yellow-500/20 rounded-lg">
+                  <FileText size={24} className="text-yellow-400" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">Cancellation Policy</h2>
+                  <p className="text-sm text-gray-400">Please review before proceeding</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {loadingPolicy ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500 mx-auto mb-4"></div>
+                  <p className="text-gray-400">Loading policy...</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {cancellationPolicy.map((section, sectionIndex) => (
+                    <div key={section.id || sectionIndex} className="bg-gray-900/50 rounded-xl p-4">
+                      <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <span className="w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center text-xs font-bold text-gray-900">
+                          {sectionIndex + 1}
+                        </span>
+                        {section.title}
+                      </h3>
+                      {section.items && section.items.length > 0 && (
+                        <ul className="space-y-2">
+                          {section.items.map((item, itemIndex) => (
+                            <li 
+                              key={item.id || itemIndex}
+                              className="flex items-start gap-2 text-gray-300 text-sm"
+                            >
+                              <ChevronRight size={16} className="flex-shrink-0 mt-0.5 text-cyan-400" />
+                              <span>{item.text}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Acknowledgment checkbox */}
+              {!loadingPolicy && cancellationPolicy.length > 0 && (
+                <label className="flex items-start gap-3 mt-6 cursor-pointer bg-gray-900/50 p-4 rounded-xl border border-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={policyAcknowledged}
+                    onChange={(e) => setPolicyAcknowledged(e.target.checked)}
+                    className="mt-1 w-5 h-5 rounded border-gray-600 bg-gray-800 text-cyan-500 focus:ring-cyan-500"
+                  />
+                  <span className="text-gray-300 text-sm">
+                    I have read and understand the cancellation policy. I acknowledge that my subscription will remain active until the end of my current billing period.
+                  </span>
+                </label>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-gray-700 flex gap-3">
+              <button
+                onClick={() => {
+                  setShowCancellationPolicy(false);
+                  setPolicyAcknowledged(false);
+                }}
+                className="flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePolicyAcknowledged}
+                disabled={!policyAcknowledged}
+                className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-colors"
+              >
+                Continue with Cancellation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

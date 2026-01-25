@@ -421,6 +421,23 @@ const ContentManagement = () => {
     }
   };
 
+  // Debounced content update to avoid too many API calls
+  const handleUpdateSectionContent = async (sectionId, content) => {
+    // Update local state immediately
+    const currentSections = getCurrentPolicySections();
+    setCurrentPolicySections(currentSections.map(s => s.id === sectionId ? { ...s, content } : s));
+    
+    // Debounce the API call
+    if (window.contentUpdateTimeout) clearTimeout(window.contentUpdateTimeout);
+    window.contentUpdateTimeout = setTimeout(async () => {
+      try {
+        await axiosInstance.put(`${getPolicyEndpoint()}/sections/${sectionId}`, { content });
+      } catch (err) {
+        console.error('Failed to save content:', err);
+      }
+    }, 1000);
+  };
+
   const handleDeleteSection = (section) => {
     setConfirmModal({
       show: true,

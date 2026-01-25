@@ -10,6 +10,7 @@ const Header = () => {
   const [isTDEEOpen, setIsTDEEOpen] = useState(false);
   
   const isOnBlogPage = location.pathname.startsWith('/blog');
+  const isOnHomePage = location.pathname === '/';
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -21,8 +22,8 @@ const Header = () => {
   };
 
   const scrollToSection = (sectionId) => {
-    // If on blog page, navigate to home first then scroll
-    if (isOnBlogPage) {
+    // If not on home page, navigate to home first then scroll
+    if (!isOnHomePage) {
       navigate('/');
       setTimeout(() => {
         const element = document.getElementById(sectionId);

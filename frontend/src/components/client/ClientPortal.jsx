@@ -188,13 +188,40 @@ const ClientPortal = () => {
     }
   };
 
-  const handleCancelSubscription = () => {
+  const handleCancelSubscription = async () => {
+    // First, fetch and show the cancellation policy
+    setLoadingPolicy(true);
+    setPolicyAcknowledged(false);
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/cancellation-policy`);
+      if (response.data.success && response.data.sections?.length > 0) {
+        setCancellationPolicy(response.data.sections);
+        setShowCancellationPolicy(true);
+      } else {
+        // No policy set up, proceed directly to confirmation
+        showCancellationConfirmation();
+      }
+    } catch (err) {
+      console.error('Failed to fetch cancellation policy:', err);
+      // If policy fetch fails, proceed with standard confirmation
+      showCancellationConfirmation();
+    } finally {
+      setLoadingPolicy(false);
+    }
+  };
+
+  const showCancellationConfirmation = () => {
     setConfirmModal({
       show: true,
       title: 'Cancel Subscription',
       message: 'Are you sure you want to cancel your subscription? It will remain active until the end of your current billing period.',
       onConfirm: () => executeCancelSubscription()
     });
+  };
+
+  const handlePolicyAcknowledged = () => {
+    setShowCancellationPolicy(false);
+    showCancellationConfirmation();
   };
 
   const executeCancelSubscription = async () => {

@@ -44,12 +44,14 @@ const POLICY_CONFIG = {
 };
 
 const PolicyPage = () => {
-  const { policyType } = useParams();
+  const { policyType: paramPolicyType } = useParams();
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const config = POLICY_CONFIG[policyType] || POLICY_CONFIG['terms-of-service'];
+  // Handle both /policies/:policyType and legacy /cancellation-policy routes
+  const policyType = paramPolicyType || 'cancellation-policy';
+  const config = POLICY_CONFIG[policyType] || POLICY_CONFIG['cancellation-policy'];
   const IconComponent = config.icon;
 
   useEffect(() => {

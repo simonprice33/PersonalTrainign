@@ -134,4 +134,5 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - **Calendly (Scheduling)** — uses public URL
 
 ## Test Credentials
-- **Client Login**: `simon.price.33@hotmail.com` / `NewTest123!`
+- **Admin Login**: `simon.price@simonprice-pt.co.uk` / `NewTest123!`
+- **Client Login**: `simon.price.33@hotmail.com` / `TestClient123!`

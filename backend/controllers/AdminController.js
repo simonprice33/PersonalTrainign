@@ -1657,6 +1657,386 @@ class AdminController {
       });
     }
   }
+
+  // ============================================================================
+  // GENERIC POLICY MANAGEMENT (Terms, Privacy, Cookie)
+  // ============================================================================
+
+  /**
+   * Get the collection for a policy type
+   */
+  _getPolicyCollection(policyType) {
+    const collectionMap = {
+      'terms-of-service': this.collections.termsOfService,
+      'privacy-policy': this.collections.privacyPolicy,
+      'cookie-policy': this.collections.cookiePolicy
+    };
+    return collectionMap[policyType];
+  }
+
+  /**
+   * Get policy by type
+   */
+  async getPolicy(req, res) {
+    try {
+      const { policyType } = req.params;
+      const collection = this._getPolicyCollection(policyType);
+      
+      if (!collection) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid policy type'
+        });
+      }
+
+      const sections = await collection.find({}).sort({ order: 1 }).toArray();
+
+      const sortedSections = sections.map(section => ({
+        ...section,
+        _id: undefined,
+        items: (section.items || []).sort((a, b) => a.order - b.order)
+      }));
+
+      res.status(200).json({
+        success: true,
+        sections: sortedSections
+      });
+    } catch (error) {
+      console.error('❌ Get policy error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch policy'
+      });
+    }
+  }
+
+  /**
+   * Create a policy section
+   */
+  async createGenericPolicySection(req, res) {
+    try {
+      const { policyType } = req.params;
+      const { title } = req.body;
+      const collection = this._getPolicyCollection(policyType);
+
+      if (!collection) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid policy type'
+        });
+      }
+
+      if (!title) {
+        return res.status(400).json({
+          success: false,
+          message: 'Section title is required'
+        });
+      }
+
+      const maxOrderDoc = await collection.find({}).sort({ order: -1 }).limit(1).toArray();
+      const newOrder = maxOrderDoc.length > 0 ? (maxOrderDoc[0].order || 0) + 1 : 1;
+
+      const section = {
+        id: `section-${Date.now()}`,
+        title,
+        order: newOrder,
+        items: [],
+        created_at: new Date()
+      };
+
+      await collection.insertOne(section);
+
+      res.status(201).json({
+        success: true,
+        message: 'Section created successfully',
+        section: { ...section, _id: undefined }
+      });
+    } catch (error) {
+      console.error('❌ Create policy section error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to create section'
+      });
+    }
+  }
+
+  /**
+   * Update a policy section
+   */
+  async updateGenericPolicySection(req, res) {
+    try {
+      const { policyType, sectionId } = req.params;
+      const { title } = req.body;
+      const collection = this._getPolicyCollection(policyType);
+
+      if (!collection) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid policy type'
+        });
+      }
+
+      await collection.updateOne(
+        { id: sectionId },
+        { $set: { title, updated_at: new Date() } }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Section updated successfully'
+      });
+    } catch (error) {
+      console.error('❌ Update policy section error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to update section'
+      });
+    }
+  }
+
+  /**
+   * Delete a policy section
+   */
+  async deleteGenericPolicySection(req, res) {
+    try {
+      const { policyType, sectionId } = req.params;
+      const collection = this._getPolicyCollection(policyType);
+
+      if (!collection) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid policy type'
+        });
+      }
+
+      await collection.deleteOne({ id: sectionId });
+
+      res.status(200).json({
+        success: true,
+        message: 'Section deleted successfully'
+      });
+    } catch (error) {
+      console.error('❌ Delete policy section error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to delete section'
+      });
+    }
+  }
+
+  /**
+   * Reorder policy sections
+   */
+  async reorderGenericPolicySections(req, res) {
+    try {
+      const { policyType } = req.params;
+      const { sectionIds } = req.body;
+      const collection = this._getPolicyCollection(policyType);
+
+      if (!collection) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid policy type'
+        });
+      }
+
+      const updatePromises = sectionIds.map((id, index) => 
+        collection.updateOne(
+          { id },
+          { $set: { order: index + 1 } }
+        )
+      );
+
+      await Promise.all(updatePromises);
+
+      res.status(200).json({
+        success: true,
+        message: 'Sections reordered successfully'
+      });
+    } catch (error) {
+      console.error('❌ Reorder policy sections error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to reorder sections'
+      });
+    }
+  }
+
+  /**
+   * Add item to a policy section
+   */
+  async addGenericPolicyItem(req, res) {
+    try {
+      const { policyType, sectionId } = req.params;
+      const { text } = req.body;
+      const collection = this._getPolicyCollection(policyType);
+
+      if (!collection) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid policy type'
+        });
+      }
+
+      if (!text) {
+        return res.status(400).json({
+          success: false,
+          message: 'Item text is required'
+        });
+      }
+
+      const section = await collection.findOne({ id: sectionId });
+      if (!section) {
+        return res.status(404).json({
+          success: false,
+          message: 'Section not found'
+        });
+      }
+
+      const items = section.items || [];
+      const maxOrder = items.length > 0 ? Math.max(...items.map(i => i.order || 0)) : 0;
+
+      const newItem = {
+        id: `item-${Date.now()}`,
+        text,
+        order: maxOrder + 1
+      };
+
+      await collection.updateOne(
+        { id: sectionId },
+        { $push: { items: newItem } }
+      );
+
+      res.status(201).json({
+        success: true,
+        message: 'Item added successfully',
+        item: newItem
+      });
+    } catch (error) {
+      console.error('❌ Add policy item error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to add item'
+      });
+    }
+  }
+
+  /**
+   * Update item in a policy section
+   */
+  async updateGenericPolicyItem(req, res) {
+    try {
+      const { policyType, sectionId, itemId } = req.params;
+      const { text } = req.body;
+      const collection = this._getPolicyCollection(policyType);
+
+      if (!collection) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid policy type'
+        });
+      }
+
+      await collection.updateOne(
+        { id: sectionId, 'items.id': itemId },
+        { $set: { 'items.$.text': text } }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Item updated successfully'
+      });
+    } catch (error) {
+      console.error('❌ Update policy item error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to update item'
+      });
+    }
+  }
+
+  /**
+   * Delete item from a policy section
+   */
+  async deleteGenericPolicyItem(req, res) {
+    try {
+      const { policyType, sectionId, itemId } = req.params;
+      const collection = this._getPolicyCollection(policyType);
+
+      if (!collection) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid policy type'
+        });
+      }
+
+      await collection.updateOne(
+        { id: sectionId },
+        { $pull: { items: { id: itemId } } }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Item deleted successfully'
+      });
+    } catch (error) {
+      console.error('❌ Delete policy item error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to delete item'
+      });
+    }
+  }
+
+  /**
+   * Reorder items within a policy section
+   */
+  async reorderGenericPolicyItems(req, res) {
+    try {
+      const { policyType, sectionId } = req.params;
+      const { itemIds } = req.body;
+      const collection = this._getPolicyCollection(policyType);
+
+      if (!collection) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid policy type'
+        });
+      }
+
+      const section = await collection.findOne({ id: sectionId });
+      if (!section) {
+        return res.status(404).json({
+          success: false,
+          message: 'Section not found'
+        });
+      }
+
+      const updatedItems = section.items.map(item => {
+        const newOrder = itemIds.indexOf(item.id);
+        return {
+          ...item,
+          order: newOrder >= 0 ? newOrder + 1 : item.order
+        };
+      });
+
+      await collection.updateOne(
+        { id: sectionId },
+        { $set: { items: updatedItems } }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Items reordered successfully'
+      });
+    } catch (error) {
+      console.error('❌ Reorder policy items error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to reorder items'
+      });
+    }
+  }
 }
 
 module.exports = AdminController;

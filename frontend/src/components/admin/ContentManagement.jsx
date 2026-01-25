@@ -15,13 +15,24 @@ import {
   GripVertical,
   FileText,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Shield,
+  Cookie,
+  Scale
 } from 'lucide-react';
 import axiosInstance from '../../utils/axiosInstance';
 import AlertModal from '../AlertModal';
 import ConfirmModal from '../ConfirmModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+
+// Policy type configurations
+const POLICY_TYPES = [
+  { id: 'cancellation', label: 'Cancellation Policy', icon: Scale, endpoint: 'cancellation-policy' },
+  { id: 'terms', label: 'Terms of Service', icon: FileText, endpoint: 'terms-of-service' },
+  { id: 'privacy', label: 'Privacy Policy', icon: Shield, endpoint: 'privacy-policy' },
+  { id: 'cookie', label: 'Cookie Policy', icon: Cookie, endpoint: 'cookie-policy' }
+];
 
 const ContentManagement = () => {
   const navigate = useNavigate();

@@ -187,11 +187,11 @@ const Footer = () => {
           <p className="text-gray-400 text-sm">
             © 2024 Simon Price Personal Training. All rights reserved.
           </p>
-          <div className="flex gap-6 text-sm text-gray-400">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-            <Link to="/cancellation-policy" className="hover:text-white transition-colors">Cancellation Policy</Link>
-            <a href="#" className="hover:text-white transition-colors">Cookie Policy</a>
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6 text-sm text-gray-400">
+            <Link to="/policies/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/policies/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link to="/policies/cancellation-policy" className="hover:text-white transition-colors">Cancellation Policy</Link>
+            <Link to="/policies/cookie-policy" className="hover:text-white transition-colors">Cookie Policy</Link>
           </div>
         </div>
 

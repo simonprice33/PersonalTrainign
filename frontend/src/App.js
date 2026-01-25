@@ -40,6 +40,9 @@ import PurchaseFlow from "./pages/PurchaseFlow";
 import BlogListing from "./pages/BlogListing";
 import BlogPost from "./pages/BlogPost";
 
+// Policy Pages
+import CancellationPolicy from "./pages/CancellationPolicy";
+
 function App() {
   return (
     <Router>
@@ -87,6 +90,9 @@ function App() {
           {/* Public Blog Routes */}
           <Route path="/blog" element={<BlogListing />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          
+          {/* Policy Pages */}
+          <Route path="/cancellation-policy" element={<CancellationPolicy />} />
           
           {/* Main Website Route */}
           <Route path="/" element={

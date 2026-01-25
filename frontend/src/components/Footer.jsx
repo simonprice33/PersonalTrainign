@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Instagram, Facebook, Linkedin, Send } from 'lucide-react';
 import { contactInfo } from '../mock/mockData';
 import axios from 'axios';
@@ -189,6 +190,7 @@ const Footer = () => {
           <div className="flex gap-6 text-sm text-gray-400">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <Link to="/cancellation-policy" className="hover:text-white transition-colors">Cancellation Policy</Link>
             <a href="#" className="hover:text-white transition-colors">Cookie Policy</a>
           </div>
         </div>

@@ -1131,10 +1131,10 @@ const ContentManagement = () => {
               </div>
             ))}
 
-            {policySections.length === 0 && (
+            {getCurrentPolicySections().length === 0 && (
               <div className="text-center py-12 text-gray-400 bg-gray-800/50 rounded-xl border border-gray-700">
                 <FileText size={48} className="mx-auto mb-4 opacity-50" />
-                <p>No policy sections yet. Add your first section above.</p>
+                <p>No sections in {POLICY_TYPES.find(p => p.id === activePolicyType)?.label} yet. Add your first section above.</p>
               </div>
             )}
           </div>

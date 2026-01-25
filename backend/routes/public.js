@@ -95,6 +95,102 @@ function createPublicRoutes(dependencies) {
     }
   });
 
+  // Get terms of service (public)
+  router.get('/terms-of-service', async (req, res) => {
+    try {
+      const sections = await collections.termsOfService
+        .find({})
+        .sort({ order: 1 })
+        .toArray();
+
+      const sortedSections = sections.map(section => ({
+        id: section.id,
+        title: section.title,
+        order: section.order,
+        items: (section.items || []).sort((a, b) => a.order - b.order).map(item => ({
+          id: item.id,
+          text: item.text,
+          order: item.order
+        }))
+      }));
+
+      res.status(200).json({
+        success: true,
+        sections: sortedSections
+      });
+    } catch (error) {
+      console.error('❌ Get public terms of service error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch terms of service'
+      });
+    }
+  });
+
+  // Get privacy policy (public)
+  router.get('/privacy-policy', async (req, res) => {
+    try {
+      const sections = await collections.privacyPolicy
+        .find({})
+        .sort({ order: 1 })
+        .toArray();
+
+      const sortedSections = sections.map(section => ({
+        id: section.id,
+        title: section.title,
+        order: section.order,
+        items: (section.items || []).sort((a, b) => a.order - b.order).map(item => ({
+          id: item.id,
+          text: item.text,
+          order: item.order
+        }))
+      }));
+
+      res.status(200).json({
+        success: true,
+        sections: sortedSections
+      });
+    } catch (error) {
+      console.error('❌ Get public privacy policy error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch privacy policy'
+      });
+    }
+  });
+
+  // Get cookie policy (public)
+  router.get('/cookie-policy', async (req, res) => {
+    try {
+      const sections = await collections.cookiePolicy
+        .find({})
+        .sort({ order: 1 })
+        .toArray();
+
+      const sortedSections = sections.map(section => ({
+        id: section.id,
+        title: section.title,
+        order: section.order,
+        items: (section.items || []).sort((a, b) => a.order - b.order).map(item => ({
+          id: item.id,
+          text: item.text,
+          order: item.order
+        }))
+      }));
+
+      res.status(200).json({
+        success: true,
+        sections: sortedSections
+      });
+    } catch (error) {
+      console.error('❌ Get public cookie policy error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch cookie policy'
+      });
+    }
+  });
+
   return router;
 }
 

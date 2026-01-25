@@ -55,6 +55,8 @@ const PolicyPage = () => {
   const IconComponent = config.icon;
 
   useEffect(() => {
+    // Scroll to top when policy type changes
+    window.scrollTo(0, 0);
     fetchPolicy();
   }, [policyType]);
 

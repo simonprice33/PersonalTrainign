@@ -488,6 +488,12 @@ const ClientManagement = () => {
                             <Mail size={16} className="text-green-400" />
                             <span className="text-sm">{client.email}</span>
                           </div>
+                          {(client.telephone || client.phone) && (
+                            <div className="flex items-center gap-2 text-gray-300">
+                              <Phone size={16} className="text-blue-400" />
+                              <span className="text-sm">{client.telephone || client.phone}</span>
+                            </div>
+                          )}
                           <div className="flex items-center gap-2 text-gray-300">
                             <DollarSign size={16} className="text-cyan-400" />
                             <span className="text-sm">£{client.price || client.monthly_price || client.subscription_price || 125}/month</span>
@@ -499,6 +505,18 @@ const ClientManagement = () => {
                               {client.prorate !== false && ' • Prorated'}
                             </span>
                           </div>
+                          {/* Address Display */}
+                          {(client.address?.line1 || client.address_line_1) && (
+                            <div className="flex items-start gap-2 text-gray-300">
+                              <MapPin size={16} className="text-orange-400 mt-0.5" />
+                              <span className="text-sm">
+                                {client.address?.line1 || client.address_line_1}
+                                {(client.address?.line2 || client.address_line_2) && `, ${client.address?.line2 || client.address_line_2}`}
+                                {(client.address?.city || client.city) && `, ${client.address?.city || client.city}`}
+                                {(client.address?.postcode || client.postcode) && ` ${client.address?.postcode || client.postcode}`}
+                              </span>
+                            </div>
+                          )}
                           {(client.stripe_customer_id || client.customer_id) && (
                             <div className="mt-2">
                               {getStatusBadge(client.status, client.subscription_status)}

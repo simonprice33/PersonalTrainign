@@ -10,6 +10,7 @@ import Footer from "./components/Footer";
 import ClientContactForm from "./components/ClientContactForm";
 import Unsubscribe from "./components/Unsubscribe";
 import ClientOnboarding from "./components/ClientOnboarding";
+import ScrollToTop from "./components/ScrollToTop";
 
 // Admin Components
 import AdminLogin from "./components/admin/AdminLogin";

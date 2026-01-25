@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User, CreditCard, MapPin, Lock, AlertTriangle, Calendar, DollarSign, CheckCircle, XCircle, FileText, ChevronRight } from 'lucide-react';
+import { LogOut, User, CreditCard, MapPin, Lock, AlertTriangle, Calendar, DollarSign, CheckCircle, XCircle, FileText, ChevronRight, Edit, Phone, Users } from 'lucide-react';
 import axios from 'axios';
 import AlertModal from '../AlertModal';
 import ConfirmModal from '../ConfirmModal';
@@ -25,16 +25,20 @@ const ClientPortal = () => {
   const [alertModal, setAlertModal] = useState({ show: false, title: '', message: '', type: 'info' });
   const [confirmModal, setConfirmModal] = useState({ show: false, title: '', message: '', onConfirm: null });
 
-  // Address Update State
-  const [addressData, setAddressData] = useState({
+  // Profile Edit State
+  const [profileData, setProfileData] = useState({
+    name: '',
+    telephone: '',
     addressLine1: '',
     addressLine2: '',
     city: '',
     postcode: '',
-    country: 'GB'
+    country: 'GB',
+    emergencyContactName: '',
+    emergencyContactNumber: '',
+    emergencyContactRelationship: ''
   });
-  const [addressError, setAddressError] = useState('');
-  const [addressSuccess, setAddressSuccess] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
 
   // Cancellation Policy State
   const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);

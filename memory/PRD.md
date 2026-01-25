@@ -98,9 +98,11 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - `/app/backend/config/database.js` - Auto-migration logic
 
 ## Key Database Schema
-- **`clients`**: Two formats exist - nested `address: { line1, ... }` and legacy flat fields. Now includes `first_name`, `last_name`.
+- **`clients`**: Normalized to use `stripe_customer_id` and nested `address: { line1, line2, city, postcode, country }`. Legacy fields are migrated by backend normalization script.
 - **`parq_questions`**: `{ ..., applicable_packages: [String] }`
 - **`health_questions`**: `{ ..., applicable_packages: [String] }`
+- **`packages`**: `{ ..., is_popular: Boolean }` for "Most Popular" badge
+- **`cancellation_policy_sections`**: `{ id, title, order, items: [{ id, text, order }] }`
 
 ## API Endpoints
 - `POST /api/purchase` - Create new client and subscription (self-service)
@@ -108,7 +110,10 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - `GET /api/public/parq-questions?packageId=<id>` - Get PARQ questions for package
 - `GET /api/public/health-questions?packageId=<id>` - Get Health questions for package
 - `POST /api/admin/create-portal-session` - Admin Stripe portal session
+- `POST /api/admin/normalize-data` - Normalize client data formats
+- `GET /api/cancellation-policy` - Public cancellation policy content
 - CRUD endpoints: `/api/admin/packages`, `/api/admin/parq-questions`, `/api/admin/health-questions`
+- Cancellation Policy CRUD: `/api/admin/cancellation-policy/sections`, `/api/admin/cancellation-policy/sections/:id/items`
 
 ## Backlog (Prioritized)
 

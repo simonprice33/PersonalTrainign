@@ -1770,7 +1770,7 @@ class AdminController {
   async updateGenericPolicySection(req, res) {
     try {
       const { policyType, sectionId } = req.params;
-      const { title } = req.body;
+      const { title, content } = req.body;
       const collection = this._getPolicyCollection(policyType);
 
       if (!collection) {
@@ -1780,9 +1780,13 @@ class AdminController {
         });
       }
 
+      const updateData = { updated_at: new Date() };
+      if (title !== undefined) updateData.title = title;
+      if (content !== undefined) updateData.content = content;
+
       await collection.updateOne(
         { id: sectionId },
-        { $set: { title, updated_at: new Date() } }
+        { $set: updateData }
       );
 
       res.status(200).json({

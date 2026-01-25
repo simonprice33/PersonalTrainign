@@ -65,6 +65,9 @@ function createClientRoutes(dependencies) {
   // Get client profile
   router.get('/profile', authenticateClient, (req, res) => controller.getProfile(req, res));
 
+  // Update client profile
+  router.put('/profile', authenticateClient, (req, res) => controller.updateProfile(req, res));
+
   // Manage billing (Stripe Customer Portal)
   router.post('/manage-billing', authenticateClient, (req, res) => controller.manageBilling(req, res));
 

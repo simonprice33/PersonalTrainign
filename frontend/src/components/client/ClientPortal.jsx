@@ -503,71 +503,151 @@ const ClientPortal = () => {
               </div>
             )}
 
-            {activeTab === 'address' && (
-              <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                <h2 className="text-2xl font-bold text-white mb-4">Update Address</h2>
-                
-                {addressError && (
-                  <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
-                    {addressError}
-                  </div>
-                )}
-
-                {addressSuccess && (
-                  <div className="mb-4 p-4 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400">
-                    Address updated successfully!
-                  </div>
-                )}
-
-                <form onSubmit={handleUpdateAddress} className="space-y-4">
-                  <div>
-                    <label className="block text-gray-300 text-sm mb-2">Address Line 1</label>
-                    <input
-                      type="text"
-                      required
-                      value={addressData.addressLine1}
-                      onChange={(e) => setAddressData({ ...addressData, addressLine1: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-300 text-sm mb-2">Address Line 2</label>
-                    <input
-                      type="text"
-                      value={addressData.addressLine2}
-                      onChange={(e) => setAddressData({ ...addressData, addressLine2: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
+            {activeTab === 'profile' && (
+              <div className="space-y-6">
+                {/* Personal Details */}
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                  <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <User size={20} className="text-cyan-400" />
+                    Personal Details
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-gray-300 text-sm mb-2">City</label>
+                      <label className="block text-gray-300 text-sm mb-2">Name</label>
                       <input
                         type="text"
-                        required
-                        value={addressData.city}
-                        onChange={(e) => setAddressData({ ...addressData, city: e.target.value })}
+                        value={profileData.name}
+                        onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
                         className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-300 text-sm mb-2">Postcode</label>
+                      <label className="block text-gray-300 text-sm mb-2">Phone Number</label>
+                      <input
+                        type="tel"
+                        value={profileData.telephone}
+                        onChange={(e) => setProfileData({ ...profileData, telephone: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                        placeholder="07XXX XXXXXX"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <label className="block text-gray-300 text-sm mb-2">Email</label>
+                    <input
+                      type="email"
+                      value={clientData?.email || ''}
+                      disabled
+                      className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-gray-400 cursor-not-allowed"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Email cannot be changed. Contact support if you need to update it.</p>
+                  </div>
+                </div>
+
+                {/* Address */}
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                  <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <MapPin size={20} className="text-cyan-400" />
+                    Address
+                  </h2>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-gray-300 text-sm mb-2">Address Line 1</label>
                       <input
                         type="text"
-                        required
-                        value={addressData.postcode}
-                        onChange={(e) => setAddressData({ ...addressData, postcode: e.target.value })}
+                        value={profileData.addressLine1}
+                        onChange={(e) => setProfileData({ ...profileData, addressLine1: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 text-sm mb-2">Address Line 2 (Optional)</label>
+                      <input
+                        type="text"
+                        value={profileData.addressLine2}
+                        onChange={(e) => setProfileData({ ...profileData, addressLine2: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-gray-300 text-sm mb-2">City</label>
+                        <input
+                          type="text"
+                          value={profileData.city}
+                          onChange={(e) => setProfileData({ ...profileData, city: e.target.value })}
+                          className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-300 text-sm mb-2">Postcode</label>
+                        <input
+                          type="text"
+                          value={profileData.postcode}
+                          onChange={(e) => setProfileData({ ...profileData, postcode: e.target.value })}
+                          className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Emergency Contact */}
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                  <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <Users size={20} className="text-cyan-400" />
+                    Emergency Contact
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-gray-300 text-sm mb-2">Name</label>
+                      <input
+                        type="text"
+                        value={profileData.emergencyContactName}
+                        onChange={(e) => setProfileData({ ...profileData, emergencyContactName: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 text-sm mb-2">Phone Number</label>
+                      <input
+                        type="tel"
+                        value={profileData.emergencyContactNumber}
+                        onChange={(e) => setProfileData({ ...profileData, emergencyContactNumber: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 text-sm mb-2">Relationship</label>
+                      <input
+                        type="text"
+                        value={profileData.emergencyContactRelationship}
+                        onChange={(e) => setProfileData({ ...profileData, emergencyContactRelationship: e.target.value })}
+                        placeholder="e.g. Partner, Parent, Friend"
                         className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
                       />
                     </div>
                   </div>
-                  <button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white py-3 rounded-lg font-semibold transition-all"
-                  >
-                    Update Address
-                  </button>
-                </form>
+                </div>
+
+                {/* Save Button */}
+                <button
+                  onClick={handleSaveProfile}
+                  disabled={profileSaving}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 disabled:opacity-50 text-white py-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
+                >
+                  {profileSaving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle size={20} />
+                      Save Changes
+                    </>
+                  )}
+                </button>
               </div>
             )}
 

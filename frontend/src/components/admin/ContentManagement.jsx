@@ -413,7 +413,8 @@ const ContentManagement = () => {
       await axiosInstance.put(`${getPolicyEndpoint()}/sections/${sectionId}`, {
         title: newTitle
       });
-      setPolicySections(policySections.map(s => s.id === sectionId ? { ...s, title: newTitle } : s));
+      const currentSections = getCurrentPolicySections();
+      setCurrentPolicySections(currentSections.map(s => s.id === sectionId ? { ...s, title: newTitle } : s));
       setEditingSectionId(null);
     } catch (err) {
       setAlertModal({ show: true, title: 'Error', message: 'Failed to update section', type: 'error' });
@@ -428,8 +429,9 @@ const ContentManagement = () => {
       onConfirm: async () => {
         setConfirmModal({ show: false, title: '', message: '', onConfirm: null });
         try {
-          await axiosInstance.delete(`${BACKEND_URL}/api/admin/cancellation-policy/sections/${section.id}`);
-          setPolicySections(policySections.filter(s => s.id !== section.id));
+          await axiosInstance.delete(`${getPolicyEndpoint()}/sections/${section.id}`);
+          const currentSections = getCurrentPolicySections();
+          setCurrentPolicySections(currentSections.filter(s => s.id !== section.id));
           setAlertModal({ show: true, title: 'Success', message: 'Section deleted', type: 'success' });
         } catch (err) {
           setAlertModal({ show: true, title: 'Error', message: 'Failed to delete section', type: 'error' });
@@ -440,11 +442,12 @@ const ContentManagement = () => {
 
   const handleMoveSectionUp = async (index) => {
     if (index === 0) return;
-    const newSections = [...policySections];
+    const currentSections = getCurrentPolicySections();
+    const newSections = [...currentSections];
     [newSections[index - 1], newSections[index]] = [newSections[index], newSections[index - 1]];
-    setPolicySections(newSections);
+    setCurrentPolicySections(newSections);
     try {
-      await axiosInstance.put(`${BACKEND_URL}/api/admin/cancellation-policy/sections/reorder`, {
+      await axiosInstance.put(`${getPolicyEndpoint()}/sections/reorder`, {
         sectionIds: newSections.map(s => s.id)
       });
     } catch (err) {
@@ -453,12 +456,13 @@ const ContentManagement = () => {
   };
 
   const handleMoveSectionDown = async (index) => {
-    if (index === policySections.length - 1) return;
-    const newSections = [...policySections];
+    const currentSections = getCurrentPolicySections();
+    if (index === currentSections.length - 1) return;
+    const newSections = [...currentSections];
     [newSections[index], newSections[index + 1]] = [newSections[index + 1], newSections[index]];
-    setPolicySections(newSections);
+    setCurrentPolicySections(newSections);
     try {
-      await axiosInstance.put(`${BACKEND_URL}/api/admin/cancellation-policy/sections/reorder`, {
+      await axiosInstance.put(`${getPolicyEndpoint()}/sections/reorder`, {
         sectionIds: newSections.map(s => s.id)
       });
     } catch (err) {
@@ -472,11 +476,12 @@ const ContentManagement = () => {
       return;
     }
     try {
-      const response = await axiosInstance.post(`${BACKEND_URL}/api/admin/cancellation-policy/sections/${sectionId}/items`, {
+      const response = await axiosInstance.post(`${getPolicyEndpoint()}/sections/${sectionId}/items`, {
         text: policyForm.itemText
       });
       if (response.data.success) {
-        setPolicySections(policySections.map(s => 
+        const currentSections = getCurrentPolicySections();
+        setCurrentPolicySections(currentSections.map(s => 
           s.id === sectionId ? { ...s, items: [...(s.items || []), response.data.item] } : s
         ));
         setPolicyForm({ ...policyForm, itemText: '' });
@@ -488,10 +493,11 @@ const ContentManagement = () => {
 
   const handleUpdateItem = async (sectionId, itemId, newText) => {
     try {
-      await axiosInstance.put(`${BACKEND_URL}/api/admin/cancellation-policy/sections/${sectionId}/items/${itemId}`, {
+      await axiosInstance.put(`${getPolicyEndpoint()}/sections/${sectionId}/items/${itemId}`, {
         text: newText
       });
-      setPolicySections(policySections.map(s => 
+      const currentSections = getCurrentPolicySections();
+      setCurrentPolicySections(currentSections.map(s => 
         s.id === sectionId ? {
           ...s,
           items: s.items.map(i => i.id === itemId ? { ...i, text: newText } : i)
@@ -505,8 +511,9 @@ const ContentManagement = () => {
 
   const handleDeleteItem = async (sectionId, itemId) => {
     try {
-      await axiosInstance.delete(`${BACKEND_URL}/api/admin/cancellation-policy/sections/${sectionId}/items/${itemId}`);
-      setPolicySections(policySections.map(s => 
+      await axiosInstance.delete(`${getPolicyEndpoint()}/sections/${sectionId}/items/${itemId}`);
+      const currentSections = getCurrentPolicySections();
+      setCurrentPolicySections(currentSections.map(s => 
         s.id === sectionId ? { ...s, items: s.items.filter(i => i.id !== itemId) } : s
       ));
     } catch (err) {
@@ -515,7 +522,8 @@ const ContentManagement = () => {
   };
 
   const handleMoveItemUp = async (sectionId, itemIndex) => {
-    const section = policySections.find(s => s.id === sectionId);
+    const currentSections = getCurrentPolicySections();
+    const section = currentSections.find(s => s.id === sectionId);
     if (!section || itemIndex === 0) return;
     
     const newItems = [...section.items];

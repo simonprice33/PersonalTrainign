@@ -99,6 +99,11 @@ The order and content of the steps in the purchase flow must adapt based on the 
   - All client data is normalized on fetch using `normalizeClient()` utility
   - Consistent data structure throughout `ClientManagement.jsx`
   - Edit modal uses normalized form data via `clientToFormData()`
+- [x] **Admin Client Edit with Stripe Price Update (Jan 26, 2025):**
+  - New `updateClient` endpoint in AdminController handles full client updates
+  - Price changes automatically update Stripe subscription with proration
+  - Updates address, emergency contact, and all client fields
+  - Fixed "Invalid input" error when editing clients
 
 ### Known Issues
 1. **P2 - Stripe Billing Portal**: Requires real API keys to function (user reports Stripe is working on their end)

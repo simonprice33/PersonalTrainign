@@ -41,7 +41,8 @@ async function startServer() {
     
     // Security middleware
     app.use(helmet({
-      crossOriginEmbedderPolicy: false
+      crossOriginEmbedderPolicy: false,
+      crossOriginResourcePolicy: { policy: "cross-origin" }
     }));
 
     // CORS configuration

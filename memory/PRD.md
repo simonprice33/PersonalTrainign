@@ -119,8 +119,11 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - [x] **Image Upload Bug Fix (Jan 26, 2025):**
   - Fixed CORS issue with `helmet` middleware blocking cross-origin image loading
   - Added `crossOriginResourcePolicy: { policy: "cross-origin" }` to helmet config
+  - Updated CSP to allow images from any source (`img-src 'self' data: blob: https: http:`)
   - Images now properly display in admin preview and on live homepage
   - Works correctly with production builds (`npm run serve`)
+  - **Blog images also migrated** to backend uploads (`/api/uploads/blog/`) for production build compatibility
+  - Added `getImageUrl()` helper to all blog components for backwards compatibility with old image paths
 
 ### Known Issues
 1. **P2 - Stripe Billing Portal**: Requires real API keys to function (user reports Stripe is working on their end)

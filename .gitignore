@@ -207,3 +207,7 @@ frontend/public/images/homepage/
 *.env
 *.env.*
 backend/public/uploads/
+-e 
+# Environment files
+*.env
+*.env.*

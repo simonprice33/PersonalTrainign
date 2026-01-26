@@ -116,7 +116,7 @@ const Hero = () => {
                   src={hero.profileImage}
                   alt="Simon Price - Personal Trainer"
                   className="w-full h-full object-cover"
-                  style={{ objectPosition: 'center 30%' }}
+                  style={{ objectPosition: hero.profileImagePosition || 'center 30%' }}
                 />
                 <div 
                   className="absolute bottom-0 left-0 right-0 text-center text-white py-4"

@@ -224,29 +224,22 @@ const PolicyPage = () => {
                           <ReactMarkdown>{section.content}</ReactMarkdown>
                         </div>
                       ) : section.items && section.items.length > 0 ? (
-                        <ul className="space-y-3">
+                        <div className="space-y-4">
                           {section.items.map((item, itemIndex) => (
-                            <li 
+                            <div 
                               key={item.id || itemIndex}
-                              className="flex items-start gap-3 text-gray-300"
-                            >
-                              <span 
-                                className="flex-shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full"
-                                style={{ background: 'var(--brand-primary)' }}
-                              />
-                              <span className="leading-relaxed prose prose-invert prose-sm max-w-none inline
+                              className="prose prose-invert prose-sm max-w-none
+                                prose-p:text-gray-300 prose-p:leading-relaxed prose-p:my-1
+                                prose-li:text-gray-300 prose-li:marker:text-[var(--brand-primary)]
                                 prose-strong:text-white prose-strong:font-semibold
                                 prose-em:text-gray-200
-                              ">
-                                <ReactMarkdown 
-                                  components={{
-                                    p: ({children}) => <span>{children}</span>
-                                  }}
-                                >{item.text}</ReactMarkdown>
-                              </span>
-                            </li>
+                                prose-ul:my-2 prose-ul:space-y-1 prose-ol:my-2 prose-ol:space-y-1
+                              "
+                            >
+                              <ReactMarkdown>{item.text}</ReactMarkdown>
+                            </div>
                           ))}
-                        </ul>
+                        </div>
                       ) : (
                         <p className="text-gray-500 italic">
                           No details available for this section.

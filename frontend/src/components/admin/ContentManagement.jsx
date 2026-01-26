@@ -1143,20 +1143,22 @@ const ContentManagement = () => {
                           s.id === section.id ? { ...s, _newItemText: e.target.value } : s
                         ));
                       }}
-                      placeholder={`Type your text here...
+                      placeholder={`This is a main point
 
-To add sub-points, leave a blank line then:
-- First sub-point
-- Second sub-point
+- This is a sub point
+  - This is a further sub point
+    - Even deeper nesting
 
+Use 2 spaces for each indent level
 Use **bold** for emphasis`}
-                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500 resize-y min-h-[120px] font-mono"
-                      rows={6}
+                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500 resize-y min-h-[140px] font-mono"
+                      rows={7}
                     />
-                    <div className="flex justify-between items-center mt-2">
+                    <div className="flex justify-between items-start mt-2">
                       <div className="text-xs text-gray-500 space-y-1">
-                        <p>Press Enter ↵ to add new lines</p>
-                        <p>Add a <span className="text-orange-400">blank line</span> before sub-points</p>
+                        <p>• Press <span className="text-orange-400">Enter</span> for new lines</p>
+                        <p>• Add <span className="text-orange-400">blank line</span> before bullet list</p>
+                        <p>• Use <span className="text-orange-400">2 spaces</span> + dash for nested bullets</p>
                       </div>
                       <button
                         onClick={() => {

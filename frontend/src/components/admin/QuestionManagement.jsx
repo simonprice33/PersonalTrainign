@@ -290,7 +290,7 @@ const QuestionManagement = ({
                       onChange={(e) => setForm({ ...form, requires_doctor_approval: e.target.checked })}
                       className="w-5 h-5 rounded border-gray-600 bg-gray-800 text-yellow-500 focus:ring-yellow-500"
                     />
-                    <span className="text-gray-300">Requires Doctor Approval if "Yes"</span>
+                    <span className="text-gray-300">Requires Doctor Approval if Yes</span>
                   </label>
                 </div>
               )}

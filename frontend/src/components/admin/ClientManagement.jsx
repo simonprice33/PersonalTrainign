@@ -479,7 +479,7 @@ const ClientManagement = () => {
               <div className="grid gap-4">
                 {clients.map((client, index) => (
                   <div 
-                    key={index}
+                    key={client.email || index}
                     className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-green-500/30 transition-all"
                   >
                     <div className="flex justify-between items-start">
@@ -490,38 +490,33 @@ const ClientManagement = () => {
                             <Mail size={16} className="text-green-400" />
                             <span className="text-sm">{client.email}</span>
                           </div>
-                          {(client.telephone || client.phone) && (
+                          {client.telephone && (
                             <div className="flex items-center gap-2 text-gray-300">
                               <Phone size={16} className="text-blue-400" />
-                              <span className="text-sm">{client.telephone || client.phone}</span>
+                              <span className="text-sm">{client.telephone}</span>
                             </div>
                           )}
                           <div className="flex items-center gap-2 text-gray-300">
                             <DollarSign size={16} className="text-cyan-400" />
-                            <span className="text-sm">£{client.price || client.monthly_price || client.subscription_price || 125}/month</span>
+                            <span className="text-sm">£{client.price}/month</span>
                           </div>
                           <div className="flex items-center gap-2 text-gray-300">
                             <Calendar size={16} className="text-purple-400" />
                             <span className="text-sm">
-                              Billing: {client.billingDay || client.billing_day || 1}{(client.billingDay || client.billing_day || 1) === 1 ? 'st' : (client.billingDay || client.billing_day || 1) === 2 ? 'nd' : (client.billingDay || client.billing_day || 1) === 3 ? 'rd' : 'th'} of each month
-                              {client.prorate !== false && ' • Prorated'}
+                              Billing: {client.billingDay}{client.billingDay === 1 ? 'st' : client.billingDay === 2 ? 'nd' : client.billingDay === 3 ? 'rd' : 'th'} of each month
+                              {client.prorate && ' • Prorated'}
                             </span>
                           </div>
                           {/* Address Display */}
-                          {(client.address?.line1 || client.address_line_1) && (
+                          {client.address?.line1 && (
                             <div className="flex items-start gap-2 text-gray-300">
                               <MapPin size={16} className="text-orange-400 mt-0.5" />
-                              <span className="text-sm">
-                                {client.address?.line1 || client.address_line_1}
-                                {(client.address?.line2 || client.address_line_2) && `, ${client.address?.line2 || client.address_line_2}`}
-                                {(client.address?.city || client.city) && `, ${client.address?.city || client.city}`}
-                                {(client.address?.postcode || client.postcode) && ` ${client.address?.postcode || client.postcode}`}
-                              </span>
+                              <span className="text-sm">{getDisplayAddress(client)}</span>
                             </div>
                           )}
-                          {(client.stripe_customer_id || client.customer_id) && (
+                          {client.stripe_customer_id && (
                             <div className="mt-2">
-                              {getStatusBadge(client.status, client.subscription_status)}
+                              {getStatusBadge(client.subscription_status, client.subscription_status)}
                               {client.imported_at && (
                                 <span className="ml-2 text-xs text-cyan-400">
                                   (Imported from Stripe)
@@ -529,7 +524,7 @@ const ClientManagement = () => {
                               )}
                             </div>
                           )}
-                          {!(client.stripe_customer_id || client.customer_id) && (
+                          {!client.stripe_customer_id && (
                             <div className="mt-2">
                               <span className="inline-block px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">
                                 ⏳ Pending Setup
@@ -540,7 +535,7 @@ const ClientManagement = () => {
                       </div>
                       
                       <div className="flex gap-2">
-                        {!(client.stripe_customer_id || client.customer_id) && (
+                        {!client.stripe_customer_id && (
                           <button
                             onClick={() => handleResendLink(client.email)}
                             disabled={resendingEmail === client.email}
@@ -560,7 +555,7 @@ const ClientManagement = () => {
                           </button>
                         )}
                         
-                        {(client.stripe_customer_id || client.customer_id) && (
+                        {client.stripe_customer_id && (
                           <>
                             <button
                               onClick={() => handleEditClient(client)}
@@ -569,7 +564,7 @@ const ClientManagement = () => {
                               <Edit size={16} />
                               Edit
                             </button>
-                            {(client.status === 'pending_payment' || client.subscription_status === 'pending') && (
+                            {client.subscription_status === 'pending_payment' && (
                               <button
                                 onClick={() => handleResendLink(client.email)}
                                 disabled={resendingEmail === client.email}
@@ -599,7 +594,7 @@ const ClientManagement = () => {
                               </button>
                             )}
                             <button
-                              onClick={() => handleManageBilling(client.stripe_customer_id || client.customer_id)}
+                              onClick={() => handleManageBilling(client.stripe_customer_id)}
                               className="flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors text-sm"
                             >
                               <ExternalLink size={16} />
@@ -607,7 +602,7 @@ const ClientManagement = () => {
                             </button>
                             {client.subscription_status === 'active' && !client.cancel_at_period_end && (
                               <button
-                                onClick={() => handleCancelSubscription(client.stripe_customer_id || client.customer_id, client.name)}
+                                onClick={() => handleCancelSubscription(client.stripe_customer_id, client.name)}
                                 className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-sm"
                               >
                                 <XCircle size={16} />

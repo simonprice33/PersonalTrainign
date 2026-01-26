@@ -88,8 +88,9 @@ async function startServer() {
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
     // Serve uploaded files statically
-    const path = require('path');
-    app.use('/api/uploads', express.static(path.join(__dirname, 'public/uploads')));
+    const uploadsPath = require('path').join(__dirname, 'public', 'uploads');
+    console.log('📁 Serving uploads from:', uploadsPath);
+    app.use('/api/uploads', express.static(uploadsPath));
 
     // 3. Initialize Database
     const dbConfig = new DatabaseConfig(config);

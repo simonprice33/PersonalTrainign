@@ -591,17 +591,6 @@ const HeroEditor = ({ data, updateField, updateArrayItem, addArrayItem, removeAr
           </div>
         </div>
       </div>
-          <div>
-            <label className="block text-gray-300 text-sm mb-2">Profile Subcaption</label>
-            <input
-              type="text"
-              value={data.profileSubcaption || ''}
-              onChange={(e) => updateField('profileSubcaption', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
-            />
-          </div>
-        </div>
-      </div>
 
       <button
         onClick={onSave}

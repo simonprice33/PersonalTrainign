@@ -164,6 +164,14 @@ const ContentManagement = () => {
         )}
 
         {/* Tab Content */}
+        {activeTab === 'homepage' && (
+          <HomepageManagement
+            onRefresh={fetchAllData}
+            setAlertModal={setAlertModal}
+            setConfirmModal={setConfirmModal}
+          />
+        )}
+
         {activeTab === 'packages' && (
           <PackageManagement
             packages={packages}

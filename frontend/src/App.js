@@ -102,7 +102,7 @@ function App() {
           
           {/* Main Website Route */}
           <Route path="/" element={
-            <>
+            <HomepageContentProvider>
               <Header />
               <main>
                 <Hero />
@@ -111,7 +111,7 @@ function App() {
                 <Contact />
               </main>
               <Footer />
-            </>
+            </HomepageContentProvider>
           } />
         </Routes>
       </div>

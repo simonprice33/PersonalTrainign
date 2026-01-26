@@ -1,9 +1,38 @@
 import React from 'react';
 import { ArrowRight, Star, Users, Trophy } from 'lucide-react';
+import { useHomepageContent, getIconComponent } from '../context/HomepageContentContext';
+
+// Default content for fallback
+const defaultHero = {
+  heading: 'Transform Your Body,',
+  headingHighlight: ' Transform Your Life',
+  description: 'Get personalized training, nutrition plans, and dedicated support from a passionate, certified personal trainer. Start your fitness journey with someone committed to helping you achieve your goals.',
+  stats: [
+    { icon: 'Trophy', title: 'Certified', subtitle: 'Personal Trainer' },
+    { icon: 'Users', title: 'Passionate', subtitle: 'About Fitness' },
+    { icon: 'Star', title: 'Dedicated', subtitle: 'To Your Success' }
+  ],
+  ctaPrimary: 'Start Your Transformation',
+  ctaSecondary: 'View Services',
+  trustText: 'Start your transformation journey with personalized support',
+  profileImage: 'https://customer-assets.emergentagent.com/job_simonfitcoach/artifacts/sbmcvjkm_IMG_0200.JPEG',
+  profileCaption: 'Personal Training',
+  profileSubcaption: 'Your Success, My Mission'
+};
 
 const Hero = () => {
+  const { content, loading } = useHomepageContent();
+  const hero = content?.hero || defaultHero;
+
   const scrollToContact = () => {
     const element = document.getElementById('contact');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToServices = () => {
+    const element = document.getElementById('services');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
@@ -17,44 +46,30 @@ const Hero = () => {
           <div className="space-y-8">
             <div className="space-y-4">
               <h1 className="display-large">
-                Transform Your Body, 
-                <span style={{ color: 'var(--brand-primary)' }}> Transform Your Life</span>
+                {hero.heading}
+                <span style={{ color: 'var(--brand-primary)' }}>{hero.headingHighlight}</span>
               </h1>
               <p className="body-large max-w-2xl">
-                Get personalized training, nutrition plans, and dedicated support from a passionate, certified personal trainer. 
-                Start your fitness journey with someone committed to helping you achieve your goals.
+                {hero.description}
               </p>
             </div>
 
             {/* Stats */}
             <div className="flex flex-wrap gap-8">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-full" style={{ background: 'var(--brand-primary)' }}>
-                  <Trophy size={20} style={{ color: 'var(--brand-dark)' }} />
-                </div>
-                <div>
-                  <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>Certified</div>
-                  <div className="text-sm" style={{ color: 'var(--text-light)' }}>Personal Trainer</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-full" style={{ background: 'var(--brand-primary)' }}>
-                  <Users size={20} style={{ color: 'var(--brand-dark)' }} />
-                </div>
-                <div>
-                  <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>Passionate</div>
-                  <div className="text-sm" style={{ color: 'var(--text-light)' }}>About Fitness</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-full" style={{ background: 'var(--brand-primary)' }}>
-                  <Star size={20} style={{ color: 'var(--brand-dark)' }} />
-                </div>
-                <div>
-                  <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>Dedicated</div>
-                  <div className="text-sm" style={{ color: 'var(--text-light)' }}>To Your Success</div>
-                </div>
-              </div>
+              {(hero.stats || []).map((stat, index) => {
+                const IconComponent = getIconComponent(stat.icon);
+                return (
+                  <div key={stat.id || index} className="flex items-center gap-2">
+                    <div className="p-2 rounded-full" style={{ background: 'var(--brand-primary)' }}>
+                      <IconComponent size={20} style={{ color: 'var(--brand-dark)' }} />
+                    </div>
+                    <div>
+                      <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>{stat.title}</div>
+                      <div className="text-sm" style={{ color: 'var(--text-light)' }}>{stat.subtitle}</div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             {/* CTA Buttons */}
@@ -63,14 +78,14 @@ const Hero = () => {
                 onClick={scrollToContact}
                 className="btn-cta group"
               >
-                Start Your Transformation
+                {hero.ctaPrimary}
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
               <button 
-                onClick={() => document.getElementById('services').scrollIntoView({ behavior: 'smooth' })}
+                onClick={scrollToServices}
                 className="btn-secondary"
               >
-                View Services
+                {hero.ctaSecondary}
               </button>
             </div>
 
@@ -82,7 +97,7 @@ const Hero = () => {
                 ))}
               </div>
               <div className="text-sm" style={{ color: 'var(--text-light)' }}>
-                Start your transformation journey with personalized support
+                {hero.trustText}
               </div>
             </div>
           </div>
@@ -98,7 +113,7 @@ const Hero = () => {
                 }}
               >
                 <img 
-                  src="https://customer-assets.emergentagent.com/job_simonfitcoach/artifacts/sbmcvjkm_IMG_0200.JPEG"
+                  src={hero.profileImage}
                   alt="Simon Price - Personal Trainer"
                   className="w-full h-full object-cover"
                   style={{ objectPosition: 'center 30%' }}
@@ -109,8 +124,8 @@ const Hero = () => {
                     background: 'linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 50%, transparent 100%)'
                   }}
                 >
-                  <div className="text-xl font-semibold">Personal Training</div>
-                  <div className="text-sm opacity-90 mt-1">Your Success, My Mission</div>
+                  <div className="text-xl font-semibold">{hero.profileCaption}</div>
+                  <div className="text-sm opacity-90 mt-1">{hero.profileSubcaption}</div>
                 </div>
               </div>
             </div>

@@ -112,12 +112,18 @@ const Hero = () => {
                   boxShadow: '0 20px 40px rgba(0, 191, 255, 0.5), inset 0 0 0 4px rgba(0, 191, 255, 0.1)'
                 }}
               >
-                <img 
-                  src={hero.profileImage}
-                  alt="Simon Price - Personal Trainer"
-                  className="w-full h-full object-cover"
-                  style={{ objectPosition: hero.profileImagePosition || 'center 30%' }}
-                />
+                {hero.profileImage && (
+                  <img 
+                    src={hero.profileImage}
+                    alt="Simon Price - Personal Trainer"
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: hero.profileImagePosition || 'center 30%' }}
+                    onError={(e) => {
+                      console.error('Hero image failed to load:', hero.profileImage);
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                )}
                 <div 
                   className="absolute bottom-0 left-0 right-0 text-center text-white py-4"
                   style={{ 

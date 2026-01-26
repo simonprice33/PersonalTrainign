@@ -230,10 +230,13 @@ const PolicyPage = () => {
                               key={item.id || itemIndex}
                               className="prose prose-invert prose-sm max-w-none
                                 prose-p:text-gray-300 prose-p:leading-relaxed prose-p:my-1
-                                prose-li:text-gray-300 prose-li:marker:text-[var(--brand-primary)]
+                                prose-li:text-gray-300
                                 prose-strong:text-white prose-strong:font-semibold
                                 prose-em:text-gray-200
-                                prose-ul:my-2 prose-ul:space-y-1 prose-ol:my-2 prose-ol:space-y-1
+                                prose-ul:my-2 prose-ul:ml-4 prose-ul:list-disc
+                                prose-ol:my-2 prose-ol:ml-4 prose-ol:list-decimal
+                                [&_ul]:space-y-1 [&_ol]:space-y-1
+                                [&_li]:marker:text-[var(--brand-primary)]
                               "
                             >
                               <ReactMarkdown>{item.text}</ReactMarkdown>

@@ -124,7 +124,7 @@ const Hero = () => {
               >
                 {hero.profileImage && (
                   <img 
-                    src={hero.profileImage}
+                    src={getImageUrl(hero.profileImage)}
                     alt="Simon Price - Personal Trainer"
                     className="w-full h-full object-cover"
                     style={{ objectPosition: hero.profileImagePosition || 'center 30%' }}

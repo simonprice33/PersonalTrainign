@@ -278,6 +278,9 @@ function createAdminRoutes(dependencies) {
   // Import default content from mockdata
   router.post('/homepage-content/import-defaults', authenticate, (req, res) => homepageController.importDefaultContent(req, res));
 
+  // Homepage image upload
+  router.post('/homepage-content/upload', authenticate, homepageController.upload.single('image'), (req, res) => homepageController.uploadImage(req, res));
+
   // Service management
   router.post('/homepage-content/services', authenticate, (req, res) => homepageController.addService(req, res));
   router.put('/homepage-content/services/:id', authenticate, (req, res) => homepageController.updateService(req, res));

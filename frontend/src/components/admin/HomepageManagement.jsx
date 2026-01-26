@@ -103,11 +103,15 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
                 alt="Preview"
                 className="w-full h-full object-cover"
                 style={{ objectPosition: imagePosition || 'center' }}
+                onLoad={() => console.log('✅ Image loaded successfully:', imageUrl)}
                 onError={(e) => {
-                  console.error('Image failed to load:', imageUrl);
+                  const fullUrl = imageUrl.startsWith('http') ? imageUrl : `${BACKEND_URL}${imageUrl}`;
+                  console.error('❌ Image failed to load:', fullUrl, 'Original URL:', imageUrl, 'BACKEND_URL:', BACKEND_URL);
                   // Show placeholder on error
                   e.target.style.display = 'none';
-                  e.target.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-500 text-xs text-center p-2">Image not found.<br/>Try uploading again.</div>';
+                  if (e.target.parentElement) {
+                    e.target.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-500 text-xs text-center p-2">Image not found.<br/>Check console for URL.</div>';
+                  }
                 }}
               />
               <button

@@ -724,9 +724,10 @@ class BlogController {
         });
       }
 
-      const imageUrl = `/images/blog-images/${req.file.filename}`;
+      // Return URL that's served via Express static from backend
+      const imageUrl = `/api/uploads/blog/${req.file.filename}`;
 
-      console.log(`✅ Blog image uploaded: ${req.file.filename}`);
+      console.log(`✅ Blog image uploaded: ${imageUrl}`);
 
       res.status(200).json({
         success: true,
@@ -749,11 +750,16 @@ class BlogController {
   async deleteImage(req, res) {
     try {
       const { filename } = req.params;
-      const imagePath = path.join(__dirname, '../../frontend/public/images/blog-images', filename);
+      // Try new location first, then old location for backwards compatibility
+      const newPath = path.join(__dirname, '../public/uploads/blog', filename);
+      const oldPath = path.join(__dirname, '../../frontend/public/images/blog-images', filename);
 
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-        console.log(`✅ Blog image deleted: ${filename}`);
+      if (fs.existsSync(newPath)) {
+        fs.unlinkSync(newPath);
+        console.log(`✅ Blog image deleted from new location: ${filename}`);
+      } else if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+        console.log(`✅ Blog image deleted from old location: ${filename}`);
       }
 
       res.status(200).json({

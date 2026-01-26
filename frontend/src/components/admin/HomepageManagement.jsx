@@ -99,7 +99,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
             {/* Preview */}
             <div className="relative w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-gray-900 border border-gray-700">
               <img
-                src={imageUrl.startsWith('http') ? imageUrl : `${window.location.origin}${imageUrl}`}
+                src={imageUrl.startsWith('http') ? imageUrl : `${BACKEND_URL}${imageUrl}`}
                 alt="Preview"
                 className="w-full h-full object-cover"
                 style={{ objectPosition: imagePosition || 'center' }}

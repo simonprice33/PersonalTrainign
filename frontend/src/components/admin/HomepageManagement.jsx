@@ -32,10 +32,9 @@ const POSITION_OPTIONS = [
 
 // Image Uploader Component
 const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChange, label = 'Profile Image' }) => {
-  const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
-  const [inputKey, setInputKey] = useState(Date.now());
+  const inputId = useRef(`image-upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`).current;
 
   const handleUpload = async (file) => {
     if (!file || !file.type.startsWith('image/')) return;
@@ -51,7 +50,6 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
       
       if (response.data.success) {
         onImageChange(response.data.url);
-        setInputKey(Date.now()); // Reset input to allow re-selecting same file
       }
     } catch (error) {
       console.error('Upload failed:', error);
@@ -70,18 +68,21 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (file) handleUpload(file);
-  };
-
-  const triggerFileSelect = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''; // Clear previous selection
-      fileInputRef.current.click();
-    }
+    e.target.value = ''; // Reset to allow selecting same file
   };
 
   return (
     <div className="space-y-3">
-      <label className="block text-gray-300 text-sm font-medium">{label}</label>
+      <span className="block text-gray-300 text-sm font-medium">{label}</span>
+      
+      {/* Hidden File Input */}
+      <input
+        id={inputId}
+        type="file"
+        accept="image/*"
+        onChange={handleFileSelect}
+        style={{ position: 'absolute', left: '-9999px', opacity: 0 }}
+      />
       
       {/* Upload Area */}
       <div
@@ -92,15 +93,6 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
       >
-        <input
-          key={inputKey}
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileSelect}
-          className="hidden"
-        />
-        
         {imageUrl ? (
           <div className="flex gap-4">
             {/* Preview */}
@@ -123,7 +115,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
             {/* Controls */}
             <div className="flex-1 space-y-3">
               <div>
-                <label className="block text-gray-400 text-xs mb-1">Image Position</label>
+                <span className="block text-gray-400 text-xs mb-1">Image Position</span>
                 <select
                   value={imagePosition || 'center'}
                   onChange={(e) => onPositionChange(e.target.value)}
@@ -135,15 +127,13 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
                 </select>
               </div>
               
-              <button
-                type="button"
-                onClick={triggerFileSelect}
-                disabled={uploading}
-                className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm"
+              <label
+                htmlFor={inputId}
+                className="inline-flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm cursor-pointer"
               >
                 {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
                 Replace Image
-              </button>
+              </label>
               
               <div className="text-xs text-gray-500">
                 URL: <span className="text-gray-400 break-all">{imageUrl.substring(0, 50)}...</span>
@@ -151,9 +141,9 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
             </div>
           </div>
         ) : (
-          <div 
-            className="text-center py-8 cursor-pointer"
-            onClick={triggerFileSelect}
+          <label 
+            htmlFor={inputId}
+            className="block text-center py-8 cursor-pointer"
           >
             {uploading ? (
               <Loader2 size={32} className="mx-auto mb-2 text-cyan-500 animate-spin" />
@@ -164,7 +154,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
               {uploading ? 'Uploading...' : 'Click or drag image to upload'}
             </p>
             <p className="text-gray-500 text-xs mt-1">PNG, JPG, WEBP up to 5MB</p>
-          </div>
+          </label>
         )}
       </div>
     </div>

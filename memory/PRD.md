@@ -26,9 +26,10 @@ The order and content of the steps in the purchase flow must adapt based on the 
 ### 5. Admin Management
 - Full CRUD interface for Packages, PARQ questions, and Health Questions
 - Ability to specify which packages a question applies to
+- **Homepage Content Management** (NEW - Jan 26, 2025)
 
 ## User Personas
-1. **Admin (Simon Price)**: Manages clients, packages, questions, and billing
+1. **Admin (Simon Price)**: Manages clients, packages, questions, homepage content, and billing
 2. **Prospective Client**: Uses Join Now flow to self-register
 3. **Existing Client**: Uses portal to view their plan and manage subscription
 

@@ -35,6 +35,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [inputKey, setInputKey] = useState(Date.now());
 
   const handleUpload = async (file) => {
     if (!file || !file.type.startsWith('image/')) return;
@@ -50,6 +51,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
       
       if (response.data.success) {
         onImageChange(response.data.url);
+        setInputKey(Date.now()); // Reset input to allow re-selecting same file
       }
     } catch (error) {
       console.error('Upload failed:', error);
@@ -70,6 +72,13 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
     if (file) handleUpload(file);
   };
 
+  const triggerFileSelect = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''; // Clear previous selection
+      fileInputRef.current.click();
+    }
+  };
+
   return (
     <div className="space-y-3">
       <label className="block text-gray-300 text-sm font-medium">{label}</label>
@@ -84,6 +93,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
         onDrop={handleDrop}
       >
         <input
+          key={inputKey}
           ref={fileInputRef}
           type="file"
           accept="image/*"
@@ -102,6 +112,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
                 style={{ objectPosition: imagePosition || 'center' }}
               />
               <button
+                type="button"
                 onClick={() => onImageChange('')}
                 className="absolute top-1 right-1 p-1 bg-red-500 rounded-full hover:bg-red-600"
               >
@@ -126,11 +137,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
               
               <button
                 type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  fileInputRef.current?.click();
-                }}
+                onClick={triggerFileSelect}
                 disabled={uploading}
                 className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm"
               >
@@ -146,7 +153,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
         ) : (
           <div 
             className="text-center py-8 cursor-pointer"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={triggerFileSelect}
           >
             {uploading ? (
               <Loader2 size={32} className="mx-auto mb-2 text-cyan-500 animate-spin" />

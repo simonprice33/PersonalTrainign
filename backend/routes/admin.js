@@ -94,10 +94,8 @@ function createAdminRoutes(dependencies) {
   // Get client details
   router.get('/clients/:email', authenticate, (req, res) => controller.getClientDetails(req, res));
 
-  // Update client status
-  router.put('/clients/:email', authenticate, [
-    body('status').isIn(['active', 'suspended', 'cancelled', 'pending_payment']).withMessage('Invalid status')
-  ], (req, res) => controller.updateClientStatus(req, res));
+  // Update client details (full update including Stripe price)
+  router.put('/clients/:email', authenticate, (req, res) => controller.updateClient(req, res));
 
   // Cancel client subscription
   router.post('/client/:id/cancel-subscription', authenticate, (req, res) => controller.cancelSubscription(req, res));

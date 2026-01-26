@@ -114,6 +114,13 @@ The order and content of the steps in the purchase flow must adapt based on the 
   - Frontend components (Hero.jsx, Services.jsx, About.jsx, Contact.jsx) updated to use HomepageContentContext
   - Backend: HomepageController.js with full CRUD operations
   - Database: `homepage_content` collection stores all homepage data
+  - **Image upload with positioning** for Hero and About profile images
+  - Images uploaded to `/app/backend/public/uploads/homepage/` and served via `/api/uploads/homepage/`
+- [x] **Image Upload Bug Fix (Jan 26, 2025):**
+  - Fixed CORS issue with `helmet` middleware blocking cross-origin image loading
+  - Added `crossOriginResourcePolicy: { policy: "cross-origin" }` to helmet config
+  - Images now properly display in admin preview and on live homepage
+  - Works correctly with production builds (`npm run serve`)
 
 ### Known Issues
 1. **P2 - Stripe Billing Portal**: Requires real API keys to function (user reports Stripe is working on their end)

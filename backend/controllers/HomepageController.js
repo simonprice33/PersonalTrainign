@@ -55,7 +55,8 @@ class HomepageController {
         });
       }
 
-      const imageUrl = `/images/homepage/${req.file.filename}`;
+      // Return URL that's served via Express static from backend
+      const imageUrl = `/api/uploads/homepage/${req.file.filename}`;
       console.log(`✅ Homepage image uploaded: ${imageUrl}`);
 
       res.status(200).json({

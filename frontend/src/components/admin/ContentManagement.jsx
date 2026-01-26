@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Package, ClipboardList, Heart, FileText, ArrowLeft } from 'lucide-react';
+import { Package, ClipboardList, Heart, FileText, ArrowLeft, Home } from 'lucide-react';
 import axiosInstance from '../../utils/axiosInstance';
 import AlertModal from '../AlertModal';
 import ConfirmModal from '../ConfirmModal';
 import PackageManagement from './PackageManagement';
 import QuestionManagement from './QuestionManagement';
 import PolicyManagement from './PolicyManagement';
+import HomepageManagement from './HomepageManagement';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 

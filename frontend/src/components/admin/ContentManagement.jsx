@@ -1102,9 +1102,12 @@ const ContentManagement = () => {
                         <textarea
                           defaultValue={item.text}
                           onBlur={(e) => handleUpdateItem(section.id, item.id, e.target.value)}
-                          className="flex-1 px-3 py-2 bg-gray-800 border border-orange-500 rounded text-white text-sm focus:outline-none resize-y min-h-[80px] font-mono"
+                          className="flex-1 px-3 py-2 bg-gray-800 border border-orange-500 rounded text-white text-sm focus:outline-none resize-y min-h-[100px] font-mono"
                           autoFocus
-                          placeholder="Main point text&#10;- Sub point 1&#10;- Sub point 2"
+                          placeholder={`Main point text
+
+- Sub point 1
+- Sub point 2`}
                         />
                       ) : (
                         <div className="flex-1 text-gray-300 text-sm whitespace-pre-wrap">{item.text}</div>

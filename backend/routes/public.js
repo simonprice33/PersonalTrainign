@@ -195,6 +195,27 @@ function createPublicRoutes(dependencies) {
     }
   });
 
+  // Get homepage content (public)
+  router.get('/homepage-content', async (req, res) => {
+    try {
+      const content = await collections.homepageContent.findOne(
+        { type: 'main' },
+        { projection: { _id: 0 } }
+      );
+
+      res.status(200).json({
+        success: true,
+        content: content || null
+      });
+    } catch (error) {
+      console.error('❌ Get homepage content error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch homepage content'
+      });
+    }
+  });
+
   return router;
 }
 

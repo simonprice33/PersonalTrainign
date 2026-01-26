@@ -75,13 +75,13 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
     <div className="space-y-3">
       <span className="block text-gray-300 text-sm font-medium">{label}</span>
       
-      {/* Hidden File Input */}
+      {/* Hidden File Input - using visibility instead of position */}
       <input
         id={inputId}
         type="file"
         accept="image/*"
         onChange={handleFileSelect}
-        style={{ position: 'absolute', left: '-9999px', opacity: 0 }}
+        className="sr-only"
       />
       
       {/* Upload Area */}
@@ -129,7 +129,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
               
               <label
                 htmlFor={inputId}
-                className="inline-flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm cursor-pointer"
+                className="inline-flex items-center gap-2 px-3 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-sm cursor-pointer transition-colors"
               >
                 {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
                 Replace Image

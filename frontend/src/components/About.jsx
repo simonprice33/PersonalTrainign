@@ -98,7 +98,7 @@ const About = () => {
                     className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden"
                     style={{ border: '3px solid var(--brand-primary)', boxShadow: '0 4px 12px rgba(0, 191, 255, 0.3)' }}
                   >
-                    <img src={about.profileImage} alt={about.profileName} className="w-full h-full object-cover" style={{ objectPosition: about.profileImagePosition || 'center' }} />
+                    <img src={getImageUrl(about.profileImage)} alt={about.profileName} className="w-full h-full object-cover" style={{ objectPosition: about.profileImagePosition || 'center' }} />
                   </div>
                   <h3 className="heading-3 mb-2">{about.profileName}</h3>
                   <p className="body-medium" style={{ color: 'var(--text-secondary)' }}>{about.profileTitle}</p>

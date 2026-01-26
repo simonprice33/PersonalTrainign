@@ -103,6 +103,11 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
                 alt="Preview"
                 className="w-full h-full object-cover"
                 style={{ objectPosition: imagePosition || 'center' }}
+                onError={(e) => {
+                  console.error('Image failed to load:', imageUrl);
+                  e.target.style.display = 'none';
+                }}
+                onLoad={() => console.log('Image loaded:', imageUrl)}
               />
               <button
                 type="button"

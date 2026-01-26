@@ -42,7 +42,20 @@ async function startServer() {
     // Security middleware
     app.use(helmet({
       crossOriginEmbedderPolicy: false,
-      crossOriginResourcePolicy: { policy: "cross-origin" }
+      crossOriginResourcePolicy: { policy: "cross-origin" },
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com"],
+          styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+          imgSrc: ["'self'", "data:", "blob:", "https:", "http:"],
+          fontSrc: ["'self'", "https:", "data:"],
+          connectSrc: ["'self'", "https:", "wss:"],
+          frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
+          objectSrc: ["'none'"],
+          upgradeInsecureRequests: []
+        }
+      }
     }));
 
     // CORS configuration

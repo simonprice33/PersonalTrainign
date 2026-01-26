@@ -430,7 +430,7 @@ const BlogEditor = () => {
               {post.header_image ? (
                 <div className="relative rounded-xl overflow-hidden">
                   <img 
-                    src={post.header_image} 
+                    src={getImageUrl(post.header_image)} 
                     alt="Header" 
                     className="w-full h-64 object-cover"
                   />

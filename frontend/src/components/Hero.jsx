@@ -2,6 +2,16 @@ import React from 'react';
 import { ArrowRight, Star, Users, Trophy } from 'lucide-react';
 import { useHomepageContent, getIconComponent } from '../context/HomepageContentContext';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+
+// Helper to get full image URL
+const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  if (url.startsWith('/api/')) return `${BACKEND_URL}${url}`;
+  return url;
+};
+
 // Default content for fallback
 const defaultHero = {
   heading: 'Transform Your Body,',

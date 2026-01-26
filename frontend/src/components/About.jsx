@@ -1,7 +1,41 @@
 import React from 'react';
-import { Award, Users, Target, Star, CheckCircle } from 'lucide-react';
+import { Star, CheckCircle } from 'lucide-react';
+import { useHomepageContent } from '../context/HomepageContentContext';
+
+// Default about content
+const defaultAbout = {
+  heading: 'Meet Simon Price',
+  subheading: 'Your Partner in Transformation',
+  paragraph1: 'As a certified personal trainer with a passion for fitness and helping others, I believe that everyone deserves to feel confident, strong, and healthy in their own body.',
+  paragraph2: "My approach goes beyond just exercise and nutrition. I focus on building sustainable habits, providing unwavering support, and creating personalized strategies that fit your lifestyle. Your success is my mission, and I'm here to guide you every step of the way.",
+  values: [
+    { value: 'Fresh Start', subtitle: 'New Perspective' },
+    { value: 'Certified', subtitle: 'Professional Training' },
+    { value: 'Dedicated', subtitle: 'To Your Goals' },
+    { value: 'Passionate', subtitle: 'About Fitness' }
+  ],
+  qualificationsHeading: 'Qualifications & Commitment',
+  qualifications: [
+    { text: 'Certified Personal Trainer' },
+    { text: 'Nutrition Guidance Qualified' },
+    { text: 'Committed to Continued Learning' },
+    { text: 'Focused on Client Success' }
+  ],
+  profileName: 'Simon Price',
+  profileTitle: 'Certified Personal Trainer',
+  profileImage: 'https://customer-assets.emergentagent.com/job_simonfitcoach/artifacts/sbmcvjkm_IMG_0200.JPEG',
+  profileStats: [
+    { label: 'Commitment Level', value: '100%' },
+    { label: 'Passion for Fitness', value: 'MAX' },
+    { label: 'Dedication to You', value: 'Always' }
+  ],
+  profileQuote: '"Ready to help you achieve your fitness goals"'
+};
 
 const About = () => {
+  const { content } = useHomepageContent();
+  const about = content?.about || defaultAbout;
+
   return (
     <section id="about" className="section-padding">
       <div className="container">
@@ -9,77 +43,38 @@ const About = () => {
           {/* Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <h2 className="heading-1">Meet Simon Price</h2>
+              <h2 className="heading-1">{about.heading}</h2>
               <h3 className="heading-3" style={{ color: 'var(--brand-primary)' }}>
-                Your Partner in Transformation
+                {about.subheading}
               </h3>
-              <p className="body-large">
-                As a certified personal trainer with a passion for fitness and helping others, 
-                I believe that everyone deserves to feel confident, strong, and healthy in their own body.
-              </p>
-              <p className="body-medium">
-                My approach goes beyond just exercise and nutrition. I focus on building sustainable habits, 
-                providing unwavering support, and creating personalized strategies that fit your lifestyle. 
-                Your success is my mission, and I'm here to guide you every step of the way.
-              </p>
+              <p className="body-large">{about.paragraph1}</p>
+              <p className="body-medium">{about.paragraph2}</p>
             </div>
 
             {/* Values Grid */}
             <div className="grid grid-cols-2 gap-6">
-              <div className="text-center p-4">
-                <div className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
-                  Fresh Start
+              {(about.values || []).map((item, index) => (
+                <div key={item.id || index} className="text-center p-4">
+                  <div className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
+                    {item.value}
+                  </div>
+                  <div className="text-sm" style={{ color: 'var(--text-light)' }}>
+                    {item.subtitle}
+                  </div>
                 </div>
-                <div className="text-sm" style={{ color: 'var(--text-light)' }}>
-                  New Perspective
-                </div>
-              </div>
-              <div className="text-center p-4">
-                <div className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
-                  Certified
-                </div>
-                <div className="text-sm" style={{ color: 'var(--text-light)' }}>
-                  Professional Training
-                </div>
-              </div>
-              <div className="text-center p-4">
-                <div className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
-                  Dedicated
-                </div>
-                <div className="text-sm" style={{ color: 'var(--text-light)' }}>
-                  To Your Goals
-                </div>
-              </div>
-              <div className="text-center p-4">
-                <div className="text-2xl font-bold mb-2" style={{ color: 'var(--brand-primary)' }}>
-                  Passionate
-                </div>
-                <div className="text-sm" style={{ color: 'var(--text-light)' }}>
-                  About Fitness
-                </div>
-              </div>
+              ))}
             </div>
 
-            {/* Certifications */}
+            {/* Qualifications */}
             <div className="space-y-4">
-              <h4 className="heading-3">Qualifications & Commitment</h4>
+              <h4 className="heading-3">{about.qualificationsHeading}</h4>
               <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <CheckCircle size={20} style={{ color: 'var(--brand-primary)' }} />
-                  <span className="body-medium">Certified Personal Trainer</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle size={20} style={{ color: 'var(--brand-primary)' }} />
-                  <span className="body-medium">Nutrition Guidance Qualified</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle size={20} style={{ color: 'var(--brand-primary)' }} />
-                  <span className="body-medium">Committed to Continued Learning</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle size={20} style={{ color: 'var(--brand-primary)' }} />
-                  <span className="body-medium">Focused on Client Success</span>
-                </div>
+                {(about.qualifications || []).map((qual, index) => (
+                  <div key={qual.id || index} className="flex items-center gap-3">
+                    <CheckCircle size={20} style={{ color: 'var(--brand-primary)' }} />
+                    <span className="body-medium">{qual.text}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -87,75 +82,41 @@ const About = () => {
           {/* Visual Element */}
           <div className="flex justify-center">
             <div className="relative">
-              {/* Main Card */}
-              <div 
-                className="network-card p-8 max-w-md"
-                style={{ background: 'var(--bg-card)' }}
-              >
+              <div className="network-card p-8 max-w-md" style={{ background: 'var(--bg-card)' }}>
                 <div className="text-center mb-6">
                   <div 
                     className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden"
-                    style={{ 
-                      border: '3px solid var(--brand-primary)',
-                      boxShadow: '0 4px 12px rgba(0, 191, 255, 0.3)'
-                    }}
+                    style={{ border: '3px solid var(--brand-primary)', boxShadow: '0 4px 12px rgba(0, 191, 255, 0.3)' }}
                   >
-                    <img 
-                      src="https://customer-assets.emergentagent.com/job_simonfitcoach/artifacts/sbmcvjkm_IMG_0200.JPEG"
-                      alt="Simon Price"
-                      className="w-full h-full object-cover"
-                      style={{ objectPosition: 'center' }}
-                    />
+                    <img src={about.profileImage} alt={about.profileName} className="w-full h-full object-cover" style={{ objectPosition: 'center' }} />
                   </div>
-                  <h3 className="heading-3 mb-2">Simon Price</h3>
-                  <p className="body-medium" style={{ color: 'var(--text-secondary)' }}>
-                    Certified Personal Trainer
-                  </p>
+                  <h3 className="heading-3 mb-2">{about.profileName}</h3>
+                  <p className="body-medium" style={{ color: 'var(--text-secondary)' }}>{about.profileTitle}</p>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="body-medium">Commitment Level</span>
-                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>100%</span>
-                  </div>
-                  <div 
-                    className="w-full h-2 rounded-full"
-                    style={{ background: 'var(--bg-subtle)' }}
-                  >
-                    <div 
-                      className="h-2 rounded-full"
-                      style={{ 
-                        background: 'var(--brand-primary)', 
-                        width: '100%' 
-                      }}
-                    ></div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="body-medium">Passion for Fitness</span>
-                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>MAX</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="body-medium">Dedication to You</span>
-                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>Always</span>
-                  </div>
+                  {(about.profileStats || []).map((stat, index) => (
+                    <React.Fragment key={stat.id || index}>
+                      <div className="flex items-center justify-between">
+                        <span className="body-medium">{stat.label}</span>
+                        <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>{stat.value}</span>
+                      </div>
+                      {index === 0 && (
+                        <div className="w-full h-2 rounded-full" style={{ background: 'var(--bg-subtle)' }}>
+                          <div className="h-2 rounded-full" style={{ background: 'var(--brand-primary)', width: '100%' }}></div>
+                        </div>
+                      )}
+                    </React.Fragment>
+                  ))}
                 </div>
 
                 <div className="mt-6 pt-6" style={{ borderTop: '1px solid var(--border-light)' }}>
                   <div className="flex items-center justify-center gap-1 mb-2">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <Star 
-                        key={star} 
-                        size={16} 
-                        fill="var(--brand-primary)" 
-                        style={{ color: 'var(--brand-primary)' }}
-                      />
+                      <Star key={star} size={16} fill="var(--brand-primary)" style={{ color: 'var(--brand-primary)' }} />
                     ))}
                   </div>
-                  <p className="text-center text-sm" style={{ color: 'var(--text-light)' }}>
-                    "Ready to help you achieve your fitness goals"
-                  </p>
+                  <p className="text-center text-sm" style={{ color: 'var(--text-light)' }}>{about.profileQuote}</p>
                 </div>
               </div>
             </div>

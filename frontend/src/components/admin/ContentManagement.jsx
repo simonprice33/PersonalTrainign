@@ -1162,35 +1162,6 @@ const ContentManagement = () => {
             ))}
 
             {getCurrentPolicySections().length === 0 && (
-                      }}
-                      placeholder="Add new item (markdown supported: **bold**, *italic*)..."
-                      className="flex-1 px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && section._newItemText?.trim()) {
-                          handleAddItem(section.id, section._newItemText);
-                        }
-                      }}
-                    />
-                    <button
-                      onClick={() => {
-                        if (section._newItemText?.trim()) {
-                          handleAddItem(section.id, section._newItemText);
-                        }
-                      }}
-                      className="px-3 py-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 rounded-lg transition-colors"
-                    >
-                      <Plus size={18} />
-                    </button>
-                  </div>
-                  
-                  <p className="text-xs text-gray-500 mt-2">
-                    Tip: Use **bold** for emphasis, *italic* for softer emphasis
-                  </p>
-                </div>
-              </div>
-            ))}
-
-            {getCurrentPolicySections().length === 0 && (
               <div className="text-center py-12 text-gray-400 bg-gray-800/50 rounded-xl border border-gray-700">
                 <FileText size={48} className="mx-auto mb-4 opacity-50" />
                 <p>No sections in {POLICY_TYPES.find(p => p.id === activePolicyType)?.label} yet. Add your first section above.</p>

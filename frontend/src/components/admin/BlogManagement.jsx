@@ -240,7 +240,7 @@ const BlogManagement = () => {
                         <div className="flex items-center gap-4">
                           {post.header_image && (
                             <img
-                              src={post.header_image}
+                              src={getImageUrl(post.header_image)}
                               alt={post.title}
                               className="w-16 h-12 object-cover rounded-lg"
                             />

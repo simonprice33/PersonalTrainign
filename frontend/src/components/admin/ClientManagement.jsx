@@ -472,7 +472,7 @@ const ClientManagement = () => {
                 <CreditCard size={64} className="text-gray-600 mx-auto mb-4" />
                 <h2 className="text-2xl font-bold text-white mb-2">No Clients Yet</h2>
                 <p className="text-gray-400 mb-6">
-                  Click "Create Payment Link" to send a subscription signup link to a new client.
+                  Click &quot;Create Payment Link&quot; to send a subscription signup link to a new client.
                 </p>
               </div>
             ) : (
@@ -791,7 +791,7 @@ const ClientManagement = () => {
                     <div className="text-gray-200 font-medium">Enable Proration</div>
                     <p className="text-xs text-gray-400 mt-1">
                       When enabled, the first charge will be prorated based on when the client signs up during the billing cycle. 
-                      If disabled, they'll be charged the full monthly amount immediately.
+                      If disabled, they&apos;ll be charged the full monthly amount immediately.
                     </p>
                   </div>
                 </label>
@@ -800,7 +800,7 @@ const ClientManagement = () => {
               <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
                 <p className="text-blue-300 text-sm">
                   <strong>Note:</strong> The client will receive an email with a secure payment link. 
-                  They'll need to complete their details and set up their payment method. 
+                  They&apos;ll need to complete their details and set up their payment method. 
                   The link expires in {formData.expirationDays} day{formData.expirationDays > 1 ? 's' : ''}.
                 </p>
               </div>

@@ -17,6 +17,20 @@ import Footer from '../components/Footer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
+// Helper to get full image URL (handles both old and new paths)
+const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  // New format: /api/uploads/blog/... - served from backend
+  if (url.startsWith('/api/')) return `${BACKEND_URL}${url}`;
+  // Old format: /images/blog-images/... - try backend first
+  if (url.startsWith('/images/blog-images/')) {
+    const filename = url.split('/').pop();
+    return `${BACKEND_URL}/api/uploads/blog/${filename}`;
+  }
+  return url;
+};
+
 const BlogListing = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [posts, setPosts] = useState([]);

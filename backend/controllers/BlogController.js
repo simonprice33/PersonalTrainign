@@ -14,9 +14,10 @@ class BlogController {
     this.config = config;
     
     // Setup multer for image uploads
+    // Save to backend's public folder which is served via Express static
     const storage = multer.diskStorage({
       destination: (req, file, cb) => {
-        const uploadPath = path.join(__dirname, '../../frontend/public/images/blog-images');
+        const uploadPath = path.join(__dirname, '../public/uploads/blog');
         if (!fs.existsSync(uploadPath)) {
           fs.mkdirSync(uploadPath, { recursive: true });
         }

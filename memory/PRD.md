@@ -86,7 +86,19 @@ The order and content of the steps in the purchase flow must adapt based on the 
   - Admin panel "Legal Policies" tab with policy type selector
   - Full CRUD for all policy types (sections, items, re-ordering)
   - Footer links to all 4 policy pages
+  - Markdown support with multi-level nested bullet points
   - "Content Coming Soon" placeholder for empty policies
+- [x] **Client Profile Editing:**
+  - Clients can edit their own profile (name, address, contact info) in their portal
+  - Admin client list shows phone and address on client cards
+- [x] **ContentManagement.jsx Refactor (Jan 26, 2025):**
+  - Refactored 1200+ line monolith into modular components
+  - New components: `PackageManagement.jsx`, `QuestionManagement.jsx`, `PolicyManagement.jsx`
+  - Main `ContentManagement.jsx` now serves as a container
+- [x] **Client Data Consistency Fix (Jan 26, 2025):**
+  - All client data is normalized on fetch using `normalizeClient()` utility
+  - Consistent data structure throughout `ClientManagement.jsx`
+  - Edit modal uses normalized form data via `clientToFormData()`
 
 ### Known Issues
 1. **P2 - Stripe Billing Portal**: Requires real API keys to function (user reports Stripe is working on their end)
@@ -100,8 +112,11 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - `/app/frontend/src/utils/clientUtils.js` - Client data normalization utility
 - `/app/backend/controllers/PublicController.js` - Self-service purchase backend
 - `/app/backend/controllers/ClientController.js` - Client authentication & onboarding
-- `/app/frontend/src/components/admin/ClientManagement.jsx` - Admin client management
-- `/app/frontend/src/components/admin/ContentManagement.jsx` - Admin content CRUD (packages, PARQ, health questions, all legal policies)
+- `/app/frontend/src/components/admin/ClientManagement.jsx` - Admin client management (uses normalized data)
+- `/app/frontend/src/components/admin/ContentManagement.jsx` - Admin content container component
+- `/app/frontend/src/components/admin/PackageManagement.jsx` - Package CRUD component
+- `/app/frontend/src/components/admin/QuestionManagement.jsx` - PARQ/Health Questions component
+- `/app/frontend/src/components/admin/PolicyManagement.jsx` - Legal Policies CRUD component
 - `/app/backend/controllers/PackageController.js` - Question query logic
 - `/app/backend/config/database.js` - Auto-migration logic
 
@@ -133,11 +148,10 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - [ ] Verify Admin blog categories/tags management UI
 
 ### P2 - Medium Priority
-- [ ] Refactor `ContentManagement.jsx` into smaller components (PackageManagement, ParqManagement, PolicyManagement)
 - [ ] Add blog commenting system
 
 ### P3 - Future Enhancements
-- [ ] Add client profile edit capability in portal
+- [ ] Additional client portal features
 
 ## Third-Party Integrations
 - **Stripe (Payments)** — requires User API Key (currently placeholder)
@@ -145,5 +159,5 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - **Calendly (Scheduling)** — uses public URL
 
 ## Test Credentials
-- **Admin Login**: `simon.price@simonprice-pt.co.uk` / `NewTest123!`
+- **Admin Login**: `simon.price@simonprice-pt.co.uk` / `admin123`
 - **Client Login**: `simon.price.33@hotmail.com` / `TestClient123!`

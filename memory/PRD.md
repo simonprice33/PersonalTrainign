@@ -105,6 +105,15 @@ The order and content of the steps in the purchase flow must adapt based on the 
   - Price changes automatically update Stripe subscription with proration
   - Updates address, emergency contact, and all client fields
   - Fixed "Invalid input" error when editing clients
+- [x] **Full Homepage Content Management (Jan 26, 2025):**
+  - New "Homepage" tab in Content Management with 4 sub-sections (Hero, Services, About, Contact)
+  - All text, headings, buttons, icons are editable from admin panel
+  - Icon dropdown selection from 50+ Lucide icons
+  - Dynamic add/remove/reorder for services (no fixed limit)
+  - Import Default Content button to pre-populate from mockdata
+  - Frontend components (Hero.jsx, Services.jsx, About.jsx, Contact.jsx) updated to use HomepageContentContext
+  - Backend: HomepageController.js with full CRUD operations
+  - Database: `homepage_content` collection stores all homepage data
 
 ### Known Issues
 1. **P2 - Stripe Billing Portal**: Requires real API keys to function (user reports Stripe is working on their end)
@@ -123,11 +132,15 @@ The order and content of the steps in the purchase flow must adapt based on the 
 - `/app/frontend/src/components/admin/PackageManagement.jsx` - Package CRUD component
 - `/app/frontend/src/components/admin/QuestionManagement.jsx` - PARQ/Health Questions component
 - `/app/frontend/src/components/admin/PolicyManagement.jsx` - Legal Policies CRUD component
+- `/app/frontend/src/components/admin/HomepageManagement.jsx` - Homepage content management (NEW)
+- `/app/frontend/src/context/HomepageContentContext.jsx` - Context provider for homepage content (NEW)
+- `/app/backend/controllers/HomepageController.js` - Homepage content CRUD (NEW)
 - `/app/backend/controllers/PackageController.js` - Question query logic
 - `/app/backend/config/database.js` - Auto-migration logic
 
 ## Key Database Schema
 - **`clients`**: Normalized to use `stripe_customer_id` and nested `address: { line1, line2, city, postcode, country }`. Legacy fields are migrated by backend normalization script.
+- **`homepage_content`**: `{ type: 'main', hero: {...}, services: {...}, about: {...}, contact: {...} }` - Single document storing all homepage content
 - **`parq_questions`**: `{ ..., applicable_packages: [String] }`
 - **`health_questions`**: `{ ..., applicable_packages: [String] }`
 - **`packages`**: `{ ..., is_popular: Boolean }` for "Most Popular" badge

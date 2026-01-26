@@ -97,22 +97,23 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
         {imageUrl ? (
           <div className="flex gap-4">
             {/* Preview */}
-            <div className="relative w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-gray-900">
+            <div className="relative w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-gray-900 border border-gray-700">
               <img
-                src={imageUrl}
+                src={imageUrl.startsWith('http') ? imageUrl : `${window.location.origin}${imageUrl}`}
                 alt="Preview"
                 className="w-full h-full object-cover"
                 style={{ objectPosition: imagePosition || 'center' }}
                 onError={(e) => {
                   console.error('Image failed to load:', imageUrl);
+                  // Show placeholder on error
                   e.target.style.display = 'none';
+                  e.target.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-500 text-xs text-center p-2">Image not found.<br/>Try uploading again.</div>';
                 }}
-                onLoad={() => console.log('Image loaded:', imageUrl)}
               />
               <button
                 type="button"
                 onClick={() => onImageChange('')}
-                className="absolute top-1 right-1 p-1 bg-red-500 rounded-full hover:bg-red-600"
+                className="absolute top-1 right-1 p-1 bg-red-500 rounded-full hover:bg-red-600 z-10"
               >
                 <X size={12} className="text-white" />
               </button>

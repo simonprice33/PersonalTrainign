@@ -399,55 +399,55 @@ const HomepageManagement = ({ onRefresh, setAlertModal, setConfirmModal }) => {
           </div>
 
           {/* Hero Section Editor */}
-          {activeSection === 'hero' && content.hero && (
+          {activeSection === 'hero' && (
             <HeroEditor 
-              data={content.hero} 
+              data={content.hero || {}} 
               updateField={(field, value) => updateField('hero', field, value)}
               updateArrayItem={(arrayField, index, field, value) => updateArrayItem('hero', arrayField, index, field, value)}
               addArrayItem={(arrayField, newItem) => addArrayItem('hero', arrayField, newItem)}
               removeArrayItem={(arrayField, index) => removeArrayItem('hero', arrayField, index)}
-              onSave={() => saveSection('hero', content.hero)}
+              onSave={() => saveSection('hero', content.hero || {})}
               saving={saving}
             />
           )}
 
           {/* Services Section Editor */}
-          {activeSection === 'services' && content.services && (
+          {activeSection === 'services' && (
             <ServicesEditor 
-              data={content.services}
+              data={content.services || { items: [] }}
               updateField={(field, value) => updateField('services', field, value)}
               updateArrayItem={(arrayField, index, field, value) => updateArrayItem('services', arrayField, index, field, value)}
               addArrayItem={(arrayField, newItem) => addArrayItem('services', arrayField, newItem)}
               removeArrayItem={(arrayField, index) => removeArrayItem('services', arrayField, index)}
               moveArrayItem={(arrayField, index, direction) => moveArrayItem('services', arrayField, index, direction)}
-              onSave={() => saveSection('services', content.services)}
+              onSave={() => saveSection('services', content.services || { items: [] })}
               saving={saving}
               setConfirmModal={setConfirmModal}
             />
           )}
 
           {/* About Section Editor */}
-          {activeSection === 'about' && content.about && (
+          {activeSection === 'about' && (
             <AboutEditor 
-              data={content.about}
+              data={content.about || {}}
               updateField={(field, value) => updateField('about', field, value)}
               updateArrayItem={(arrayField, index, field, value) => updateArrayItem('about', arrayField, index, field, value)}
               addArrayItem={(arrayField, newItem) => addArrayItem('about', arrayField, newItem)}
               removeArrayItem={(arrayField, index) => removeArrayItem('about', arrayField, index)}
-              onSave={() => saveSection('about', content.about)}
+              onSave={() => saveSection('about', content.about || {})}
               saving={saving}
             />
           )}
 
           {/* Contact Section Editor */}
-          {activeSection === 'contact' && content.contact && (
+          {activeSection === 'contact' && (
             <ContactEditor 
-              data={content.contact}
+              data={content.contact || {}}
               updateField={(field, value) => updateField('contact', field, value)}
               updateArrayItem={(arrayField, index, field, value) => updateArrayItem('contact', arrayField, index, field, value)}
               addArrayItem={(arrayField, newItem) => addArrayItem('contact', arrayField, newItem)}
               removeArrayItem={(arrayField, index) => removeArrayItem('contact', arrayField, index)}
-              onSave={() => saveSection('contact', content.contact)}
+              onSave={() => saveSection('contact', content.contact || {})}
               saving={saving}
             />
           )}

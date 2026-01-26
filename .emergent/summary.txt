@@ -1,177 +1,136 @@
 <analysis>**original_problem_statement:**
-The initial project was to build a Join Now page for direct client subscriptions. The scope expanded to include a comprehensive blog system with public-facing pages and full admin CRUD management.
+The initial project was to build a Join Now page and a comprehensive blog system. The scope has since expanded significantly.
 
-In the current session, the user requested further features:
-1.  Add a third package option to the Join Now page, arrange them on a single line, and add a Most Popular banner managed from the admin panel.
-2.  Normalize the inconsistent client data ( vs , flat vs. nested address) and provide a button in the admin portal to trigger this process.
-3.  Create a content-managed Cancellation Policy. The admin should be able to create sections and items within those sections, with the ability to re-order both.
-4.  Add a link to the new Cancellation Policy page in the footer of the main site.
+In the most recent sessions, the user requested:
+1.  Add a third package to the Join Now page with a Most Popular banner. (Done)
+2.  Normalize inconsistent client data structures via an admin button. (Done)
+3.  Create a content-managed Cancellation Policy page. (Done and expanded)
+4.  Following the cancellation policy, the user requested that the Terms of Service, Privacy Policy, and Cookie Policy also become content-managed from the admin panel. (Done)
+5.  The user then requested that the policy content support markdown, including multi-level nested bullet points with different styles for each level. (Done)
+6.  Enable clients to edit their own profile details (name, address, contact info) in their portal. (Done)
+7.  Display the client's full address and contact info in the admin panel. (Done)
+8.  Refactor the monolithic  component into smaller, more manageable pieces. (In Progress)
 
 **PRODUCT REQUIREMENTS:**
-1.  **Blog System (Mostly Complete):**
-    *   Public pages for blog listing () and single posts ().
-    *   Search by title, category, and tags.
-    *   Full admin CRUD for posts, categories, and tags.
-    *   Markdown editor with image upload.
-2.  **Join Now Flow (Enhanced):**
-    *   Display up to 3 packages in a single row.
-    *   An admin-selectable Most Popular package, which is highlighted with a banner on the frontend.
-3.  **Client Data Normalization (Implemented):**
-    *   A backend script and admin button to migrate inconsistent client data formats into a single, standardized structure.
-    *   The script should unify Stripe IDs, consolidate address fields into a nested object, and handle name fields.
-    *   Old, redundant fields should be removed after migration.
-4.  **Cancellation Policy (In Progress):**
-    *   A new section in the admin Content Management area to manage cancellation policy.
-    *   Admins must be able to create/edit/delete sections and list items.
-    *   Admins must be able to re-order sections and items within sections via drag-and-drop or up/down buttons.
-    *   A public-facing page () to display the content.
-    *   A link to this page in the website's footer.
-    *   The policy must be displayed to the client before they confirm their subscription cancellation in their portal.
+Refer to  for a complete list of implemented and pending features. Key recent additions include a unified legal policy management system and client profile editing.
 
 **User's preferred language**: English
 
 **what currently exists?**
-- The Join Now page has been updated with a 3-column layout and the Most Popular package feature is fully implemented (both frontend and admin).
-- A backend endpoint and an admin button have been created to normalize client data. The script now also removes the old, redundant fields after migrating them.
-- The blog system is largely feature-complete, with functioning public search/filtering and admin management pages. A recurring  error related to blog navigation was resolved by pulling a fix from the user's own repository.
-- The backend CRUD endpoints and admin UI for managing a re-orderable cancellation policy (sections and items) have been created. A Cancellation Policy tab is now visible in the Content Management area.
+- A full-stack application (React, Node.js/Express, MongoDB).
+- A blog system, a Join Now page, and client/admin portals.
+- A unified content management system in the admin panel for four legal policies (Cancellation, Terms, Privacy, Cookie), which supports re-ordering sections/items and rich text editing via markdown (including multi-level nested bullets).
+- A generic, dynamic frontend page () that renders the content for any of the managed policies.
+- Clients can now edit their own profile information (name, address, phone, emergency contacts) via the My Details tab in the client portal.
+- The admin client list now displays the phone number and address for each client.
+- The large  component has been broken down into a container that renders three new components: , , and . However, this refactor is not yet complete.
 
 **Last working item**:
--   **Last item agent was working:** The user requested a link to the cancellation policy be added to the footer of the main page. This implies creating a new public-facing page to display the policy and then updating the  component to link to it. The agent acknowledged the request but the session ended before implementation began.
--   **Status:** NOT STARTED
--   **Agent Testing Done:** N
--   **Which testing method agent to use?** Frontend testing agent. The test should verify the new  page renders the policy content correctly and that a Cancellation Policy link exists in the footer and navigates to the correct page.
+-   **Last item agent was working:** Completing the refactor of . The agent created the new component files (, , ) and updated the main component to use them. However, linting revealed errors in the new files. The agent was in the process of fixing these errors when the user repeatedly asked if the task was complete, and the session ended before all errors were resolved and the changes were tested.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N (Linting was failing)
+-   **Which testing method agent to use?** Frontend testing agent. The test must verify that the Admin -> Content Management page loads correctly and that all three tabs (Packages, Health Questions, Legal Policies) are fully functional, ensuring the refactor did not introduce any regressions.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1 (P1): Data inconsistency in Admin Edit Client modal.**
+-   **Issue 1 (P0): Complete the refactor of .**
+-   **Issue 2 (P1): Lingering data inconsistency in the Admin Edit Client modal.**
 
 **Issues Detail:**
--   **Issue 1: Data inconsistency in Admin Edit Client modal.**
-    -   **Attempted fixes:** A one-time backend normalization script () was created and successfully run. While this fixes the data in the database, it does not solve the root problem in the frontend. The  component and others still contain logic to handle two different data structures ( vs , etc.).
+-   **Issue 1: Complete the refactor of **
+    -   **Attempted fixes:** The agent successfully created the new files and modified the main component. It then started fixing linting errors () in the new files but did not finish.
     -   **Next debug checklist:**
-        1.  Open  and create a new file for client utilities.
-        2.  Create a  utility function that takes a client object and always returns a consistent structure (e.g., using  and a nested  object).
-        3.  Refactor  to use this  function whenever a client is selected for viewing or editing.
-        4.  Update the Edit Client modal form fields to bind to the properties of the normalized client object only.
-        5.  Search the codebase for other components that might handle client data and apply the same normalization pattern.
-    -   **Why fix this issue and what will be achieved with the fix?** This will permanently resolve a recurring source of bugs by ensuring all frontend components operate on a single, predictable data structure, making the code more robust and easier to maintain. The current backend script is a patch, not a permanent solution for the frontend code.
+        1.  Run  on  and .
+        2.  Fix all remaining lint errors. These are typically unescaped characters like  or  in the JSX.
+        3.  After fixing the errors, start the app and thoroughly test the Content Management section in the admin portal to confirm all features (managing packages, questions, and all policies) work as they did before the refactor.
+    -   **Why fix this issue and what will be achieved with the fix?** To complete the P2 refactoring task requested by the user. This will make the admin codebase significantly more maintainable by splitting a 1200+ line file into focused components.
     -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Frontend.
+    -   **Blocked on other issue:** None.
+
+-   **Issue 2: Lingering data inconsistency in the Admin Edit Client modal.**
+    -   **Attempted fixes:** A  helper was created and applied to the Edit Client handler. This is a partial fix.
+    -   **Next debug checklist:**
+        1.  Thoroughly review .
+        2.  Search for any remaining direct access to legacy client fields (e.g., , flat address fields).
+        3.  Ensure all parts of the component that display or process client data use the  utility function to guarantee a consistent data structure.
+    -   **Why fix this issue and what will be achieved with the fix?** This will permanently resolve a recurring bug source by ensuring the frontend operates on a single, predictable client data structure, improving robustness.
+    -   **Status:** NOT STARTED (This session)
     -   **Is recurring issue?** Y
     -   **Should Test frontend/backend/both after fix?** Frontend.
     -   **Blocked on other issue:** None.
 
 **In progress Task List**:
--   **Task 1 (P0): Complete Cancellation Policy Feature.**
-    -   **Where to resume:** The backend and admin UI are built. The remaining work is on the public-facing side.
-        1.  Create a new page component .
-        2.  This page should fetch data from the public  endpoint and render the sections and items.
-        3.  Add a route for  in .
-        4.  Update  to add a link to this new page.
-        5.  Integrate this policy display into the client cancellation flow in .
-    -   **What will be achieved with this?** A fully manageable and visible cancellation policy, fulfilling a key business requirement.
+-   **Task 1 (P0): Complete the refactor of **
+    -   **Where to resume:** Fix the remaining linting errors in the new component files, starting with  and .
+    -   **What will be achieved with this?** A cleaner, more maintainable admin codebase.
     -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** Both.
+    -   **Should Test frontend/backend/both after fix?** Frontend.
     -   **Blocked on something:** None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P1:** Verify Admin blog categories/tags management UI () is fully functional and meets user expectations.
--   **Future Tasks:**
     -   **P2:** Add a commenting system to blog posts.
+-   **Future Tasks:**
+    -   **P3:** Add additional client portal features (e.g., other self-service options).
 
 **Completed work in this session**
--   **JWT Refresh Token Fix:** Resolved an issue where the frontend only intercepted 401 errors for token refresh, while the backend was sending 403. The interceptor in  now handles both.
--   **Client Subscription Cancellation Fix:** The backend endpoint was updated to use the client's  for lookup instead of , making it more robust.
--   **Join Now Page Enhancement:** Implemented a responsive 3-column layout for packages and added a Most Popular feature, complete with an admin checkbox and special styling (banner, border, glow) on the frontend. Resolved layout overlap issues.
--   **Client Data Normalization:** Created a backend endpoint () and an admin UI button to migrate inconsistent client data structures into a standardized format. The script was later improved to remove the old, redundant fields.
--   **Blog UI/UX Fixes:** Added a search bar to the blog hero section, implemented a display for active filters with a clear option, and improved mobile filter UI.
--   **Git Conflict Resolution:** Successfully pulled changes from the user's remote repository and resolved a merge conflict in the  file.
--   **Cancellation Policy Admin UI:** Created the backend (CRUD and re-ordering endpoints) and frontend (new tab in ) for a fully manageable cancellation policy.
-
-**Earlier issues found/mentioned but not fixed**
--   The root cause of data inconsistency in frontend components (as described in **All Pending/In progress Issue list**) remains. The backend normalization script is a workaround, not a refactor of the frontend code.
-
-**Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork:** Data inconsistency in Admin Edit Client modal.
--   **Recurrence count:** 3+
--   **Status:** IN PROGRESS (partially addressed with a backend script).
+-   **Unified Legal Policy System:** Created a fully content-managed system for Cancellation, Terms of Service, Privacy, and Cookie policies, with a generic backend and frontend.
+-   **Advanced Markdown Support:** Enabled policy items to be rendered from markdown, supporting bold/italic text and multi-level nested bullet points with different styles per level.
+-   **Client Profile Editing:** Implemented the UI and backend for clients to edit their personal and contact details in their portal.
+-   **Admin UI Enhancements:** Updated the admin client list to show phone and address details directly on the client cards.
+-   **Navigation Fixes:** Implemented a global  component and fixed header navigation to work from any page.
+-   ** Refactor (Started):** Created the new component files (, , ) and updated the main component to use them.
 
 **Code Architecture**
 
 
-**Key Technical Concepts**
--   **Frontend:** React, Axios, Tailwind CSS, React Router.
--   **Backend:** Node.js, Express.js, JWT, MongoDB, Multer.
--   **Data Management:** Implemented a backend data normalization/migration script using MongoDB update operators (, , ).
-
 **key DB schema**
--   ****: Post-normalization, the schema is being enforced to use  and a nested  object. Legacy fields are being removed.
--   ****: Added  field.
+-   : Added , , .
 -   **** (New): 
-
-**changes in tech stack**
--   No new dependencies were added. Existing stack was utilized.
+-   **** (New): (Same structure)
+-   **** (New): (Same structure)
+-   *Note:  also exists and follows the same structure.*
 
 **All files of reference**
--   : A large, monolithic component that was heavily modified. Contains logic for packages, PAR-Q questions, and now the cancellation policy.
--   : Updated to handle the 3-column Most Popular layout.
--   : Contains the new  and cancellation policy management logic.
--   : Next target for integrating the cancellation policy display.
--   : Was the source of a major  bug. The user provided the final fix.
-
-**Areas that need refactoring**:
--   ****: This component has grown excessively large and complex. It now manages Packages, PAR-Q Health Questions, and the Cancellation Policy. It should be broken down into separate, more focused components for better maintainability (e.g., , , ).
--   **Client Data Handling (Frontend)**: As mentioned in the pending issues, components like  should be refactored to use a  utility function to ensure they only ever deal with one consistent data structure, rather than having conditional logic for legacy fields.
-
-**key api endpoints**
--   : New endpoint to run the client data normalization script.
--   : New endpoint to ensure only one package is marked as popular.
--   : New public endpoint to fetch the cancellation policy.
--   : New CRUD and re-ordering endpoints for managing the cancellation policy.
+-   : The component that was just refactored.
+-   : New component with linting errors to fix.
+-   : New component with linting errors to fix.
+-   : New component.
+-   : The unified page for displaying all legal policies.
+-   : Was updated to allow profile editing.
+-   : Contains the generic policy management logic.
 
 **Critical Info for New Agent**
--   **User Git Repository:** The user is technically proficient and actively pushes code to their public repository at  (note the typo in Training). You **must** be prepared to pull changes from this remote. The  error was a prime example where the user's fix was the one that worked.
--   **Monolithic Component:** Be very careful when editing . It's a huge file managing multiple unrelated features. Proposing a refactor to break it down would be a good long-term strategy.
--   **Data Normalization:** The user is focused on data integrity. The backend normalization script was a successful task. The next logical step is to clean up the frontend code that handles client data to rely on this new, consistent schema.
--   **Last User Request:** The immediate next task is to create the public-facing page for the cancellation policy and link it in the footer.
-
-**documents and test reports created in this job**
--   
+-   **Immediate Priority:** The user is waiting for the  refactor to be completed. Your first action must be to fix the linting errors in the new components (, ) and test that the entire Content Management section works correctly. The user was asking are we complete? repeatedly, so finishing this is critical.
+-   **Markdown Syntax:** The established markdown pattern for nested lists requires indentation with spaces (e.g., , , ). This is important context for any future text editing features.
+-   **User Interaction:** The user is highly engaged and provides frequent feedback. Be prepared to respond to status checks and clearly define what done means (i.e., coded, linted, and tested).
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User (LATEST):** Requested a link to the cancellation policy on the bottom of the main page. **(Pending Implementation)**
-2.  **User:** Asks what is outstanding on the cancellation policy before forking. (Agent Actioned)
-3.  **User:** Reports a git conflict and asks the agent to resolve it before they can push. (Completed)
-4.  **User:** Asks to work on the content-managed cancellation policy next. (In Progress)
-5.  **User:** Asks about the remaining P1 and P2 tasks. (Agent Actioned)
-6.  **User:** Confirms the backend normalization is better and asks what is next. (Agent Actioned)
-7.  **User:** Provides a screenshot showing the normalization left old data behind. (Completed)
-8.  **User:** Asks how to test the normalize data endpoint via Postman. (Agent Actioned)
-9.  **User:** Provides a screenshot of the  endpoint not working in Postman. (Completed, user was using  on localhost)
-10. **User:** Asks to normalize the data next and provide a button in the admin portal. (Completed)
+1.  **User (LATEST):** complete now? (Asking about the refactor)
+2.  **User:** are we complete now?
+3.  **User:** Asks about the refactor's completion status.
+4.  **User:** Asks about the refactor's completion status before forking.
+5.  **User:** Approved P2 refactor task.
+6.  **User:** Asks for the list of outstanding items.
+7.  **User:** Uploads an image showing the desired multi-level nested bullet points. (Implemented)
+8.  **User:** Reports being unable to add a carriage return in the text box and that sub-points are not nesting. (Implemented)
+9.  **User:** Asks for a video to be analyzed showing an input bug. Also wants to keep the items system but have each item support markdown. (Implemented)
+10. **User:** Asks for the policy pages to accept markdown. (Implemented)
 
 **Project Health Check:**
 -   **Broken:**
-    -   The client cancellation flow in  is incomplete as it does not yet display the cancellation policy before confirmation.
+    -   Admin Content Management page is likely broken due to linting errors in newly created components from the incomplete refactor.
 -   **Mocked:**
-    -   None. The user confirmed Stripe is working on their end.
+    -   None.
 
 **3rd Party Integrations**
--   **Stripe (Payments)** — requires User API Key. (User reports this is now working).
+-   **Stripe (Payments)** — requires User API Key.
 -   **Microsoft Graph (Email)** — requires User API Key.
 -   **Calendly (Scheduling)** — uses a public URL.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES (once, for the  issue, but it could not reproduce the user's local error).
--   **Troubleshoot agent used after agent stuck in loop:** NO.
+-   **Testing agent used after significant changes:** YES, multiple times for policy pages and client profile editing. All tests passed in the last run.
 -   **Test files created:** None.
--   **Known regressions:** None.
-
-**Credentials to test flow:**
--   **Admin Login:** The agent's preview environment credentials failed repeatedly. Use the user's provided credentials if testing locally:  / .
-
-**What agent forgot to execute**
--   The agent did not create the public-facing page for the cancellation policy ().
--   The agent did not add the link to the new cancellation policy page in the  component, which was the user's very last request.
--   The agent did not integrate the display of the cancellation policy into the  cancellation flow.</analysis>
+-   **Known regressions:** The  refactor likely introduced regressions that need to be fixed.</analysis>

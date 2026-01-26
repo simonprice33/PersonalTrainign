@@ -1133,7 +1133,7 @@ const ContentManagement = () => {
                   {/* Add Item Input */}
                   <div className="mt-3 pt-3 border-t border-gray-700">
                     <label className="block text-sm text-gray-400 mb-2">
-                      Add new item (Press Enter for new lines, leave a blank line before sub-points):
+                      Add new item:
                     </label>
                     <textarea
                       value={section._newItemText || ''}
@@ -1143,19 +1143,21 @@ const ContentManagement = () => {
                           s.id === section.id ? { ...s, _newItemText: e.target.value } : s
                         ));
                       }}
-                      placeholder={`Main point text here
+                      placeholder={`Type your text here...
 
-- Sub point 1
-- Sub point 2
-- Sub point 3
+To add sub-points, leave a blank line then:
+- First sub-point
+- Second sub-point
 
 Use **bold** for emphasis`}
-                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500 resize-y min-h-[100px] font-mono"
+                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500 resize-y min-h-[120px] font-mono"
+                      rows={6}
                     />
                     <div className="flex justify-between items-center mt-2">
-                      <p className="text-xs text-gray-500">
-                        Important: Add a blank line before sub-points for them to render as bullets
-                      </p>
+                      <div className="text-xs text-gray-500 space-y-1">
+                        <p>Press Enter ↵ to add new lines</p>
+                        <p>Add a <span className="text-orange-400">blank line</span> before sub-points</p>
+                      </div>
                       <button
                         onClick={() => {
                           if (section._newItemText?.trim()) {

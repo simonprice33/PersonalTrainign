@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Home, Save, Plus, Trash2, Edit, ChevronUp, ChevronDown, Upload, X, Image,
+  Home, Save, Plus, Trash2, Edit, ChevronUp, ChevronDown, Upload, X, Image, Loader2,
   // All Lucide icons that can be selected
   Dumbbell, Apple, MessageCircle, Calendar, Video, Target, Zap, TrendingUp, 
   Smartphone, Trophy, Users, Star, Award, CheckCircle, Clock, Shield, Phone, 
@@ -12,6 +12,152 @@ import {
 import axiosInstance from '../../utils/axiosInstance';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+
+// Image position options
+const POSITION_OPTIONS = [
+  { value: 'center', label: 'Center' },
+  { value: 'top', label: 'Top' },
+  { value: 'bottom', label: 'Bottom' },
+  { value: 'left', label: 'Left' },
+  { value: 'right', label: 'Right' },
+  { value: 'center top', label: 'Center Top' },
+  { value: 'center bottom', label: 'Center Bottom' },
+  { value: 'center 20%', label: 'Upper Third' },
+  { value: 'center 30%', label: 'Upper Middle' },
+  { value: 'center 40%', label: 'Middle Upper' },
+  { value: 'center 60%', label: 'Middle Lower' },
+  { value: 'center 70%', label: 'Lower Middle' },
+  { value: 'center 80%', label: 'Lower Third' }
+];
+
+// Image Uploader Component
+const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChange, label = 'Profile Image' }) => {
+  const fileInputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+
+  const handleUpload = async (file) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const response = await axiosInstance.post(`${BACKEND_URL}/api/blog/admin/upload`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      if (response.data.success) {
+        onImageChange(response.data.url);
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer?.files?.[0];
+    if (file) handleUpload(file);
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (file) handleUpload(file);
+  };
+
+  return (
+    <div className="space-y-3">
+      <label className="block text-gray-300 text-sm font-medium">{label}</label>
+      
+      {/* Upload Area */}
+      <div
+        className={`relative border-2 border-dashed rounded-xl p-4 transition-colors ${
+          dragOver ? 'border-cyan-500 bg-cyan-500/10' : 'border-gray-600 hover:border-gray-500'
+        }`}
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+        
+        {imageUrl ? (
+          <div className="flex gap-4">
+            {/* Preview */}
+            <div className="relative w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-gray-900">
+              <img
+                src={imageUrl}
+                alt="Preview"
+                className="w-full h-full object-cover"
+                style={{ objectPosition: imagePosition || 'center' }}
+              />
+              <button
+                onClick={() => onImageChange('')}
+                className="absolute top-1 right-1 p-1 bg-red-500 rounded-full hover:bg-red-600"
+              >
+                <X size={12} className="text-white" />
+              </button>
+            </div>
+            
+            {/* Controls */}
+            <div className="flex-1 space-y-3">
+              <div>
+                <label className="block text-gray-400 text-xs mb-1">Image Position</label>
+                <select
+                  value={imagePosition || 'center'}
+                  onChange={(e) => onPositionChange(e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                >
+                  {POSITION_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm"
+              >
+                {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                Replace Image
+              </button>
+              
+              <div className="text-xs text-gray-500">
+                URL: <span className="text-gray-400 break-all">{imageUrl.substring(0, 50)}...</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div 
+            className="text-center py-8 cursor-pointer"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {uploading ? (
+              <Loader2 size={32} className="mx-auto mb-2 text-cyan-500 animate-spin" />
+            ) : (
+              <Image size={32} className="mx-auto mb-2 text-gray-500" />
+            )}
+            <p className="text-gray-400 text-sm">
+              {uploading ? 'Uploading...' : 'Click or drag image to upload'}
+            </p>
+            <p className="text-gray-500 text-xs mt-1">PNG, JPG, WEBP up to 5MB</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 // Available icons for dropdown selection
 const AVAILABLE_ICONS = [

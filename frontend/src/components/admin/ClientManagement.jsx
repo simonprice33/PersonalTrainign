@@ -94,7 +94,9 @@ const ClientManagement = () => {
 
       if (response.data.success) {
         console.log(`✅ Loaded ${response.data.clients.length} clients`);
-        setClients(response.data.clients);
+        // Normalize all clients for consistent data structure
+        const normalizedClients = response.data.clients.map(client => normalizeClient(client));
+        setClients(normalizedClients);
         setError(''); // Clear any previous errors
       }
     } catch (err) {

@@ -11,7 +11,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://admin-refactor-6.preview.emergentagent.com/api"
+BACKEND_URL = "https://image-service-dev.preview.emergentagent.com/api"
 TEST_EMAIL_BASE = "simon.price+test"
 TEST_DOMAIN = "@simonprice-pt.co.uk"
 

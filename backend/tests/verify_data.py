@@ -6,7 +6,7 @@ Quick verification test to check data persistence
 import requests
 import json
 
-BASE_URL = "https://admin-refactor-6.preview.emergentagent.com/api"
+BASE_URL = "https://image-service-dev.preview.emergentagent.com/api"
 ADMIN_EMAIL = "simon.price@simonprice-pt.co.uk"
 ADMIN_PASSWORD = "Qwerty1234!!!"
 

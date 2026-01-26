@@ -7,7 +7,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://admin-refactor-6.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://image-service-dev.preview.emergentagent.com')
 
 class TestPolicyEndpoints:
     """Test all 4 policy page endpoints"""

@@ -1005,12 +1005,12 @@ const AboutEditor = ({ data, updateField, updateArrayItem, addArrayItem, removeA
             />
           </div>
           <div className="col-span-2">
-            <label className="block text-gray-300 text-sm mb-2">Profile Image URL</label>
-            <input
-              type="text"
-              value={data.profileImage || ''}
-              onChange={(e) => updateField('profileImage', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+            <ImageUploader
+              imageUrl={data.profileImage || ''}
+              imagePosition={data.profileImagePosition || 'center'}
+              onImageChange={(url) => updateField('profileImage', url)}
+              onPositionChange={(pos) => updateField('profileImagePosition', pos)}
+              label="About Profile Image"
             />
           </div>
           <div className="col-span-2">

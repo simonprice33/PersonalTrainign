@@ -144,8 +144,8 @@ The order and content of the steps in the purchase flow must adapt based on the 
 ## Backlog (Prioritized)
 
 ### P1 - High Priority
-- [ ] Final end-to-end testing of Join Now purchase flow
-- [ ] Verify Admin blog categories/tags management UI
+- [x] Final end-to-end testing of Join Now purchase flow ✅ (Tested Jan 26, 2025)
+- [x] Verify Admin blog categories/tags management UI ✅ (Tested Jan 26, 2025)
 
 ### P2 - Medium Priority
 - [ ] Add blog commenting system

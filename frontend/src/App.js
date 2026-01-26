@@ -44,6 +44,9 @@ import BlogPost from "./pages/BlogPost";
 // Policy Pages
 import PolicyPage from "./pages/PolicyPage";
 
+// Context Providers
+import { HomepageContentProvider } from "./context/HomepageContentContext";
+
 function App() {
   return (
     <Router>

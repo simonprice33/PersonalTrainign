@@ -1129,6 +1129,9 @@ const ContentManagement = () => {
 
                   {/* Add Item Input */}
                   <div className="mt-3 pt-3 border-t border-gray-700">
+                    <label className="block text-sm text-gray-400 mb-2">
+                      Add new item (Press Enter for new lines, leave a blank line before sub-points):
+                    </label>
                     <textarea
                       value={section._newItemText || ''}
                       onChange={(e) => {
@@ -1137,12 +1140,18 @@ const ContentManagement = () => {
                           s.id === section.id ? { ...s, _newItemText: e.target.value } : s
                         ));
                       }}
-                      placeholder="Add new item with sub-points:&#10;Main point text&#10;- Sub point 1&#10;- Sub point 2&#10;&#10;Use **bold** and *italic* for emphasis"
-                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500 resize-y min-h-[80px] font-mono"
+                      placeholder={`Main point text here
+
+- Sub point 1
+- Sub point 2
+- Sub point 3
+
+Use **bold** for emphasis`}
+                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500 resize-y min-h-[100px] font-mono"
                     />
                     <div className="flex justify-between items-center mt-2">
                       <p className="text-xs text-gray-500">
-                        Tip: Add sub-points with "- " on new lines
+                        Important: Add a blank line before sub-points for them to render as bullets
                       </p>
                       <button
                         onClick={() => {

@@ -1078,10 +1078,10 @@ const ContentManagement = () => {
                 </div>
 
                 {/* Section Content - Items with Markdown Support */}
-                <div className="p-4 space-y-2">
+                <div className="p-4 space-y-3">
                   {(section.items || []).map((item, itemIndex) => (
-                    <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-lg group">
-                      <div className="flex flex-col gap-0.5">
+                    <div key={item.id} className="flex items-start gap-3 p-3 bg-gray-900/50 rounded-lg group">
+                      <div className="flex flex-col gap-0.5 pt-1">
                         <button
                           onClick={() => handleMoveItemUp(section.id, itemIndex)}
                           disabled={itemIndex === 0}
@@ -1099,16 +1099,15 @@ const ContentManagement = () => {
                       </div>
                       
                       {editingItemId === item.id ? (
-                        <input
-                          type="text"
+                        <textarea
                           defaultValue={item.text}
                           onBlur={(e) => handleUpdateItem(section.id, item.id, e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleUpdateItem(section.id, item.id, e.target.value)}
-                          className="flex-1 px-3 py-1 bg-gray-800 border border-orange-500 rounded text-white focus:outline-none"
+                          className="flex-1 px-3 py-2 bg-gray-800 border border-orange-500 rounded text-white text-sm focus:outline-none resize-y min-h-[80px] font-mono"
                           autoFocus
+                          placeholder="Main point text&#10;- Sub point 1&#10;- Sub point 2"
                         />
                       ) : (
-                        <span className="flex-1 text-gray-300">• {item.text}</span>
+                        <div className="flex-1 text-gray-300 text-sm whitespace-pre-wrap">{item.text}</div>
                       )}
                       
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1129,15 +1128,40 @@ const ContentManagement = () => {
                   ))}
 
                   {/* Add Item Input */}
-                  <div className="flex gap-2 mt-3 pt-3 border-t border-gray-700">
-                    <input
-                      type="text"
+                  <div className="mt-3 pt-3 border-t border-gray-700">
+                    <textarea
                       value={section._newItemText || ''}
                       onChange={(e) => {
                         const currentSections = getCurrentPolicySections();
                         setCurrentPolicySections(currentSections.map(s => 
                           s.id === section.id ? { ...s, _newItemText: e.target.value } : s
                         ));
+                      }}
+                      placeholder="Add new item with sub-points:&#10;Main point text&#10;- Sub point 1&#10;- Sub point 2&#10;&#10;Use **bold** and *italic* for emphasis"
+                      className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500 resize-y min-h-[80px] font-mono"
+                    />
+                    <div className="flex justify-between items-center mt-2">
+                      <p className="text-xs text-gray-500">
+                        Tip: Add sub-points with "- " on new lines
+                      </p>
+                      <button
+                        onClick={() => {
+                          if (section._newItemText?.trim()) {
+                            handleAddItem(section.id, section._newItemText);
+                          }
+                        }}
+                        className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors flex items-center gap-2 text-sm"
+                      >
+                        <Plus size={16} />
+                        Add Item
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {getCurrentPolicySections().length === 0 && (
                       }}
                       placeholder="Add new item (markdown supported: **bold**, *italic*)..."
                       className="flex-1 px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500"

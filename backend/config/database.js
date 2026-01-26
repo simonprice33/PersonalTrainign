@@ -62,7 +62,8 @@ class DatabaseConfig {
         cancellationPolicy: this.db.collection('cancellation_policy'),
         termsOfService: this.db.collection('terms_of_service'),
         privacyPolicy: this.db.collection('privacy_policy'),
-        cookiePolicy: this.db.collection('cookie_policy')
+        cookiePolicy: this.db.collection('cookie_policy'),
+        homepageContent: this.db.collection('homepage_content')
       };
 
       // Create indexes for better performance

@@ -262,6 +262,28 @@ function createAdminRoutes(dependencies) {
   // Delete item from section
   router.delete('/policies/:policyType/sections/:sectionId/items/:itemId', authenticate, (req, res) => controller.deleteGenericPolicyItem(req, res));
 
+  // ============================================================================
+  // HOMEPAGE CONTENT MANAGEMENT
+  // ============================================================================
+
+  const HomepageController = require('../controllers/HomepageController');
+  const homepageController = new HomepageController(collections);
+
+  // Get homepage content (admin)
+  router.get('/homepage-content', authenticate, (req, res) => homepageController.getHomepageContent(req, res));
+
+  // Update homepage section
+  router.put('/homepage-content', authenticate, (req, res) => homepageController.updateHomepageContent(req, res));
+
+  // Import default content from mockdata
+  router.post('/homepage-content/import-defaults', authenticate, (req, res) => homepageController.importDefaultContent(req, res));
+
+  // Service management
+  router.post('/homepage-content/services', authenticate, (req, res) => homepageController.addService(req, res));
+  router.put('/homepage-content/services/:id', authenticate, (req, res) => homepageController.updateService(req, res));
+  router.delete('/homepage-content/services/:id', authenticate, (req, res) => homepageController.deleteService(req, res));
+  router.put('/homepage-content/services/reorder', authenticate, (req, res) => homepageController.reorderServices(req, res));
+
   return router;
 }
 

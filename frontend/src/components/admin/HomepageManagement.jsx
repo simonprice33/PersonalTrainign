@@ -528,7 +528,7 @@ const HeroEditor = ({ data, updateField, updateArrayItem, addArrayItem, removeAr
 
       {/* CTA Buttons & Profile */}
       <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-        <h3 className="text-lg font-bold text-white mb-4">Buttons & Profile</h3>
+        <h3 className="text-lg font-bold text-white mb-4">Buttons & Text</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-gray-300 text-sm mb-2">Primary Button Text</label>
@@ -557,15 +557,20 @@ const HeroEditor = ({ data, updateField, updateArrayItem, addArrayItem, removeAr
               className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
             />
           </div>
-          <div className="col-span-2">
-            <label className="block text-gray-300 text-sm mb-2">Profile Image URL</label>
-            <input
-              type="text"
-              value={data.profileImage || ''}
-              onChange={(e) => updateField('profileImage', e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
-            />
-          </div>
+        </div>
+      </div>
+
+      {/* Profile Image Upload */}
+      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+        <h3 className="text-lg font-bold text-white mb-4">Profile Image</h3>
+        <ImageUploader
+          imageUrl={data.profileImage || ''}
+          imagePosition={data.profileImagePosition || 'center 30%'}
+          onImageChange={(url) => updateField('profileImage', url)}
+          onPositionChange={(pos) => updateField('profileImagePosition', pos)}
+          label="Hero Profile Image"
+        />
+        <div className="grid grid-cols-2 gap-4 mt-4">
           <div>
             <label className="block text-gray-300 text-sm mb-2">Profile Caption</label>
             <input
@@ -575,6 +580,17 @@ const HeroEditor = ({ data, updateField, updateArrayItem, addArrayItem, removeAr
               className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
             />
           </div>
+          <div>
+            <label className="block text-gray-300 text-sm mb-2">Profile Subcaption</label>
+            <input
+              type="text"
+              value={data.profileSubcaption || ''}
+              onChange={(e) => updateField('profileSubcaption', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
+            />
+          </div>
+        </div>
+      </div>
           <div>
             <label className="block text-gray-300 text-sm mb-2">Profile Subcaption</label>
             <input

@@ -32,9 +32,9 @@ const POSITION_OPTIONS = [
 
 // Image Uploader Component
 const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChange, label = 'Profile Image' }) => {
+  const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
-  const inputId = useRef(`image-upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`).current;
 
   const handleUpload = async (file) => {
     if (!file || !file.type.startsWith('image/')) return;
@@ -53,6 +53,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
       }
     } catch (error) {
       console.error('Upload failed:', error);
+      alert('Upload failed. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -68,21 +69,21 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (file) handleUpload(file);
-    e.target.value = ''; // Reset to allow selecting same file
+    // Reset input value to allow selecting same file again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const openFilePicker = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
     <div className="space-y-3">
       <span className="block text-gray-300 text-sm font-medium">{label}</span>
-      
-      {/* Hidden File Input - using visibility instead of position */}
-      <input
-        id={inputId}
-        type="file"
-        accept="image/*"
-        onChange={handleFileSelect}
-        className="sr-only"
-      />
       
       {/* Upload Area */}
       <div
@@ -127,13 +128,20 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
                 </select>
               </div>
               
-              <label
-                htmlFor={inputId}
-                className="inline-flex items-center gap-2 px-3 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-sm cursor-pointer transition-colors"
-              >
-                {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
-                Replace Image
-              </label>
+              {/* File input with visible wrapper */}
+              <div className="relative">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                />
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-sm cursor-pointer transition-colors">
+                  {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                  {uploading ? 'Uploading...' : 'Replace Image'}
+                </div>
+              </div>
               
               <div className="text-xs text-gray-500">
                 URL: <span className="text-gray-400 break-all">{imageUrl.substring(0, 50)}...</span>
@@ -141,10 +149,16 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
             </div>
           </div>
         ) : (
-          <label 
-            htmlFor={inputId}
-            className="block text-center py-8 cursor-pointer"
+          <div 
+            className="text-center py-8 cursor-pointer relative"
           >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileSelect}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            />
             {uploading ? (
               <Loader2 size={32} className="mx-auto mb-2 text-cyan-500 animate-spin" />
             ) : (
@@ -154,7 +168,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
               {uploading ? 'Uploading...' : 'Click or drag image to upload'}
             </p>
             <p className="text-gray-500 text-xs mt-1">PNG, JPG, WEBP up to 5MB</p>
-          </label>
+          </div>
         )}
       </div>
     </div>

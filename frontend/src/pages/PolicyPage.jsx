@@ -228,15 +228,14 @@ const PolicyPage = () => {
                           {section.items.map((item, itemIndex) => (
                             <div 
                               key={item.id || itemIndex}
-                              className="prose prose-invert prose-sm max-w-none
-                                prose-p:text-gray-300 prose-p:leading-relaxed prose-p:my-1
-                                prose-li:text-gray-300
-                                prose-strong:text-white prose-strong:font-semibold
-                                prose-em:text-gray-200
-                                prose-ul:my-2 prose-ul:ml-4 prose-ul:list-disc
-                                prose-ol:my-2 prose-ol:ml-4 prose-ol:list-decimal
-                                [&_ul]:space-y-1 [&_ol]:space-y-1
-                                [&_li]:marker:text-[var(--brand-primary)]
+                              className="text-gray-300 leading-relaxed
+                                [&_p]:my-1
+                                [&_strong]:text-white [&_strong]:font-semibold
+                                [&_em]:text-gray-200
+                                [&_ul]:my-2 [&_ul]:ml-6 [&_ul]:list-disc [&_ul]:space-y-1
+                                [&_ol]:my-2 [&_ol]:ml-6 [&_ol]:list-decimal [&_ol]:space-y-1
+                                [&_li]:text-gray-300
+                                [&_li::marker]:text-[var(--brand-primary)]
                               "
                             >
                               <ReactMarkdown>{item.text}</ReactMarkdown>

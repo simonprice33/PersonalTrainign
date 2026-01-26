@@ -264,7 +264,7 @@ const PackageManagement = ({
                     onChange={(e) => setPackageForm({ ...packageForm, is_popular: e.target.checked })}
                     className="w-5 h-5 rounded border-gray-600 bg-gray-800 text-yellow-500 focus:ring-yellow-500"
                   />
-                  <span className="text-gray-300">Mark as "Most Popular"</span>
+                  <span className="text-gray-300">Mark as Most Popular</span>
                 </label>
                 <p className="text-xs text-gray-500 mt-1 ml-8">Only one package can be marked as most popular</p>
               </div>

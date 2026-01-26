@@ -44,7 +44,7 @@ const ImageUploader = ({ imageUrl, imagePosition, onImageChange, onPositionChang
       const formData = new FormData();
       formData.append('image', file);
       
-      const response = await axiosInstance.post(`${BACKEND_URL}/api/blog/admin/upload`, formData, {
+      const response = await axiosInstance.post(`${BACKEND_URL}/api/admin/homepage-content/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       

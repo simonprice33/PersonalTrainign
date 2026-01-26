@@ -607,6 +607,133 @@ class AdminController {
   }
 
   /**
+   * Update client details (full update including Stripe price)
+   */
+  async updateClient(req, res) {
+    try {
+      const { email } = req.params;
+      const {
+        name,
+        telephone,
+        price,
+        billingDay,
+        prorate,
+        addressLine1,
+        addressLine2,
+        city,
+        postcode,
+        country,
+        emergencyContactName,
+        emergencyContactNumber,
+        emergencyContactRelationship
+      } = req.body;
+
+      // Find the client
+      const client = await this.collections.clients.findOne({ email });
+      if (!client) {
+        return res.status(404).json({
+          success: false,
+          message: 'Client not found'
+        });
+      }
+
+      // Build update object
+      const updateData = {
+        updated_at: new Date()
+      };
+
+      // Update basic fields if provided
+      if (name !== undefined) updateData.name = name;
+      if (telephone !== undefined) updateData.telephone = telephone;
+      if (billingDay !== undefined) updateData.billingDay = billingDay;
+      if (prorate !== undefined) updateData.prorate = prorate;
+
+      // Update address as nested object
+      updateData.address = {
+        line1: addressLine1 || client.address?.line1 || '',
+        line2: addressLine2 || client.address?.line2 || '',
+        city: city || client.address?.city || '',
+        postcode: postcode || client.address?.postcode || '',
+        country: country || client.address?.country || 'GB'
+      };
+
+      // Update emergency contact
+      if (emergencyContactName !== undefined) updateData.emergency_contact_name = emergencyContactName;
+      if (emergencyContactNumber !== undefined) updateData.emergency_contact_number = emergencyContactNumber;
+      if (emergencyContactRelationship !== undefined) updateData.emergency_contact_relationship = emergencyContactRelationship;
+
+      // Handle price change - update Stripe subscription if price changed
+      const currentPrice = client.price || client.monthly_price || 125;
+      const newPrice = price !== undefined ? parseInt(price) : currentPrice;
+      
+      if (newPrice !== currentPrice) {
+        updateData.price = newPrice;
+        
+        // Update Stripe subscription price if client has active subscription
+        const customerId = client.stripe_customer_id || client.customer_id;
+        if (customerId) {
+          try {
+            // Get active subscriptions
+            const subscriptions = await this.stripe.subscriptions.list({
+              customer: customerId,
+              status: 'active'
+            });
+
+            if (subscriptions.data.length > 0) {
+              const subscription = subscriptions.data[0];
+              
+              // Create a new price for the updated amount
+              const newStripePrice = await this.stripe.prices.create({
+                unit_amount: newPrice * 100, // Convert to pence
+                currency: 'gbp',
+                recurring: { interval: 'month' },
+                product: subscription.items.data[0].price.product
+              });
+
+              // Update the subscription with the new price
+              // proration_behavior can be 'create_prorations', 'none', or 'always_invoice'
+              await this.stripe.subscriptions.update(subscription.id, {
+                items: [{
+                  id: subscription.items.data[0].id,
+                  price: newStripePrice.id
+                }],
+                proration_behavior: 'create_prorations', // Prorate from next billing
+                billing_cycle_anchor: 'unchanged'
+              });
+
+              console.log(`💰 Stripe subscription price updated for ${email}: £${currentPrice} -> £${newPrice}`);
+            }
+          } catch (stripeError) {
+            console.error('❌ Stripe price update error:', stripeError);
+            // Continue with local update even if Stripe fails
+            // The admin can retry or use Stripe dashboard
+          }
+        }
+      } else {
+        updateData.price = currentPrice;
+      }
+
+      // Update client in database
+      await this.collections.clients.updateOne({ email }, { $set: updateData });
+
+      console.log(`✅ Client updated: ${email}`);
+
+      res.status(200).json({
+        success: true,
+        message: 'Client updated successfully',
+        priceUpdated: newPrice !== currentPrice
+      });
+
+    } catch (error) {
+      console.error('❌ Update client error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to update client'
+      });
+    }
+  }
+
+  /**
    * Update client status
    */
   async updateClientStatus(req, res) {

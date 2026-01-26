@@ -250,7 +250,7 @@ const BlogPost = () => {
       <Header />
 
       <div className="relative h-[50vh] min-h-[400px] max-h-[600px] mt-20">
-        <img src={post.header_image} alt={post.title} className="w-full h-full object-cover" />
+        <img src={getImageUrl(post.header_image)} alt={post.title} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent"></div>
         <div className="absolute top-6 left-6">
           <button

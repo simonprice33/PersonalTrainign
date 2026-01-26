@@ -2,6 +2,16 @@ import React from 'react';
 import { Star, CheckCircle } from 'lucide-react';
 import { useHomepageContent } from '../context/HomepageContentContext';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+
+// Helper to get full image URL
+const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  if (url.startsWith('/api/')) return `${BACKEND_URL}${url}`;
+  return url;
+};
+
 // Default about content
 const defaultAbout = {
   heading: 'Meet Simon Price',

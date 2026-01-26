@@ -101,6 +101,17 @@ const ContentManagement = () => {
         {/* Tab Navigation */}
         <div className="flex flex-wrap gap-2 mb-8">
           <button
+            onClick={() => setActiveTab('homepage')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              activeTab === 'homepage' 
+                ? 'bg-cyan-500 text-white' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            <Home size={18} />
+            Homepage
+          </button>
+          <button
             onClick={() => setActiveTab('packages')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
               activeTab === 'packages' 

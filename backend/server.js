@@ -61,10 +61,21 @@ async function startServer() {
     // CORS configuration
     const corsOptions = {
       origin: function (origin, callback) {
-        if (!origin || config.corsOrigins.includes(origin)) {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) {
+          callback(null, true);
+          return;
+        }
+        // Check if origin is in allowed list
+        if (config.corsOrigins.includes(origin)) {
+          callback(null, true);
+        } else if (process.env.NODE_ENV !== 'production') {
+          // In development, allow all origins
+          console.log(`⚠️ CORS: Allowing unlisted origin in dev mode: ${origin}`);
           callback(null, true);
         } else {
-          callback(new Error('Not allowed by CORS'));
+          console.log(`❌ CORS: Blocked origin: ${origin}`);
+          callback(null, false);
         }
       },
       credentials: true,

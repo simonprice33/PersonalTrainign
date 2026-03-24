@@ -125,6 +125,17 @@ The order and content of the steps in the purchase flow must adapt based on the 
   - **Blog images also migrated** to backend uploads (`/api/uploads/blog/`) for production build compatibility
   - Added `getImageUrl()` helper to all blog components for backwards compatibility with old image paths
 
+- [x] **Campaign Landing Page System (Jan 26, 2025):**
+  - Full campaign management in admin panel (`/admin/campaigns`)
+  - Create, edit, delete campaigns with media uploads
+  - Public landing pages at `/c/:slug` for lead capture
+  - Lead capture with mandatory name + email fields
+  - Leads stored in `email_subscribers` collection with campaign source tracking
+  - Configurable post-submit behavior (thank you message OR redirect URL)
+  - Simple on/off status toggle per campaign
+  - View leads and export to CSV
+  - Media support: images and videos uploaded to backend
+
 ### Known Issues
 1. **P2 - Stripe Billing Portal**: Requires real API keys to function (user reports Stripe is working on their end)
 

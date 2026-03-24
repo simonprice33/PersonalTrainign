@@ -98,6 +98,15 @@ function App() {
           <Route path="/admin/blog/edit/:slug" element={<BlogEditor />} />
           <Route path="/admin/blog/categories" element={<BlogCategories />} />
           
+          {/* Campaign Routes */}
+          <Route path="/admin/campaigns" element={<CampaignManagement />} />
+          <Route path="/admin/campaigns/new" element={<CampaignEditor />} />
+          <Route path="/admin/campaigns/:slug/edit" element={<CampaignEditor />} />
+          <Route path="/admin/campaigns/:slug/leads" element={<CampaignLeads />} />
+          
+          {/* Public Campaign Landing Page */}
+          <Route path="/c/:slug" element={<CampaignPage />} />
+          
           {/* Public Blog Routes */}
           <Route path="/blog" element={<BlogListing />} />
           <Route path="/blog/:slug" element={<BlogPost />} />

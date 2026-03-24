@@ -27,6 +27,9 @@ import ContentManagement from "./components/admin/ContentManagement";
 import BlogManagement from "./components/admin/BlogManagement";
 import BlogEditor from "./components/admin/BlogEditor";
 import BlogCategories from "./components/admin/BlogCategories";
+import CampaignManagement from "./components/admin/CampaignManagement";
+import CampaignEditor from "./components/admin/CampaignEditor";
+import CampaignLeads from "./components/admin/CampaignLeads";
 
 // Client Portal Components
 import ClientLogin from "./components/client/ClientLogin";
@@ -40,6 +43,9 @@ import PurchaseFlow from "./pages/PurchaseFlow";
 // Blog Components
 import BlogListing from "./pages/BlogListing";
 import BlogPost from "./pages/BlogPost";
+
+// Campaign Landing Page
+import CampaignPage from "./pages/CampaignPage";
 
 // Policy Pages
 import PolicyPage from "./pages/PolicyPage";

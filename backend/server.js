@@ -180,6 +180,12 @@ async function startServer() {
     const blogController = new BlogController(collections, config);
     app.use('/api/blog', createBlogRoutes(blogController, authMiddleware.authenticate));
 
+    // Campaign routes (landing pages + lead capture)
+    const CampaignController = require('./controllers/CampaignController');
+    const createCampaignRoutes = require('./routes/campaigns');
+    const campaignController = new CampaignController(collections);
+    app.use('/api/campaigns', createCampaignRoutes(campaignController, authMiddleware.authenticate));
+
     // Portal session endpoint (can be used by both admin and client)
     app.post('/api/create-portal-session', authMiddleware.authenticate, async (req, res) => {
       try {

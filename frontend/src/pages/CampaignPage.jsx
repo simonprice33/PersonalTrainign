@@ -254,12 +254,10 @@ const CampaignPage = () => {
             </form>
           )}
         </div>
-
-        {/* Footer */}
-        <p className="text-center text-gray-500 text-sm mt-8">
-          © {new Date().getFullYear()} Simon Price PT. All rights reserved.
-        </p>
       </div>
+      
+      {/* Standard Footer */}
+      <Footer />
     </div>
   );
 };

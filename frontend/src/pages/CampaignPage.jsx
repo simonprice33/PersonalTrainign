@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import Footer from '../components/Footer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
@@ -11,6 +12,47 @@ const getMediaUrl = (url) => {
   if (url.startsWith('http')) return url;
   if (url.startsWith('/api/')) return `${BACKEND_URL}${url}`;
   return url;
+};
+
+// Simple header for campaign pages (logo only, no navigation)
+const CampaignHeader = () => {
+  return (
+    <header className="fixed top-0 w-full z-50" style={{ background: 'rgba(10, 10, 10, 0.98)' }}>
+      <div className="container mx-auto px-4">
+        <div style={{
+          background: 'var(--brand-dark, #1a1a1a)',
+          borderRadius: '25px',
+          padding: '8px 24px',
+          margin: '16px 0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '1px solid rgba(0, 255, 255, 0.1)'
+        }}>
+          <Link to="/" className="flex items-center gap-2">
+            <span style={{
+              background: 'linear-gradient(135deg, var(--neon-cyan, #00ffff) 0%, var(--neon-magenta, #ff00ff) 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              fontWeight: 800,
+              fontSize: '1.5rem',
+              letterSpacing: '-0.02em'
+            }}>
+              SIMON PRICE
+            </span>
+            <span style={{
+              color: 'white',
+              fontWeight: 300,
+              fontSize: '1.5rem',
+              opacity: 0.9
+            }}>
+              PT
+            </span>
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
 };
 
 const CampaignPage = () => {

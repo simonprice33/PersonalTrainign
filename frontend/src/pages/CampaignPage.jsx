@@ -129,7 +129,7 @@ const CampaignPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <CampaignHeader />
       
-      <div className="container mx-auto px-4 pt-28 pb-12 max-w-4xl">
+      <div className="container mx-auto px-4 pt-32 pb-12 max-w-4xl">
         {/* Campaign Header */}
         {campaign.header && (
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white text-center mb-6">

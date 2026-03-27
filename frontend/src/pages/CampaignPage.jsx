@@ -14,40 +14,28 @@ const getMediaUrl = (url) => {
   return url;
 };
 
-// Simple header for campaign pages (logo only, no navigation)
+// Header for campaign pages - uses actual logo, no navigation links
 const CampaignHeader = () => {
   return (
-    <header className="fixed top-0 w-full z-50" style={{ background: 'rgba(10, 10, 10, 0.98)' }}>
-      <div className="container mx-auto px-4">
-        <div style={{
-          background: 'var(--brand-dark, #1a1a1a)',
+    <header className="network-header fixed top-0 w-full z-50" style={{ background: 'rgba(10, 10, 10, 0.98)' }}>
+      <div className="container">
+        <div className="nav-wrapper" style={{
+          background: 'var(--brand-dark)',
           borderRadius: '25px',
-          padding: '8px 24px',
+          padding: '8px 16px',
           margin: '16px 0',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          border: '1px solid rgba(0, 255, 255, 0.1)'
+          boxShadow: '0 2px 8px rgba(0, 191, 255, 0.25)'
         }}>
-          <Link to="/" className="flex items-center gap-2">
-            <span style={{
-              background: 'linear-gradient(135deg, var(--neon-cyan, #00ffff) 0%, var(--neon-magenta, #ff00ff) 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              fontWeight: 800,
-              fontSize: '1.5rem',
-              letterSpacing: '-0.02em'
-            }}>
-              SIMON PRICE
-            </span>
-            <span style={{
-              color: 'white',
-              fontWeight: 300,
-              fontSize: '1.5rem',
-              opacity: 0.9
-            }}>
-              PT
-            </span>
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_personal-trainer-24/artifacts/g2n7e7ey_Logo%20800x770.png" 
+              alt="Simon Price Personal Training" 
+              className="h-12 w-auto"
+            />
           </Link>
         </div>
       </div>

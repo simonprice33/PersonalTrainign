@@ -2,7 +2,7 @@
  * Campaign Controller - Handles campaign landing pages and lead capture
  */
 
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID } = require('crypto');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -409,7 +409,7 @@ class CampaignController {
       res.status(200).json({
         success: true,
         media: {
-          id: uuidv4(),
+          id: randomUUID(),
           type: isVideo ? 'video' : 'image',
           url: mediaUrl,
           filename: req.file.filename,

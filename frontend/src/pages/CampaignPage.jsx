@@ -102,9 +102,16 @@ const CampaignPage = () => {
       <Header />
       
       <div className="container mx-auto px-4 pb-12 max-w-4xl" style={{ paddingTop: '120px' }}>
-        {/* Media Gallery - Now at the top */}
+        {/* Campaign Header - First */}
+        {campaign.header && (
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white text-center mb-8">
+            {campaign.header}
+          </h1>
+        )}
+
+        {/* Media Gallery - Second */}
         {campaign.media && campaign.media.length > 0 && (
-          <div className="mb-10">
+          <div className="mb-8">
             <div className={`grid gap-4 ${campaign.media.length === 1 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
               {campaign.media.map((item, index) => (
                 <div 
@@ -133,14 +140,7 @@ const CampaignPage = () => {
           </div>
         )}
 
-        {/* Campaign Header - Now below media */}
-        {campaign.header && (
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white text-center mb-6">
-            {campaign.header}
-          </h1>
-        )}
-
-        {/* Description - Now below header */}
+        {/* Description / Sub text - Third */}
         {campaign.description && (
           <p className="text-lg text-gray-300 text-center mb-8 max-w-2xl mx-auto">
             {campaign.description}

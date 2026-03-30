@@ -140,9 +140,9 @@ const CampaignPage = () => {
           </div>
         )}
 
-        {/* Description / Sub text - Third */}
+        {/* Description / Sub text - Third, with preserved line breaks */}
         {campaign.description && (
-          <p className="text-lg text-gray-300 text-center mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-300 text-center mb-8 max-w-2xl mx-auto whitespace-pre-line">
             {campaign.description}
           </p>
         )}

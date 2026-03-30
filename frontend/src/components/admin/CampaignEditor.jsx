@@ -304,19 +304,42 @@ const CampaignEditor = () => {
           <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold text-white">Media</h2>
-              <label className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg cursor-pointer transition-colors">
-                {uploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
-                {uploading ? 'Uploading...' : 'Upload Media'}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*,video/*"
-                  multiple
-                  onChange={handleMediaUpload}
-                  className="hidden"
-                  disabled={uploading}
-                />
-              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const url = prompt('Enter image or video URL:');
+                    if (url && url.trim()) {
+                      const isVideo = /\.(mp4|mov|avi|webm)$/i.test(url) || url.includes('video');
+                      setCampaign(prev => ({
+                        ...prev,
+                        media: [...prev.media, {
+                          id: `url-${Date.now()}`,
+                          type: isVideo ? 'video' : 'image',
+                          url: url.trim()
+                        }]
+                      }));
+                    }
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                >
+                  <LinkIcon size={18} />
+                  Add URL
+                </button>
+                <label className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg cursor-pointer transition-colors">
+                  {uploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
+                  {uploading ? 'Uploading...' : 'Upload File'}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*,video/*"
+                    multiple
+                    onChange={handleMediaUpload}
+                    className="hidden"
+                    disabled={uploading}
+                  />
+                </label>
+              </div>
             </div>
 
             {campaign.media.length === 0 ? (

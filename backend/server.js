@@ -117,6 +117,20 @@ async function startServer() {
     console.log('📁 Serving uploads from:', uploadsPath);
     app.use('/api/uploads', express.static(uploadsPath));
 
+    // Explicit route for serving uploaded files (fallback for reverse proxy issues)
+    app.get('/api/uploads/:folder/:filename', (req, res) => {
+      const { folder, filename } = req.params;
+      const filePath = require('path').join(__dirname, 'public', 'uploads', folder, filename);
+      
+      // Check if file exists
+      if (require('fs').existsSync(filePath)) {
+        res.sendFile(filePath);
+      } else {
+        console.log(`❌ File not found: ${filePath}`);
+        res.status(404).json({ success: false, message: 'File not found' });
+      }
+    });
+
     // 3. Initialize Database
     const dbConfig = new DatabaseConfig(config);
     const { db, collections } = await dbConfig.connect();

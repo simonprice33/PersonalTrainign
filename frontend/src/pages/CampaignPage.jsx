@@ -75,7 +75,7 @@ const CampaignPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
-        <CampaignHeader />
+        <Header />
         <Loader2 className="w-12 h-12 text-cyan-500 animate-spin" />
       </div>
     );
@@ -84,7 +84,7 @@ const CampaignPage = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-        <CampaignHeader />
+        <Header />
         <div className="flex items-center justify-center min-h-[80vh]">
           <div className="text-center">
             <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
@@ -99,7 +99,7 @@ const CampaignPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-      <CampaignHeader />
+      <Header />
       
       <div className="container mx-auto px-4 pb-12 max-w-4xl" style={{ paddingTop: '120px' }}>
         {/* Campaign Header */}

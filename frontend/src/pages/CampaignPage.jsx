@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
@@ -12,35 +13,6 @@ const getMediaUrl = (url) => {
   if (url.startsWith('http')) return url;
   if (url.startsWith('/api/')) return `${BACKEND_URL}${url}`;
   return url;
-};
-
-// Header for campaign pages - uses actual logo, no navigation links
-const CampaignHeader = () => {
-  return (
-    <header className="network-header fixed top-0 w-full z-50" style={{ background: 'rgba(10, 10, 10, 0.98)' }}>
-      <div className="container">
-        <div className="nav-wrapper" style={{
-          background: 'var(--brand-dark)',
-          borderRadius: '25px',
-          padding: '8px 16px',
-          margin: '16px 0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 2px 8px rgba(0, 191, 255, 0.25)'
-        }}>
-          {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <img 
-              src="https://customer-assets.emergentagent.com/job_personal-trainer-24/artifacts/g2n7e7ey_Logo%20800x770.png" 
-              alt="Simon Price Personal Training" 
-              className="h-12 w-auto"
-            />
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
 };
 
 const CampaignPage = () => {

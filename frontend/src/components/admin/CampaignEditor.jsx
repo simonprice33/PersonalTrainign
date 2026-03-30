@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import { 
   ArrowLeft, Save, Eye, Upload, Trash2, GripVertical,
-  Image, Video, Plus, Loader2, ExternalLink
+  Image, Video, Plus, Loader2, ExternalLink, Link as LinkIcon
 } from 'lucide-react';
 import AlertModal from '../AlertModal';
 

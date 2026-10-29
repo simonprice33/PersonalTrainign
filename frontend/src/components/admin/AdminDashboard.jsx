@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Users, LogOut, Key, CreditCard, Upload, Settings, FileText } from 'lucide-react';
+import { Mail, Users, LogOut, Key, CreditCard, Upload, Settings, FileText, Target } from 'lucide-react';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -199,6 +199,28 @@ const AdminDashboard = () => {
             </p>
             <div className="mt-6 flex items-center text-pink-500 text-sm font-medium">
               Manage Blog
+              <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+
+          {/* Campaign Management Card */}
+          <Link
+            to="/admin/campaigns"
+            className="bg-gray-800 rounded-xl p-8 border border-orange-500/20 hover:border-orange-500/50 transition-all hover:shadow-lg hover:shadow-orange-500/20 group"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-orange-500/10 rounded-lg group-hover:bg-orange-500/20 transition-colors">
+                <Target className="text-orange-500" size={32} />
+              </div>
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">Campaigns</h2>
+            <p className="text-gray-400 text-sm">
+              Create landing pages to capture leads and grow your email list.
+            </p>
+            <div className="mt-6 flex items-center text-orange-500 text-sm font-medium">
+              Manage Campaigns
               <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

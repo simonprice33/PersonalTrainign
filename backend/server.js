@@ -61,10 +61,21 @@ async function startServer() {
     // CORS configuration
     const corsOptions = {
       origin: function (origin, callback) {
-        if (!origin || config.corsOrigins.includes(origin)) {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) {
+          callback(null, true);
+          return;
+        }
+        // Check if origin is in allowed list
+        if (config.corsOrigins.includes(origin)) {
+          callback(null, true);
+        } else if (process.env.NODE_ENV !== 'production') {
+          // In development, allow all origins
+          console.log(`⚠️ CORS: Allowing unlisted origin in dev mode: ${origin}`);
           callback(null, true);
         } else {
-          callback(new Error('Not allowed by CORS'));
+          console.log(`❌ CORS: Blocked origin: ${origin}`);
+          callback(null, false);
         }
       },
       credentials: true,
@@ -105,6 +116,20 @@ async function startServer() {
     const uploadsPath = require('path').join(__dirname, 'public', 'uploads');
     console.log('📁 Serving uploads from:', uploadsPath);
     app.use('/api/uploads', express.static(uploadsPath));
+
+    // Explicit route for serving uploaded files (fallback for reverse proxy issues)
+    app.get('/api/uploads/:folder/:filename', (req, res) => {
+      const { folder, filename } = req.params;
+      const filePath = require('path').join(__dirname, 'public', 'uploads', folder, filename);
+      
+      // Check if file exists
+      if (require('fs').existsSync(filePath)) {
+        res.sendFile(filePath);
+      } else {
+        console.log(`❌ File not found: ${filePath}`);
+        res.status(404).json({ success: false, message: 'File not found' });
+      }
+    });
 
     // 3. Initialize Database
     const dbConfig = new DatabaseConfig(config);
@@ -168,6 +193,12 @@ async function startServer() {
     // Blog routes (public + admin)
     const blogController = new BlogController(collections, config);
     app.use('/api/blog', createBlogRoutes(blogController, authMiddleware.authenticate));
+
+    // Campaign routes (landing pages + lead capture)
+    const CampaignController = require('./controllers/CampaignController');
+    const createCampaignRoutes = require('./routes/campaigns');
+    const campaignController = new CampaignController(collections);
+    app.use('/api/campaigns', createCampaignRoutes(campaignController, authMiddleware.authenticate));
 
     // Portal session endpoint (can be used by both admin and client)
     app.post('/api/create-portal-session', authMiddleware.authenticate, async (req, res) => {

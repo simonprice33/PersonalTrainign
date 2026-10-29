@@ -63,7 +63,9 @@ class DatabaseConfig {
         termsOfService: this.db.collection('terms_of_service'),
         privacyPolicy: this.db.collection('privacy_policy'),
         cookiePolicy: this.db.collection('cookie_policy'),
-        homepageContent: this.db.collection('homepage_content')
+        homepageContent: this.db.collection('homepage_content'),
+        campaigns: this.db.collection('campaigns'),
+        emailSubscribers: this.db.collection('email_subscribers')
       };
 
       // Create indexes for better performance

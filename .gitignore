@@ -117,3 +117,6 @@ frontend/node_modules/.cache/default-development/8.pack
 # Environment files
 *.env
 *.env.*
+
+# node-windows service wrapper (created on the server by the deploy)
+backend/daemon/

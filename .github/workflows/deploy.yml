@@ -57,11 +57,18 @@ jobs:
           REACT_APP_BACKEND_URL: https://www.simonprice-pt.co.uk
         run: npm run build
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: frontend/build
-          retention-days: 7
+      - name: Stage build output on the runner (no cloud artifact)
+        shell: pwsh
+        run: |
+          $src = "frontend\build"
+          $dst = "C:\actions-artifacts\${{ github.event.repository.name }}\${{ github.run_id }}\frontend-build"
+          if (-not (Test-Path $src)) { throw "Build output not found: $src" }
+          New-Item -ItemType Directory -Force $dst | Out-Null
+          robocopy $src $dst /E /NFL /NDL /NJH /NJS /NP | Out-Null
+          if ($LASTEXITCODE -ge 8) { throw "robocopy failed ($LASTEXITCODE)" }
+          # keep only the 5 most recent runs
+          Get-ChildItem (Split-Path (Split-Path $dst)) -Directory -ErrorAction SilentlyContinue | Sort-Object CreationTime -Descending | Select-Object -Skip 5 | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+          exit 0
 
   deploy:
     needs: build-and-test
@@ -76,10 +83,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: frontend-build
-          path: ${{ runner.temp }}/frontend-build
+      - name: Fetch build output from the runner (no cloud artifact)
+        shell: pwsh
+        run: |
+          $src = "C:\actions-artifacts\${{ github.event.repository.name }}\${{ github.run_id }}\frontend-build"
+          $dst = "${{ runner.temp }}\frontend-build"
+          if (-not (Test-Path $src)) { throw "Build output not found: $src" }
+          New-Item -ItemType Directory -Force $dst | Out-Null
+          robocopy $src $dst /E /NFL /NDL /NJH /NJS /NP | Out-Null
+          if ($LASTEXITCODE -ge 8) { throw "robocopy failed ($LASTEXITCODE)" }
+          exit 0
 
       - name: Deploy to production
         run: .github/scripts/deploy.ps1 -RepoRoot "$env:GITHUB_WORKSPACE" -BuildDir "${{ runner.temp }}/frontend-build" -SiteRoot "$env:SITE_ROOT"
